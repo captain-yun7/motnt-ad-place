@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 광고 카테고리 (LED, 현수막, 버스정류장 등)
+model Category {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  ads         Ad[]
+  
+  @@map("categories")
+}
+
+// 지역 정보
+model District {
+  id        String @id @default(cuid())
+  name      String @unique // 강남구, 서초구 등
+  city      String @default("서울") // 향후 확장 대비
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  ads       Ad[]
+  
+  @@map("districts")
+}
+
+// 메인 광고 테이블
+model Ad {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  isActive    Boolean  @default(true)
+  
+  // 위치 정보 (JSON 필드로 유연성 확보)
+  location    Json     // { address, coordinates: [lng, lat], landmarks }
+  
+  // 광고판 사양 (JSON 필드)
+  specs       Json     // { type, size: "3x2", resolution, material }
+  
+  // 가격 정보 (JSON 필드)
+  pricing     Json     // { monthly, deposit, minimumPeriod }
+  
+  // 추가 메타데이터 (확장 가능)
+  metadata    Json?    // { traffic, visibility, nearbyBusinesses }
+  
+  // 관계 필드
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  
+  districtId  String
+  district    District @relation(fields: [districtId], references: [id])
+  
+  images      AdImage[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("ads")
+}
+
+// 광고 이미지
+model AdImage {
+  id        String @id @default(cuid())
+  url       String
+  alt       String?
+  order     Int    @default(0)
+  
+  adId      String
+  ad        Ad     @relation(fields: [adId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("ad_images")
+}
+
+// 관리자 (Supabase Auth와 연동)
+model Admin {
+  id        String @id @default(cuid())
+  email     String @unique
+  name      String
+  role      String @default("admin")
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("admins")
+}
