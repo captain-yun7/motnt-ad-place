@@ -1,29 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { MOCK_CATEGORIES } from '../../../../docs/mock-data/ads';
 
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: { name: 'asc' },
-      include: {
-        _count: {
-          select: {
-            ads: {
-              where: { isActive: true },
-            },
-          },
-        },
-      },
-    });
-
-    const categoriesWithCount = categories.map(category => ({
-      id: category.id,
-      name: category.name,
-      description: category.description,
-      adCount: category._count.ads,
-    }));
-
-    return NextResponse.json({ data: categoriesWithCount });
+    return NextResponse.json({ data: MOCK_CATEGORIES });
   } catch (error) {
     console.error('Error fetching categories:', error);
     return NextResponse.json(

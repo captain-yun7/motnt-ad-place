@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
 import { AdResponse } from '@/types/ad';
+import { MOCK_ADS } from '../../../../../docs/mock-data/ads';
 
 export async function GET(
   request: NextRequest,
@@ -9,22 +9,7 @@ export async function GET(
   try {
     const { id } = params;
 
-    const ad = await prisma.ad.findUnique({
-      where: { 
-        OR: [
-          { id },
-          { slug: id }, // slug으로도 조회 가능
-        ],
-        isActive: true,
-      },
-      include: {
-        category: true,
-        district: true,
-        images: {
-          orderBy: { order: 'asc' },
-        },
-      },
-    });
+    const ad = MOCK_ADS.find(ad => ad.id === id || ad.slug === id);
 
     if (!ad) {
       return NextResponse.json(
@@ -33,36 +18,7 @@ export async function GET(
       );
     }
 
-    // 타입 변환
-    const adResponse: AdResponse = {
-      id: ad.id,
-      title: ad.title,
-      slug: ad.slug,
-      description: ad.description,
-      location: ad.location as any,
-      specs: ad.specs as any,
-      pricing: ad.pricing as any,
-      metadata: ad.metadata as any,
-      category: {
-        id: ad.category.id,
-        name: ad.category.name,
-      },
-      district: {
-        id: ad.district.id,
-        name: ad.district.name,
-        city: ad.district.city,
-      },
-      images: ad.images.map(img => ({
-        id: img.id,
-        url: img.url,
-        alt: img.alt,
-        order: img.order,
-      })),
-      createdAt: ad.createdAt.toISOString(),
-      updatedAt: ad.updatedAt.toISOString(),
-    };
-
-    return NextResponse.json({ data: adResponse });
+    return NextResponse.json({ data: ad });
   } catch (error) {
     console.error('Error fetching ad:', error);
     return NextResponse.json(

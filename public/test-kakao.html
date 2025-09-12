@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>카카오맵 API 테스트</title>
+</head>
+<body>
+    <div id="map" style="width:500px;height:400px; border:1px solid #ccc;"></div>
+    <div id="status">스크립트 로딩 확인 중...</div>
+    
+    <script>
+        // 스크립트 로드 전 상태 확인
+        console.log('페이지 로드됨');
+        document.getElementById('status').innerHTML = "1. 페이지 로드 완료";
+        
+        // 스크립트 동적 로드로 테스트
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=a827807dfdde79c05bb11529d8e2d759';
+        
+        script.onload = function() {
+            document.getElementById('status').innerHTML = "2. ✅ 스크립트 로드 성공! kakao 객체: " + (typeof window.kakao);
+            
+            if (window.kakao && window.kakao.maps) {
+                var container = document.getElementById('map');
+                var options = {
+                    center: new window.kakao.maps.LatLng(37.566826, 126.9786567),
+                    level: 3
+                };
+                var map = new window.kakao.maps.Map(container, options);
+                document.getElementById('status').innerHTML = "3. ✅ 카카오맵 렌더링 성공!";
+            }
+        };
+        
+        script.onerror = function() {
+            document.getElementById('status').innerHTML = "❌ 스크립트 로드 실패 - API 키 또는 도메인 문제";
+            console.error('스크립트 로드 실패');
+        };
+        
+        document.head.appendChild(script);
+        
+        // 5초 후에도 로드 안되면 타임아웃
+        setTimeout(function() {
+            if (!window.kakao) {
+                document.getElementById('status').innerHTML = "❌ 타임아웃 - 스크립트가 로드되지 않음";
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
