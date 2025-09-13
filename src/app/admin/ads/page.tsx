@@ -1,0 +1,43 @@
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import AdminAdsPage from '@/components/admin/AdminAdsPage'
+
+export default async function AdminAdsListPage() {
+  const supabase = createClient()
+  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/admin/login')
+  }
+
+  // 광고 목록 조회
+  const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/ads`, {
+    cache: 'no-store'
+  })
+  const adsData = await response.json()
+
+  // 카테고리와 지역 정보도 함께 조회
+  const [categoriesRes, districtsRes] = await Promise.all([
+    fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/categories`, {
+      cache: 'no-store'
+    }),
+    fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/districts`, {
+      cache: 'no-store'
+    })
+  ])
+
+  const categoriesData = await categoriesRes.json()
+  const districtsData = await districtsRes.json()
+
+  return (
+    <AdminAdsPage 
+      user={user}
+      initialAds={adsData.data || []}
+      categories={categoriesData.data || []}
+      districts={districtsData.data || []}
+    />
+  )
+}
