@@ -105,6 +105,7 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [images, setImages] = useState<File[]>([])
+  const [existingImages, setExistingImages] = useState<any[]>([])
   
   const router = useRouter()
   const supabase = createClient()
@@ -112,6 +113,7 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
   // 기존 광고 데이터로 폼 초기화
   useEffect(() => {
     if (ad) {
+      setExistingImages(ad.images || [])
       setFormData({
         title: ad.title,
         slug: ad.slug,
@@ -203,6 +205,27 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
     }
   }
 
+  const handleDeleteExistingImage = async (imageId: string) => {
+    if (!confirm('이 이미지를 삭제하시겠습니까?')) return
+
+    try {
+      const response = await fetch(`/api/admin/images/${imageId}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        setExistingImages(existingImages.filter(img => img.id !== imageId))
+        alert('이미지가 성공적으로 삭제되었습니다.')
+      } else {
+        const errorData = await response.json()
+        alert(`이미지 삭제 실패: ${errorData.error}`)
+      }
+    } catch (error) {
+      console.error('Image delete error:', error)
+      alert('이미지 삭제 중 오류가 발생했습니다.')
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -242,10 +265,33 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
 
       const result = await response.json()
       
-      // TODO: 이미지 업로드 구현 (나중에 추가)
+      // 새 이미지 업로드 처리
       if (images.length > 0) {
-        console.log('Images to upload:', images)
-        // 이미지 업로드 로직은 Phase 5-6에서 구현
+        try {
+          const imageFormData = new FormData()
+          images.forEach((image) => {
+            imageFormData.append('images', image)
+          })
+          imageFormData.append('adId', ad.id)
+
+          const imageResponse = await fetch('/api/admin/images', {
+            method: 'POST',
+            body: imageFormData
+          })
+
+          if (!imageResponse.ok) {
+            const imageError = await imageResponse.json()
+            console.error('Image upload failed:', imageError)
+            // 이미지 업로드 실패해도 광고는 수정되었으므로 경고만 표시
+            alert(`광고는 수정되었지만 이미지 업로드 중 오류가 발생했습니다: ${imageError.error}`)
+          } else {
+            const imageResult = await imageResponse.json()
+            console.log('Images uploaded successfully:', imageResult)
+          }
+        } catch (imageError) {
+          console.error('Image upload error:', imageError)
+          alert('광고는 수정되었지만 이미지 업로드 중 오류가 발생했습니다.')
+        }
       }
 
       alert('광고가 성공적으로 수정되었습니다!')
@@ -671,12 +717,12 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
           </div>
 
           {/* 기존 이미지 표시 */}
-          {ad.images && ad.images.length > 0 && (
+          {existingImages && existingImages.length > 0 && (
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">기존 이미지</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                {ad.images.map((image, index) => (
-                  <div key={image.id} className="relative">
+                {existingImages.map((image, index) => (
+                  <div key={image.id} className="relative group">
                     <img
                       src={image.url}
                       alt={`광고 이미지 ${index + 1}`}
@@ -691,11 +737,19 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
                         {index + 1}
                       </span>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteExistingImage(image.id)}
+                      className="absolute -top-1 -left-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                      title="이미지 삭제"
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>
               <p className="text-sm text-gray-600">
-                기존 이미지는 유지됩니다. 새로운 이미지를 추가하려면 아래에서 선택하세요.
+                기존 이미지를 삭제하려면 이미지에 마우스를 올리고 × 버튼을 클릭하세요.
               </p>
             </div>
           )}

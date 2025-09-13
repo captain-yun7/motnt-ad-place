@@ -199,10 +199,33 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
 
       const result = await response.json()
       
-      // TODO: 이미지 업로드 구현 (나중에 추가)
+      // 이미지 업로드 처리
       if (images.length > 0) {
-        console.log('Images to upload:', images)
-        // 이미지 업로드 로직은 Phase 5-6에서 구현
+        try {
+          const imageFormData = new FormData()
+          images.forEach((image) => {
+            imageFormData.append('images', image)
+          })
+          imageFormData.append('adId', result.data.id)
+
+          const imageResponse = await fetch('/api/admin/images', {
+            method: 'POST',
+            body: imageFormData
+          })
+
+          if (!imageResponse.ok) {
+            const imageError = await imageResponse.json()
+            console.error('Image upload failed:', imageError)
+            // 이미지 업로드 실패해도 광고는 생성되었으므로 경고만 표시
+            alert(`광고는 생성되었지만 이미지 업로드 중 오류가 발생했습니다: ${imageError.error}`)
+          } else {
+            const imageResult = await imageResponse.json()
+            console.log('Images uploaded successfully:', imageResult)
+          }
+        } catch (imageError) {
+          console.error('Image upload error:', imageError)
+          alert('광고는 생성되었지만 이미지 업로드 중 오류가 발생했습니다.')
+        }
       }
 
       alert('광고가 성공적으로 생성되었습니다!')
