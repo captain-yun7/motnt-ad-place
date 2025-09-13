@@ -120,21 +120,28 @@ export default function Map({
               <h3 className="font-semibold text-gray-900 mb-2">
                 {selectedAd.title}
               </h3>
-              <div className="text-sm text-gray-600 space-y-1">
+              <div className="text-sm text-gray-600 space-y-1 mb-3">
                 <p><span className="font-medium">카테고리:</span> {selectedAd.category.name}</p>
                 <p><span className="font-medium">지역:</span> {selectedAd.district.name}</p>
                 <p><span className="font-medium">월 금액:</span> {selectedAd.pricing.monthly.toLocaleString()}원</p>
                 <p><span className="font-medium">주소:</span> {selectedAd.location.address}</p>
-                {selectedAd.description && (
-                  <p className="text-xs mt-2 text-gray-500">
+              </div>
+              
+              {/* 설명 영역 - 고정 높이로 균일한 여백 확보 */}
+              <div className="min-h-[2rem] mb-3">
+                {selectedAd.description ? (
+                  <p className="text-xs text-gray-500">
                     {selectedAd.description.length > 50 
                       ? `${selectedAd.description.substring(0, 50)}...` 
                       : selectedAd.description
                     }
                   </p>
+                ) : (
+                  <div className="h-4"></div>
                 )}
               </div>
-              <div className="flex space-x-2 mt-3">
+
+              <div className="flex space-x-2">
                 <button 
                   onClick={() => {
                     window.location.href = `/ad/${selectedAd.id}`;
