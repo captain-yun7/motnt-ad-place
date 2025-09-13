@@ -90,11 +90,11 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
       stats: `${stats.totalDistricts}개`
     },
     {
-      title: '이미지 관리',
-      description: '광고 이미지 업로드 및 관리',
-      href: '/admin/images',
-      icon: '🖼️',
-      stats: '업로드'
+      title: '새 광고',
+      description: '새로운 광고 등록',
+      href: '/admin/ads/create',
+      icon: '➕',
+      stats: '등록'
     }
   ]
 
