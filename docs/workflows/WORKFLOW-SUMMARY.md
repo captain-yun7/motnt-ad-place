@@ -32,6 +32,20 @@
 
 ---
 
+### Phase 3: 카카오맵 연동 및 실제 DB 연결 ✅
+**소요시간**: 3시간  
+**핵심 작업**:
+- react-kakao-maps-sdk 설치 및 Map 컴포넌트 구현
+- 카카오맵 API 403 오류 해결 (2024년 정책 변경 대응)
+- 메인 페이지 레이아웃 (헤더 + 사이드바 + 지도)
+- Supabase 프로젝트 생성 및 실제 DB 연동
+- Prisma 마이그레이션 및 시드 데이터 주입
+- API를 더미 데이터에서 실제 DB로 변경
+
+**결과물**: 실제 지도 기반 광고 조회 서비스 완성
+
+---
+
 ## 현재 상태
 
 ### 📁 프로젝트 구조
@@ -74,6 +88,7 @@ motnt-ad-place/
   "dependencies": {
     "@prisma/client": "^6.16.1",
     "@supabase/supabase-js": "^2.57.4",
+    "react-kakao-maps-sdk": "^1.2.0",
     "next": "15.5.3",
     "react": "19.1.0"
   },
@@ -90,18 +105,12 @@ motnt-ad-place/
 
 ## 다음 단계 (진행 예정)
 
-### Phase 3: 지도 기능 구현 (예상 1주)
-- [ ] 카카오 개발자 계정 및 Maps API 키 발급
-- [ ] `react-kakao-maps-sdk` 설치 및 설정
-- [ ] 기본 지도 컴포넌트 생성
-- [ ] 광고 위치 마커 표시
-- [ ] 마커 클릭 시 기본 정보 표시
-
-### Phase 4: 사용자 화면 구현 (예상 1-2주)
-- [ ] 메인 페이지 (지도 + 사이드바)
-- [ ] 검색 및 필터링 UI
-- [ ] 광고 상세 페이지
-- [ ] 광고 목록 페이지
+### Phase 4: 사용자 화면 고도화 (예상 1주)
+- [ ] 검색 기능 실제 동작 연결
+- [ ] 필터링 기능 구현 (카테고리, 지역, 가격대)
+- [ ] 광고 상세 페이지 구현
+- [ ] 마커 클릭 시 상세 정보 표시
+- [ ] 광고 목록 페이지 (리스트뷰)
 
 ### Phase 5: 관리자 기능 (예상 1-2주)
 - [ ] Supabase Auth 연동
@@ -118,9 +127,9 @@ motnt-ad-place/
 
 ## 필요한 외부 서비스
 
-### 🔴 필수 (아직 설정 안됨)
-- **Supabase 프로젝트**: PostgreSQL 데이터베이스 호스팅
-- **카카오 개발자**: Maps API 키 발급
+### ✅ 설정 완료
+- **Supabase 프로젝트**: https://kkwuhihbhztfwjvhfaiz.supabase.co
+- **카카오 개발자**: Maps API 키 발급 완료
 
 ### 🟡 선택적 (나중에)
 - **Vercel**: 배포 플랫폼
@@ -142,16 +151,16 @@ npm run db:push
 npm run db:seed
 ```
 
-### 환경 변수 설정 필요
-`.env.local` 파일 생성:
+### 환경 변수 설정 (이미 완료)
+`.env.local` 및 `.env` 파일 설정:
 ```env
-# Supabase (필수)
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-DATABASE_URL=your-supabase-database-url
+# 카카오맵 API
+NEXT_PUBLIC_KAKAO_MAP_APP_KEY=dec2ef5dd8bdf2f0bee138d7fcaddbc7
 
-# 카카오맵 (Phase 3에서 필요)
-NEXT_PUBLIC_KAKAO_MAP_APP_KEY=your-kakao-map-app-key
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://kkwuhihbhztfwjvhfaiz.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+DATABASE_URL="postgresql://postgres.kkwuhihbhztfwjvhfaiz:YpLHcXTt9q7jKB6v@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres"
 ```
 
 ---

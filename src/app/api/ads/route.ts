@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 import { AdResponse, AdSearchParams } from '@/types/ad';
-import { MOCK_ADS } from '../../../../docs/mock-data/ads';
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,57 +18,94 @@ export async function GET(request: NextRequest) {
       order: (searchParams.get('order') as 'asc' | 'desc') || 'desc',
     };
 
-    // 필터링 로직
-    let filteredAds = [...MOCK_ADS];
+    const skip = (filters.page! - 1) * filters.limit!;
+
+    // 검색 조건 구성
+    const where: any = {
+      isActive: true,
+    };
 
     if (filters.category) {
-      filteredAds = filteredAds.filter(ad => 
-        ad.category.name.toLowerCase().includes(filters.category!.toLowerCase())
-      );
+      where.category = {
+        name: filters.category,
+      };
     }
 
     if (filters.district) {
-      filteredAds = filteredAds.filter(ad => 
-        ad.district.name.toLowerCase().includes(filters.district!.toLowerCase())
-      );
+      where.district = {
+        name: filters.district,
+      };
     }
 
     if (filters.query) {
-      filteredAds = filteredAds.filter(ad => 
-        ad.title.toLowerCase().includes(filters.query!.toLowerCase()) ||
-        ad.description?.toLowerCase().includes(filters.query!.toLowerCase())
-      );
+      where.OR = [
+        { title: { contains: filters.query, mode: 'insensitive' } },
+        { description: { contains: filters.query, mode: 'insensitive' } },
+      ];
     }
 
-    if (filters.priceMin || filters.priceMax) {
-      filteredAds = filteredAds.filter(ad => {
-        const price = ad.pricing.monthly;
-        const minCheck = !filters.priceMin || price >= filters.priceMin;
-        const maxCheck = !filters.priceMax || price <= filters.priceMax;
-        return minCheck && maxCheck;
-      });
+    // 정렬 조건
+    let orderBy: any = {};
+    switch (filters.sort) {
+      case 'price':
+        // JSON 필드 정렬은 복잡하므로 일단 createdAt으로 대체
+        orderBy = { createdAt: filters.order };
+        break;
+      case 'title':
+        orderBy = { title: filters.order };
+        break;
+      default:
+        orderBy = { createdAt: filters.order };
     }
 
-    // 정렬
-    if (filters.sort === 'price') {
-      filteredAds.sort((a, b) => {
-        const diff = a.pricing.monthly - b.pricing.monthly;
-        return filters.order === 'asc' ? diff : -diff;
-      });
-    } else if (filters.sort === 'title') {
-      filteredAds.sort((a, b) => {
-        const diff = a.title.localeCompare(b.title);
-        return filters.order === 'asc' ? diff : -diff;
-      });
-    }
+    const [ads, total] = await Promise.all([
+      prisma.ad.findMany({
+        where,
+        include: {
+          category: true,
+          district: true,
+          images: {
+            orderBy: { order: 'asc' },
+          },
+        },
+        skip,
+        take: filters.limit,
+        orderBy,
+      }),
+      prisma.ad.count({ where }),
+    ]);
 
-    // 페이지네이션
-    const total = filteredAds.length;
-    const skip = (filters.page! - 1) * filters.limit!;
-    const paginatedAds = filteredAds.slice(skip, skip + filters.limit!);
+    // 타입 변환
+    const adResponses: AdResponse[] = ads.map(ad => ({
+      id: ad.id,
+      title: ad.title,
+      slug: ad.slug,
+      description: ad.description,
+      location: ad.location as any,
+      specs: ad.specs as any,
+      pricing: ad.pricing as any,
+      metadata: ad.metadata as any,
+      category: {
+        id: ad.category.id,
+        name: ad.category.name,
+      },
+      district: {
+        id: ad.district.id,
+        name: ad.district.name,
+        city: ad.district.city,
+      },
+      images: ad.images.map(img => ({
+        id: img.id,
+        url: img.url,
+        alt: img.alt,
+        order: img.order,
+      })),
+      createdAt: ad.createdAt.toISOString(),
+      updatedAt: ad.updatedAt.toISOString(),
+    }));
 
     return NextResponse.json({
-      data: paginatedAds,
+      data: adResponses,
       pagination: {
         page: filters.page,
         limit: filters.limit,

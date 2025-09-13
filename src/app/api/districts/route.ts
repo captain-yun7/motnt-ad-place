@@ -1,9 +1,29 @@
 import { NextResponse } from 'next/server';
-import { MOCK_DISTRICTS } from '../../../../docs/mock-data/ads';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
-    return NextResponse.json({ data: MOCK_DISTRICTS });
+    const districts = await prisma.district.findMany({
+      orderBy: { name: 'asc' },
+      include: {
+        _count: {
+          select: {
+            ads: {
+              where: { isActive: true },
+            },
+          },
+        },
+      },
+    });
+
+    const districtsWithCount = districts.map(district => ({
+      id: district.id,
+      name: district.name,
+      city: district.city,
+      adCount: district._count.ads,
+    }));
+
+    return NextResponse.json({ data: districtsWithCount });
   } catch (error) {
     console.error('Error fetching districts:', error);
     return NextResponse.json(
