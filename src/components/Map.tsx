@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Map as KakaoMap, MapMarker, useKakaoLoader } from 'react-kakao-maps-sdk';
+import { Map as KakaoMap, MapMarker, MapInfoWindow, useKakaoLoader } from 'react-kakao-maps-sdk';
 import { AdResponse } from '@/types/ad';
 
 interface MapProps {
@@ -31,6 +31,7 @@ export default function Map({
   });
 
   const [mapInstance, setMapInstance] = useState<kakao.maps.Map | null>(null);
+  const [selectedAd, setSelectedAd] = useState<AdResponse | null>(null);
 
   useEffect(() => {
     if (!mapInstance || ads.length === 0) return;
@@ -85,6 +86,7 @@ export default function Map({
         level={level}
         onCreate={setMapInstance}
         className="rounded-lg border border-gray-200"
+        onClick={() => setSelectedAd(null)}
       >
         {ads.map(ad => {
           if (!ad.location.coordinates) return null;
@@ -96,16 +98,61 @@ export default function Map({
               key={ad.id}
               position={{ lat, lng }}
               title={ad.title}
-              onClick={() => onMarkerClick?.(ad)}
-              image={{
-                src: '/marker-default.png', // 커스텀 마커 이미지 (나중에 추가)
-                size: { width: 32, height: 32 },
-                options: { offset: { x: 16, y: 32 } },
+              onClick={() => {
+                setSelectedAd(ad);
+                onMarkerClick?.(ad);
               }}
               zIndex={1}
             />
           );
         })}
+        
+        {/* 인포윈도우 */}
+        {selectedAd && selectedAd.location.coordinates && (
+          <MapInfoWindow
+            position={{
+              lat: selectedAd.location.coordinates[1],
+              lng: selectedAd.location.coordinates[0]
+            }}
+            removable={true}
+          >
+            <div className="p-4 min-w-64">
+              <h3 className="font-semibold text-gray-900 mb-2">
+                {selectedAd.title}
+              </h3>
+              <div className="text-sm text-gray-600 space-y-1">
+                <p><span className="font-medium">카테고리:</span> {selectedAd.category.name}</p>
+                <p><span className="font-medium">지역:</span> {selectedAd.district.name}</p>
+                <p><span className="font-medium">월 금액:</span> {selectedAd.pricing.monthly.toLocaleString()}원</p>
+                <p><span className="font-medium">주소:</span> {selectedAd.location.address}</p>
+                {selectedAd.description && (
+                  <p className="text-xs mt-2 text-gray-500">
+                    {selectedAd.description.length > 50 
+                      ? `${selectedAd.description.substring(0, 50)}...` 
+                      : selectedAd.description
+                    }
+                  </p>
+                )}
+              </div>
+              <div className="flex space-x-2 mt-3">
+                <button 
+                  onClick={() => {
+                    window.location.href = `/ad/${selectedAd.id}`;
+                  }}
+                  className="flex-1 bg-blue-600 text-white text-sm py-2 px-3 rounded hover:bg-blue-700"
+                >
+                  상세 보기
+                </button>
+                <button 
+                  onClick={() => setSelectedAd(null)}
+                  className="px-3 py-2 text-sm text-gray-600 bg-gray-100 rounded hover:bg-gray-200"
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          </MapInfoWindow>
+        )}
       </KakaoMap>
       
       {/* 지도 컨트롤 */}
@@ -127,13 +174,11 @@ export default function Map({
       </div>
 
       {/* 광고 개수 표시 */}
-      {ads.length > 0 && (
-        <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-md px-3 py-2">
-          <p className="text-sm text-gray-600">
-            총 <span className="font-semibold text-blue-600">{ads.length}</span>개 광고
-          </p>
-        </div>
-      )}
+      <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-md px-3 py-2">
+        <p className="text-sm text-gray-600">
+          총 <span className="font-semibold text-blue-600">{ads.length}</span>개 광고
+        </p>
+      </div>
     </div>
   );
 }

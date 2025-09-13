@@ -4,20 +4,65 @@ import { useEffect, useState } from 'react';
 import Map from '@/components/Map';
 import { AdResponse } from '@/types/ad';
 
+interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  adCount: number;
+}
+
+interface District {
+  id: string;
+  name: string;
+  city: string;
+  adCount: number;
+}
+
+interface SearchFilters {
+  search: string;
+  category: string;
+  district: string;
+  priceRange: string;
+}
+
 export default function Home() {
   const [ads, setAds] = useState<AdResponse[]>([]);
+  const [allAds, setAllAds] = useState<AdResponse[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [districts, setDistricts] = useState<District[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [filters, setFilters] = useState<SearchFilters>({
+    search: '',
+    category: '',
+    district: '',
+    priceRange: ''
+  });
 
   useEffect(() => {
-    const fetchAds = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/ads');
-        if (!response.ok) {
-          throw new Error('광고 데이터를 불러올 수 없습니다');
+        const [adsRes, categoriesRes, districtsRes] = await Promise.all([
+          fetch('/api/ads'),
+          fetch('/api/categories'),
+          fetch('/api/districts')
+        ]);
+
+        if (!adsRes.ok || !categoriesRes.ok || !districtsRes.ok) {
+          throw new Error('데이터를 불러올 수 없습니다');
         }
-        const result = await response.json();
-        setAds(result.data || []);
+
+        const [adsData, categoriesData, districtsData] = await Promise.all([
+          adsRes.json(),
+          categoriesRes.json(),
+          districtsRes.json()
+        ]);
+
+        const adsArray = adsData.data || [];
+        setAllAds(adsArray);
+        setAds(adsArray);
+        setCategories(categoriesData.data || []);
+        setDistricts(districtsData.data || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
       } finally {
@@ -25,12 +70,73 @@ export default function Home() {
       }
     };
 
-    fetchAds();
+    fetchData();
   }, []);
 
   const handleMarkerClick = (ad: AdResponse) => {
     console.log('Selected ad:', ad);
     // TODO: 광고 상세 정보 표시 또는 페이지 이동
+  };
+
+  const filterAds = (currentFilters: SearchFilters) => {
+    let filtered = [...allAds];
+
+    // 검색어 필터링 (지역명, 제목, 설명)
+    if (currentFilters.search.trim()) {
+      const searchTerm = currentFilters.search.toLowerCase();
+      filtered = filtered.filter(ad => 
+        ad.title.toLowerCase().includes(searchTerm) ||
+        (ad.description && ad.description.toLowerCase().includes(searchTerm)) ||
+        ad.district.name.toLowerCase().includes(searchTerm) ||
+        ad.location.address.toLowerCase().includes(searchTerm)
+      );
+    }
+
+    // 카테고리 필터링
+    if (currentFilters.category) {
+      filtered = filtered.filter(ad => ad.category.id === currentFilters.category);
+    }
+
+    // 지역 필터링
+    if (currentFilters.district) {
+      filtered = filtered.filter(ad => ad.district.id === currentFilters.district);
+    }
+
+    // 가격 필터링
+    if (currentFilters.priceRange) {
+      const [min, max] = currentFilters.priceRange.split('-').map(Number);
+      filtered = filtered.filter(ad => {
+        const monthlyPrice = ad.pricing.monthly;
+        if (max) {
+          return monthlyPrice >= min && monthlyPrice <= max;
+        } else {
+          return monthlyPrice >= min;
+        }
+      });
+    }
+
+    setAds(filtered);
+  };
+
+  const handleFilterChange = (key: keyof SearchFilters, value: string) => {
+    const newFilters = { ...filters, [key]: value };
+    setFilters(newFilters);
+    filterAds(newFilters);
+  };
+
+  const handleSearch = () => {
+    filterAds(filters);
+  };
+
+  const handleReset = () => {
+    const resetFilters = {
+      search: '',
+      category: '',
+      district: '',
+      priceRange: ''
+    };
+    setFilters(resetFilters);
+    setAds(allAds);
   };
 
   return (
@@ -48,12 +154,12 @@ export default function Home() {
               </span>
             </div>
             <nav className="flex space-x-4">
-              <a 
-                href="#" 
+              <button
+                onClick={() => window.location.href = '/ads'}
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
               >
                 광고 찾기
-              </a>
+              </button>
               <a 
                 href="#" 
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium"
@@ -83,6 +189,9 @@ export default function Home() {
                 <input
                   type="text"
                   placeholder="강남구, 홍대 등..."
+                  value={filters.search}
+                  onChange={(e) => handleFilterChange('search', e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -92,13 +201,36 @@ export default function Home() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   광고 유형
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select 
+                  value={filters.category}
+                  onChange={(e) => handleFilterChange('category', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
                   <option value="">전체</option>
-                  <option value="LED 전광판">LED 전광판</option>
-                  <option value="현수막">현수막</option>
-                  <option value="버스정류장">버스정류장</option>
-                  <option value="지하철역">지하철역</option>
-                  <option value="옥외간판">옥외간판</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name} ({category.adCount})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 지역 필터 */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  지역
+                </label>
+                <select 
+                  value={filters.district}
+                  onChange={(e) => handleFilterChange('district', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="">전체</option>
+                  {districts.map((district) => (
+                    <option key={district.id} value={district.id}>
+                      {district.name} ({district.adCount})
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -107,18 +239,33 @@ export default function Home() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   월 광고료
                 </label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                <select 
+                  value={filters.priceRange}
+                  onChange={(e) => handleFilterChange('priceRange', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                >
                   <option value="">전체</option>
                   <option value="0-500000">50만원 이하</option>
                   <option value="500000-1500000">50만원 - 150만원</option>
                   <option value="1500000-3000000">150만원 - 300만원</option>
-                  <option value="3000000-">300만원 이상</option>
+                  <option value="3000000">300만원 이상</option>
                 </select>
               </div>
 
-              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-                검색
-              </button>
+              <div className="flex space-x-2">
+                <button 
+                  onClick={handleSearch}
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  검색
+                </button>
+                <button 
+                  onClick={handleReset}
+                  className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                >
+                  초기화
+                </button>
+              </div>
             </div>
 
             {/* 광고 개수 및 통계 */}

@@ -4,17 +4,15 @@ import { AdResponse } from '@/types/ad';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
-    const ad = await prisma.ad.findUnique({
+    // ID로 먼저 조회
+    let ad = await prisma.ad.findFirst({
       where: { 
-        OR: [
-          { id },
-          { slug: id }, // slug으로도 조회 가능
-        ],
+        id,
         isActive: true,
       },
       include: {
@@ -26,6 +24,23 @@ export async function GET(
       },
     });
 
+    // ID로 찾지 못하면 slug로 조회
+    if (!ad) {
+      ad = await prisma.ad.findFirst({
+        where: { 
+          slug: id,
+          isActive: true,
+        },
+        include: {
+          category: true,
+          district: true,
+          images: {
+            orderBy: { order: 'asc' },
+          },
+        },
+      });
+    }
+
     if (!ad) {
       return NextResponse.json(
         { error: 'Ad not found' },
@@ -33,8 +48,8 @@ export async function GET(
       );
     }
 
-    // 타입 변환
-    const adResponse: AdResponse = {
+    // AdResponse 타입에 isActive 필드 추가
+    const adResponse: AdResponse & { isActive: boolean } = {
       id: ad.id,
       title: ad.title,
       slug: ad.slug,
@@ -52,12 +67,13 @@ export async function GET(
         name: ad.district.name,
         city: ad.district.city,
       },
-      images: ad.images.map(img => ({
+      images: ad.images.map((img: any) => ({
         id: img.id,
         url: img.url,
         alt: img.alt,
         order: img.order,
       })),
+      isActive: ad.isActive,
       createdAt: ad.createdAt.toISOString(),
       updatedAt: ad.updatedAt.toISOString(),
     };
