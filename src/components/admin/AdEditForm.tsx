@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { AdResponse } from '@/types/ad'
 
 interface Category {
@@ -22,7 +23,7 @@ interface District {
 
 interface AdEditFormProps {
   user: User
-  ad: AdResponse
+  ad: AdResponse,
   categories: Category[]
   districts: District[]
 }
@@ -722,15 +723,14 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
               <h2 className="text-lg font-semibold text-gray-900 mb-4">기존 이미지</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                 {existingImages.map((image, index) => (
-                  <div key={image.id} className="relative group">
-                    <img
+                  <div key={image.id} className="relative group w-24 h-24">
+                    <Image
                       src={image.url}
                       alt={`광고 이미지 ${index + 1}`}
+                      width={96}
+                      height={96}
                       className="w-full h-24 object-cover rounded border"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA2NCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNiAyMEMyNiAxOC44OTU0IDI2Ljg5NTQgMTggMjggMThIMzZDMzcuMTA0NiAxOCAzOCAxOC44OTU0IDM4IDIwVjI4QzM4IDI5LjEwNDYgMzcuMTA0NiAzMCAzNiAzMEgyOEMyNi44OTU0IDMwIDI2IDI5LjEwNDYgMjYgMjhWMjBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik0zMSAyM0MzMS41NTIzIDIzIDMyIDIzLjQ0NzcgMzIgMjRDMzIgMjQuNTUyMyAzMS41NTIzIDI1IDMxIDI1QzMwLjQ0NzcgMjUgMzAgMjQuNTUyMyAzMCAyNEMzMCAyMy40NDc3IDMwLjQ0NzcgMjMgMzEgMjNaIiBmaWxsPSIjNkI3MjgwIi8+Cjx0ZXh0IHg9IjMyIiB5PSIzOCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgiIGZpbGw9IiM2QjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPm5vIGltYWdlPC90ZXh0Pgo8L3N2Zz4K'
-                      }}
+                      sizes="96px"
                     />
                     <div className="absolute -top-2 -right-2">
                       <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">

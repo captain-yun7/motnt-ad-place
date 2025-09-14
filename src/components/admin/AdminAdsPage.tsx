@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { AdResponse } from '@/types/ad'
 
 interface Category {
@@ -313,16 +314,15 @@ export default function AdminAdsPage({ user, initialAds, categories, districts }
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 h-12 w-16">
+                      <div className="flex-shrink-0 h-12 w-16 relative">
                         {ad.images && ad.images.length > 0 ? (
-                          <img
+                          <Image
                             src={ad.images[0].url}
                             alt={ad.title}
+                            width={64}
+                            height={48}
                             className="h-12 w-16 object-cover rounded"
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement
-                              target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA2NCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjQ4IiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNiAyMEMyNiAxOC44OTU0IDI2Ljg5NTQgMTggMjggMThIMzZDMzcuMTA0NiAxOCAzOCAxOC44OTU0IDM4IDIwVjI4QzM4IDI5LjEwNDYgMzcuMTA0NiAzMCAzNiAzMEgyOEMyNi44OTU0IDMwIDI2IDI5LjEwNDYgMjYgMjhWMjBaIiBmaWxsPSIjOUI5QkEwIi8+CjxwYXRoIGQ9Ik0zMSAyM0MzMS41NTIzIDIzIDMyIDIzLjQ0NzcgMzIgMjRDMzIgMjQuNTUyMyAzMS41NTIzIDI1IDMxIDI1QzMwLjQ0NzcgMjUgMzAgMjQuNTUyMyAzMCAyNEMzMCAyMy40NDc3IDMwLjQ0NzcgMjMgMzEgMjNaIiBmaWxsPSIjNkI3MjgwIi8+Cjx0ZXh0IHg9IjMyIiB5PSIzOCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgiIGZpbGw9IiM2QjcyODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiPm5vIGltYWdlPC90ZXh0Pgo8L3N2Zz4K'
-                            }}
+                            sizes="64px"
                           />
                         ) : (
                           <div className="h-12 w-16 bg-gray-100 rounded flex items-center justify-center">

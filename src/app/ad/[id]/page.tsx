@@ -1,9 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { AdResponse } from '@/types/ad';
-import Map from '@/components/Map';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import ErrorMessage from '@/components/ErrorMessage';
+
+const Map = lazy(() => import('@/components/Map'));
 
 export default function AdDetailPage() {
   const params = useParams();
@@ -21,6 +26,41 @@ export default function AdDetailPage() {
         }
         const result = await response.json();
         setAd(result.data);
+        
+        // 동적으로 페이지 제목과 메타데이터 업데이트
+        if (result.data) {
+          document.title = `${result.data.title} | Motnt Ad Place`;
+          
+          // 메타 태그 업데이트
+          const updateMetaTag = (property: string, content: string) => {
+            let meta = document.querySelector(`meta[property="${property}"]`) || 
+                      document.querySelector(`meta[name="${property}"]`);
+            if (!meta) {
+              meta = document.createElement('meta');
+              if (property.startsWith('og:')) {
+                meta.setAttribute('property', property);
+              } else {
+                meta.setAttribute('name', property);
+              }
+              document.head.appendChild(meta);
+            }
+            meta.setAttribute('content', content);
+          };
+
+          const description = result.data.description || `${result.data.district.name} 지역의 ${result.data.category.name} 광고매체 정보`;
+          
+          updateMetaTag('description', description);
+          updateMetaTag('og:title', result.data.title);
+          updateMetaTag('og:description', description);
+          updateMetaTag('og:url', window.location.href);
+          updateMetaTag('twitter:title', result.data.title);
+          updateMetaTag('twitter:description', description);
+          
+          if (result.data.images && result.data.images.length > 0) {
+            updateMetaTag('og:image', result.data.images[0].url);
+            updateMetaTag('twitter:image', result.data.images[0].url);
+          }
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다');
       } finally {
@@ -35,28 +75,88 @@ export default function AdDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-sm text-gray-600">광고 정보를 불러오는 중...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <button className="text-blue-600 hover:text-blue-700 flex items-center space-x-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>목록으로 돌아가기</span>
+                </button>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">광고 상세정보</h1>
+              <div></div>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              <SkeletonLoader type="detail" />
+            </div>
+            <div className="lg:col-span-1">
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded w-20 mb-4"></div>
+                  <div className="space-y-3">
+                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  </div>
+                  <div className="mt-4 h-64 bg-gray-200 rounded"></div>
+                </div>
+                <div className="bg-white rounded-lg shadow-sm border p-6 animate-pulse">
+                  <div className="h-6 bg-gray-200 rounded w-20 mb-4"></div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                    </div>
+                    <div className="flex justify-between">
+                      <div className="h-4 bg-gray-200 rounded w-12"></div>
+                      <div className="h-4 bg-gray-200 rounded w-16"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
     );
   }
 
   if (error || !ad) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg text-red-600 mb-2">광고 정보를 불러올 수 없습니다</p>
-          <p className="text-sm text-gray-500 mb-4">{error}</p>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            메인으로 돌아가기
-          </button>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <button
+                  onClick={() => router.push('/')}
+                  className="text-blue-600 hover:text-blue-700 flex items-center space-x-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>목록으로 돌아가기</span>
+                </button>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">광고 상세정보</h1>
+              <div></div>
+            </div>
+          </div>
+        </header>
+        <ErrorMessage
+          title="광고 정보를 불러올 수 없습니다"
+          message={error || '요청하신 광고를 찾을 수 없습니다.'}
+          onRetry={() => window.location.reload()}
+          onGoBack={() => router.push('/')}
+          className="min-h-[calc(100vh-4rem)]"
+        />
       </div>
     );
   }
@@ -163,15 +263,13 @@ export default function AdDetailPage() {
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">갤러리</h2>
                 <div className="grid grid-cols-2 gap-4">
                   {ad.images.map((image, index) => (
-                    <div key={index} className="aspect-video bg-gray-200 rounded-lg">
-                      <img
+                    <div key={index} className="aspect-video bg-gray-200 rounded-lg relative">
+                      <Image
                         src={image.url}
                         alt={image.alt || `광고 이미지 ${index + 1}`}
-                        className="w-full h-full object-cover rounded-lg"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuydtOuvuOyngCDsl4bsnYw8L3RleHQ+PC9zdmc+';
-                        }}
+                        fill
+                        className="object-cover rounded-lg"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                   ))}
@@ -188,27 +286,36 @@ export default function AdDetailPage() {
               <div className="space-y-3">
                 <div>
                   <span className="text-sm font-medium text-gray-500">주소</span>
-                  <p className="text-gray-900">{ad.location.address}</p>
+                  <p className="text-gray-900">{ad.location?.address}</p>
                 </div>
-                {ad.location.landmark && (
+                {ad.location?.landmarks && (
                   <div>
                     <span className="text-sm font-medium text-gray-500">랜드마크</span>
-                    <p className="text-gray-900">{ad.location.landmark}</p>
+                    <p className="text-gray-900">{ad.location?.landmarks}</p>
                   </div>
                 )}
               </div>
               
               {/* 지도 */}
               <div className="mt-4">
-                <Map
-                  ads={[ad]}
-                  center={ad.location.coordinates ? {
-                    lat: ad.location.coordinates[1],
-                    lng: ad.location.coordinates[0]
-                  } : undefined}
-                  level={4}
-                  style={{ width: '100%', height: '300px' }}
-                />
+                <Suspense fallback={
+                  <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ height: '300px' }}>
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                      <p className="text-xs text-gray-600">지도 로딩중...</p>
+                    </div>
+                  </div>
+                }>
+                  <Map
+                    ads={[ad]}
+                    center={ad.location?.coordinates ? {
+                      lat: ad.location?.coordinates[1],
+                      lng: ad.location?.coordinates[0]
+                    } : undefined}
+                    level={4}
+                    style={{ width: '100%', height: '300px' }}
+                  />
+                </Suspense>
               </div>
             </div>
 

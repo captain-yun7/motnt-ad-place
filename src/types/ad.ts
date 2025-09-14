@@ -5,13 +5,16 @@ export interface AdLocation {
   address: string;
   coordinates: [number, number]; // [lng, lat]
   landmarks?: string[];
-  district?: string;
+  district?: string;  
 }
 
 // 광고판 사양 타입
 export interface AdSpecs {
   type: string; // LED, 현수막, 간판 등
   size: string; // "3m x 2m"
+  width?: string;
+  height?: string;
+  brightness?: string;
   resolution?: string;
   material?: string;
   installation?: string;
@@ -21,8 +24,10 @@ export interface AdSpecs {
 export interface AdPricing {
   monthly: number;
   deposit?: number;
+  setup?: number;  
+  design?: number;
   minimumPeriod: number; // 최소 계약 기간 (월)
-  currency: string;
+  currency: string;    
 }
 
 // 메타데이터 타입
@@ -46,11 +51,12 @@ export interface AdResponse {
   id: string;
   title: string;
   slug: string;
-  description?: string;
-  location: AdLocation;
+  description: string | null;
+  location: AdLocation | null;
   specs: AdSpecs;
   pricing: AdPricing;
   metadata?: AdMetadata;
+  isActive?: boolean,  
   category: {
     id: string;
     name: string;

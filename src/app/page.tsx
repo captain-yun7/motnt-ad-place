@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Map from '@/components/Map';
+import { useEffect, useState, Suspense, lazy } from 'react';
 import { AdResponse } from '@/types/ad';
+
+const Map = lazy(() => import('@/components/Map'));
 
 interface Category {
   id: string;
@@ -74,8 +75,7 @@ export default function Home() {
   }, []);
 
   const handleMarkerClick = (ad: AdResponse) => {
-    console.log('Selected ad:', ad);
-    // TODO: 광고 상세 정보 표시 또는 페이지 이동
+    window.open(`/ad/${ad.id}`, '_blank');
   };
 
   const filterAds = (currentFilters: SearchFilters) => {
@@ -172,7 +172,7 @@ export default function Home() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main id="main-content" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 사이드바 - 검색 & 필터 */}
           <div className="lg:col-span-1">
@@ -183,28 +183,35 @@ export default function Home() {
               
               {/* 검색 입력 */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="search-input" className="block text-sm font-medium text-gray-700 mb-2">
                   지역 검색
                 </label>
                 <input
+                  id="search-input"
                   type="text"
                   placeholder="강남구, 홍대 등..."
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  aria-describedby="search-help"
                 />
+                <div id="search-help" className="sr-only">
+                  광고 위치나 이름을 입력하여 검색하세요
+                </div>
               </div>
 
               {/* 카테고리 필터 */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="category-select" className="block text-sm font-medium text-gray-700 mb-2">
                   광고 유형
                 </label>
                 <select 
+                  id="category-select"
                   value={filters.category}
                   onChange={(e) => handleFilterChange('category', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  aria-label="광고 유형 선택"
                 >
                   <option value="">전체</option>
                   {categories.map((category) => (
@@ -217,13 +224,15 @@ export default function Home() {
 
               {/* 지역 필터 */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="district-select" className="block text-sm font-medium text-gray-700 mb-2">
                   지역
                 </label>
                 <select 
+                  id="district-select"
                   value={filters.district}
                   onChange={(e) => handleFilterChange('district', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  aria-label="지역 선택"
                 >
                   <option value="">전체</option>
                   {districts.map((district) => (
@@ -236,13 +245,15 @@ export default function Home() {
 
               {/* 가격 필터 */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="price-select" className="block text-sm font-medium text-gray-700 mb-2">
                   월 광고료
                 </label>
                 <select 
+                  id="price-select"
                   value={filters.priceRange}
                   onChange={(e) => handleFilterChange('priceRange', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  aria-label="가격대 선택"
                 >
                   <option value="">전체</option>
                   <option value="0-500000">50만원 이하</option>
@@ -256,12 +267,14 @@ export default function Home() {
                 <button 
                   onClick={handleSearch}
                   className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  aria-label="광고 검색 실행"
                 >
                   검색
                 </button>
                 <button 
                   onClick={handleReset}
                   className="px-4 py-2 text-sm text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                  aria-label="검색 조건 초기화"
                 >
                   초기화
                 </button>
@@ -288,7 +301,7 @@ export default function Home() {
                 <h2 className="text-lg font-semibold text-gray-900">
                   광고 위치 지도
                 </h2>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-gray-500" role="note">
                   마커를 클릭하면 상세 정보를 볼 수 있습니다
                 </div>
               </div>
@@ -308,11 +321,20 @@ export default function Home() {
                   </div>
                 </div>
               ) : (
-                <Map
-                  ads={ads}
-                  style={{ width: '100%', height: '600px' }}
-                  onMarkerClick={handleMarkerClick}
-                />
+                <Suspense fallback={
+                  <div className="flex items-center justify-center bg-gray-100 rounded-lg" style={{ height: '600px' }}>
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                      <p className="text-sm text-gray-600">지도를 불러오는 중...</p>
+                    </div>
+                  </div>
+                }>
+                  <Map
+                    ads={ads}
+                    style={{ width: '100%', height: '600px' }}
+                    onMarkerClick={handleMarkerClick}
+                  />
+                </Suspense>
               )}
             </div>
           </div>

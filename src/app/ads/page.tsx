@@ -1,8 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { AdResponse } from '@/types/ad';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import SkeletonLoader from '@/components/SkeletonLoader';
+import ErrorMessage from '@/components/ErrorMessage';
 
 interface Category {
   id: string;
@@ -18,7 +22,7 @@ interface District {
   adCount: number;
 }
 
-export default function AdListPage() {
+function AdListPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [ads, setAds] = useState<AdResponse[]>([]);
@@ -149,28 +153,69 @@ export default function AdListPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-sm text-gray-600">광고 목록을 불러오는 중...</p>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <button className="text-blue-600 hover:text-blue-700 flex items-center space-x-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>지도 보기</span>
+                </button>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">광고 목록</h1>
+              <div></div>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-12 mb-1"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <SkeletonLoader type="card" count={9} />
+        </main>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg text-red-600 mb-2">데이터를 불러올 수 없습니다</p>
-          <p className="text-sm text-gray-500 mb-4">{error}</p>
-          <button
-            onClick={() => router.push('/')}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            메인으로 돌아가기
-          </button>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <button
+                  onClick={() => router.push('/')}
+                  className="text-blue-600 hover:text-blue-700 flex items-center space-x-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>지도 보기</span>
+                </button>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">광고 목록</h1>
+              <div></div>
+            </div>
+          </div>
+        </header>
+        <ErrorMessage
+          title="데이터를 불러올 수 없습니다"
+          message={error}
+          onRetry={() => window.location.reload()}
+          onGoBack={() => router.push('/')}
+          className="min-h-[calc(100vh-4rem)]"
+        />
       </div>
     );
   }
@@ -313,20 +358,27 @@ export default function AdListPage() {
             {paginatedAds.map((ad) => (
               <div
                 key={ad.id}
-                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer"
+                className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-shadow cursor-pointer touch-manipulation"
                 onClick={() => router.push(`/ad/${ad.id}`)}
+                role="article"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    router.push(`/ad/${ad.id}`);
+                  }
+                }}
+                aria-label={`${ad.title} 광고 상세보기`}
               >
                 {/* 이미지 */}
-                <div className="aspect-video bg-gray-200 rounded-t-lg">
+                <div className="aspect-video bg-gray-200 rounded-t-lg relative">
                   {ad.images && ad.images.length > 0 ? (
-                    <img
+                    <Image
                       src={ad.images[0].url}
                       alt={ad.images[0].alt || ad.title}
-                      className="w-full h-full object-cover rounded-t-lg"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPuydtOuvuOyngCDsl4bsnYw8L3RleHQ+PC9zdmc+';
-                      }}
+                      fill
+                      className="object-cover rounded-t-lg"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center">
@@ -426,5 +478,45 @@ export default function AdListPage() {
         )}
       </main>
     </div>
+  );
+}
+
+export default function AdListPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <button className="text-blue-600 hover:text-blue-700 flex items-center space-x-2">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>지도 보기</span>
+                </button>
+              </div>
+              <h1 className="text-xl font-semibold text-gray-900">광고 목록</h1>
+              <div></div>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="h-4 bg-gray-200 rounded w-12 mb-1"></div>
+                  <div className="h-10 bg-gray-200 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <SkeletonLoader type="card" count={9} />
+        </main>
+      </div>
+    }>
+      <AdListPageContent />
+    </Suspense>
   );
 }
