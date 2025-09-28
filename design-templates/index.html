@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motnt Ad Place - 디자인 템플릿 선택</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .template-card {
+            transition: all 0.3s ease;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .preview-frame {
+            background: #f8f9fa;
+            border: 8px solid #dee2e6;
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .preview-frame::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: #6c757d;
+            border-radius: 2px;
+        }
+        
+        .preview-frame::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 8px;
+            background: #6c757d;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Motnt 디자인 템플릿</h1>
+                <p class="text-xl text-blue-100 max-w-3xl mx-auto">
+                    다양한 스타일의 디자인 템플릿 중에서 당신의 브랜드에 가장 적합한 디자인을 선택해보세요
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Featured Template -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 py-16">
+        <div class="text-center mb-12">
+            <div class="inline-block bg-black text-white px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                🔥 최신 추천
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">모던 & 세련된 디자인</h2>
+            <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                Innocean 스타일의 모던한 타이포그래피와 흰색+검정 색상으로 제작된 하이엔드 디자인입니다
+            </p>
+        </div>
+        
+        <!-- Featured Template Card -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-16 border border-gray-100">
+            <div class="preview-frame p-4">
+                <iframe 
+                    src="modern-sophisticated.html" 
+                    class="w-full h-96 rounded border-0"
+                    title="모던 세련된 디자인 미리보기"
+                ></iframe>
+            </div>
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">모던 소피스티케이티드</h2>
+                    <span class="bg-black text-white px-3 py-1 rounded-full text-sm font-medium">🔥 NEW</span>
+                </div>
+                <p class="text-gray-600 mb-6 leading-relaxed">
+                    Innocean의 세련된 디자인 철학을 반영한 모던한 인터페이스입니다. 
+                    Pretendard와 Suisse Intl 폰트를 사용하여 타이포그래피를 강화하고, 
+                    흰색과 검정의 미니멀한 색상 조합으로 하이엔드한 느낌을 연출했습니다.
+                </p>
+                <div class="mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-3">핵심 특징:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-gray-900 rounded-full mr-3"></span>
+                                Pretendard + Suisse Intl 폰트
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-gray-900 rounded-full mr-3"></span>
+                                모던한 흰색+검정 색상 체계
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-gray-900 rounded-full mr-3"></span>
+                                세련된 애니메이션 효과
+                            </li>
+                        </ul>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-gray-900 rounded-full mr-3"></span>
+                                글래스 모피즘 디자인
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-gray-900 rounded-full mr-3"></span>
+                                하이엔드 인터랙션
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-gray-900 rounded-full mr-3"></span>
+                                브랜드 아이덴티티 강화
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="modern-sophisticated.html" target="_blank" 
+                       class="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                        전체 보기
+                    </a>
+                    <button onclick="selectTemplate('modern-sophisticated')" 
+                            class="flex-1 bg-gray-900 hover:bg-gray-800 text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                        이 디자인 선택하기 ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Previous Template -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 pb-8">
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">이전 추천 템플릿</h2>
+        </div>
+        
+        <!-- Previous Template Card -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-16">
+            <div class="preview-frame p-4">
+                <iframe 
+                    src="wework-inspired.html" 
+                    class="w-full h-80 rounded border-0"
+                    title="WeWork 스타일 디자인 미리보기"
+                ></iframe>
+            </div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">WeWork 스타일 실용적 디자인</h2>
+                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">실용적</span>
+                </div>
+                <p class="text-gray-600 mb-4 leading-relaxed text-sm">
+                    WeWork의 직관적인 검색 구조를 참고하여 제작한 실용적인 디자인입니다.
+                </p>
+                <div class="flex space-x-3">
+                    <a href="wework-inspired.html" target="_blank" 
+                       class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-2 px-4 rounded-lg font-semibold transition-colors text-sm">
+                        전체 보기
+                    </a>
+                    <button onclick="selectTemplate('wework-inspired')" 
+                            class="flex-1 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-center py-2 px-4 rounded-lg font-semibold transition-colors text-sm">
+                        선택하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Other Templates -->
+    <section class="max-w-7xl mx-auto px-6 lg:px-8 pb-16">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">기타 스타일 템플릿</h2>
+            <p class="text-gray-600">다양한 디자인 스타일 중에서도 선택하실 수 있습니다</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Modern Minimal Template -->
+            <div class="template-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="preview-frame p-4">
+                    <iframe 
+                        src="modern-minimal.html" 
+                        class="w-full h-64 rounded border-0"
+                        title="모던 미니멀 디자인 미리보기"
+                    ></iframe>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">모던 미니멀</h2>
+                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">깔끔함</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        깔끔하고 세련된 미니멀 디자인으로 현대적인 느낌을 강조합니다. 
+                        화이트 베이스에 블루 포인트 컬러로 신뢰감을 주는 디자인입니다.
+                    </p>
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-3">특징:</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                                깔끔한 레이아웃과 여백 활용
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                                직관적인 네비게이션
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
+                                모바일 최적화
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="modern-minimal.html" target="_blank" 
+                           class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            전체 보기
+                        </a>
+                        <button onclick="selectTemplate('modern-minimal')" 
+                                class="flex-1 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            선택하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Premium Dark Template -->
+            <div class="template-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="preview-frame p-4">
+                    <iframe 
+                        src="premium-dark.html" 
+                        class="w-full h-64 rounded border-0"
+                        title="프리미엄 다크 디자인 미리보기"
+                    ></iframe>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">프리미엄 다크</h2>
+                        <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">고급스러움</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        어두운 배경에 골드 액센트로 럭셔리한 느낌을 연출합니다. 
+                        프리미엄 서비스나 고급 브랜드에 적합한 세련된 디자인입니다.
+                    </p>
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-3">특징:</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                                다크 테마의 고급스러운 분위기
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                                골드 포인트 컬러
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-purple-500 rounded-full mr-3"></span>
+                                글래스 모피즘 효과
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="premium-dark.html" target="_blank" 
+                           class="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            전체 보기
+                        </a>
+                        <button onclick="selectTemplate('premium-dark')" 
+                                class="flex-1 border-2 border-purple-600 text-purple-600 hover:bg-purple-50 text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            선택하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colorful Gradient Template -->
+            <div class="template-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="preview-frame p-4">
+                    <iframe 
+                        src="colorful-gradient.html" 
+                        class="w-full h-64 rounded border-0"
+                        title="컬러풀 그라디언트 디자인 미리보기"
+                    ></iframe>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">컬러풀 그라디언트</h2>
+                        <span class="bg-pink-100 text-pink-800 px-3 py-1 rounded-full text-sm font-medium">창의적</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        생동감 넘치는 그라디언트와 다채로운 컬러로 창의적인 분위기를 연출합니다. 
+                        젊은 타겟층이나 크리에이티브 산업에 적합한 역동적인 디자인입니다.
+                    </p>
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-3">특징:</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-pink-500 rounded-full mr-3"></span>
+                                다채로운 그라디언트 배경
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-pink-500 rounded-full mr-3"></span>
+                                이모지와 애니메이션 효과
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-pink-500 rounded-full mr-3"></span>
+                                젊고 트렌디한 느낌
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="colorful-gradient.html" target="_blank" 
+                           class="flex-1 bg-pink-600 hover:bg-pink-700 text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            전체 보기
+                        </a>
+                        <button onclick="selectTemplate('colorful-gradient')" 
+                                class="flex-1 border-2 border-pink-600 text-pink-600 hover:bg-pink-50 text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            선택하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classic Business Template -->
+            <div class="template-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="preview-frame p-4">
+                    <iframe 
+                        src="classic-business.html" 
+                        class="w-full h-64 rounded border-0"
+                        title="클래식 비즈니스 디자인 미리보기"
+                    ></iframe>
+                </div>
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-2xl font-bold text-gray-900">클래식 비즈니스</h2>
+                        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">전문적</span>
+                    </div>
+                    <p class="text-gray-600 mb-6 leading-relaxed">
+                        전통적이고 신뢰할 수 있는 비즈니스 디자인입니다. 
+                        네이비와 골드 컬러로 전문성과 안정감을 강조하는 기업용 디자인입니다.
+                    </p>
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-900 mb-3">특징:</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
+                                전문적이고 신뢰할 수 있는 디자인
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
+                                네이비 & 골드 컬러 조합
+                            </li>
+                            <li class="flex items-center">
+                                <span class="w-2 h-2 bg-indigo-500 rounded-full mr-3"></span>
+                                고객 성공 사례 강조
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="flex space-x-3">
+                        <a href="classic-business.html" target="_blank" 
+                           class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            전체 보기
+                        </a>
+                        <button onclick="selectTemplate('classic-business')" 
+                                class="flex-1 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-50 text-center py-3 px-4 rounded-lg font-semibold transition-colors">
+                            선택하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Table -->
+        <div class="mt-20">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">템플릿 비교</h2>
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">특성</th>
+                                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">모던 미니멀</th>
+                                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">프리미엄 다크</th>
+                                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">컬러풀 그라디언트</th>
+                                <th class="px-6 py-4 text-center text-sm font-semibold text-gray-900">클래식 비즈니스</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">적합한 업종</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">IT, 스타트업</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">럭셔리, 프리미엄</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">크리에이티브, 엔터</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">금융, 법무, 컨설팅</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">타겟 연령층</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">25-45세</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">35-55세</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">18-35세</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">30-60세</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">디자인 스타일</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">미니멀, 깔끔</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">다크, 럭셔리</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">화려, 역동적</td>
+                                <td class="px-6 py-4 text-sm text-gray-600 text-center">전통적, 신뢰</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-medium text-gray-900">주요 컬러</td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center space-x-1">
+                                        <div class="w-4 h-4 bg-blue-500 rounded-full"></div>
+                                        <div class="w-4 h-4 bg-gray-100 rounded-full border"></div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center space-x-1">
+                                        <div class="w-4 h-4 bg-gray-900 rounded-full"></div>
+                                        <div class="w-4 h-4 bg-yellow-500 rounded-full"></div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center space-x-1">
+                                        <div class="w-4 h-4 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"></div>
+                                        <div class="w-4 h-4 bg-gradient-to-r from-blue-500 to-green-500 rounded-full"></div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex justify-center space-x-1">
+                                        <div class="w-4 h-4 bg-indigo-900 rounded-full"></div>
+                                        <div class="w-4 h-4 bg-yellow-600 rounded-full"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12 mt-20">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+            <h3 class="text-2xl font-bold mb-4">디자인 선택을 완료하셨나요?</h3>
+            <p class="text-gray-400 mb-8">
+                선택하신 디자인을 기반으로 실제 서비스에 적용할 수 있습니다
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                    개발팀과 상담하기
+                </button>
+                <button class="border border-gray-600 text-gray-300 hover:bg-gray-800 px-8 py-3 rounded-lg font-semibold transition-colors">
+                    추가 커스터마이징 요청
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function selectTemplate(templateName) {
+            const templates = {
+                'modern-sophisticated': '모던 소피스티케이티드',
+                'wework-inspired': 'WeWork 스타일 실용적 디자인',
+                'modern-minimal': '모던 미니멀',
+                'premium-dark': '프리미엄 다크',
+                'colorful-gradient': '컬러풀 그라디언트',
+                'classic-business': '클래식 비즈니스'
+            };
+            
+            const templateDisplayName = templates[templateName];
+            
+            if (confirm(`"${templateDisplayName}" 템플릿을 선택하시겠습니까?\n\n이 디자인을 기반으로 실제 서비스에 적용됩니다.`)) {
+                alert(`"${templateDisplayName}" 템플릿이 선택되었습니다!\n\n개발팀에서 이 디자인을 기반으로 실제 서비스를 구현하겠습니다. 추가 요청사항이 있으시면 언제든 말씀해 주세요.`);
+                
+                // 실제 구현에서는 여기서 서버로 선택한 템플릿 정보를 전송
+                console.log('Selected template:', templateName);
+            }
+        }
+        
+        // 페이지 로드 시 iframe 크기 조정
+        window.addEventListener('load', function() {
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
+                iframe.onload = function() {
+                    // iframe 내용이 로드되면 스크롤을 맨 위로
+                    this.contentWindow.scrollTo(0, 0);
+                };
+            });
+        });
+    </script>
+</body>
+</html>

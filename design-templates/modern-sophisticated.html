@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motnt - 옥외광고 검색 플랫폼</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Pretendard', 'ui-sans-serif', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        'display': ['Clash Display', 'Space Grotesk', 'Inter', 'system-ui', 'sans-serif'],
+                        'strong': ['Montserrat', 'Pretendard', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        'gray': {
+                            50: '#fafafa',
+                            100: '#f5f5f5',
+                            200: '#e5e5e5',
+                            300: '#d4d4d4',
+                            400: '#a3a3a3',
+                            500: '#737373',
+                            600: '#525252',
+                            700: '#404040',
+                            800: '#262626',
+                            900: '#171717',
+                            950: '#0a0a0a',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'scale-in': 'scaleIn 0.2s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap" rel="stylesheet">
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .search-input {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .search-input:focus {
+            box-shadow: 0 0 0 1px #171717, 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-color: #171717;
+            transform: translateY(-1px);
+        }
+        
+        .filter-chip {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+        
+        .filter-chip:hover {
+            background-color: #f5f5f5;
+            transform: translateY(-1px);
+        }
+        
+        .filter-chip.active {
+            background-color: #171717;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .location-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 2px solid transparent;
+        }
+        
+        .location-card:hover {
+            border-left-color: #171717;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            transform: translateX(2px);
+        }
+        
+        .modern-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+        
+        .modern-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modern-button.primary {
+            background: linear-gradient(135deg, #171717 0%, #404040 100%);
+        }
+        
+        .modern-button.primary:hover {
+            background: linear-gradient(135deg, #0a0a0a 0%, #262626 100%);
+        }
+        
+        .navbar-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .type-display {
+            font-family: 'Clash Display', 'Space Grotesk', 'Inter', system-ui, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+        }
+        
+        .type-strong {
+            font-family: 'Montserrat', 'Inter', system-ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        
+        .type-bold {
+            font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #171717 0%, #525252 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .minimal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .minimal-scroll::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+        
+        .minimal-scroll::-webkit-scrollbar-thumb {
+            background: #d4d4d4;
+            border-radius: 2px;
+        }
+        
+        .minimal-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a3a3a3;
+        }
+        
+        .map-marker {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body class="font-sans bg-white text-gray-900">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 navbar-blur">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-lg type-display">M</span>
+                    </div>
+                    <span class="text-2xl font-bold type-display gradient-text tracking-tight">motnt</span>
+                </div>
+                
+                <!-- Navigation -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">검색</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">솔루션</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">기업 서비스</a>
+                    <a href="#" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">고객지원</a>
+                </nav>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    <button class="text-gray-600 hover:text-gray-900 font-medium transition-colors">로그인</button>
+                    <button class="modern-button primary text-white px-6 py-2.5 rounded-lg">
+                        시작하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="flex h-screen pt-16">
+        <!-- Left Panel - Search & Filters -->
+        <div class="w-2/5 bg-white border-r border-gray-100 flex flex-col animate-fade-in">
+            <!-- Search Section -->
+            <div class="p-8 border-b border-gray-100">
+                <h1 class="text-3xl font-bold type-display gradient-text mb-6 leading-tight">
+                    광고 위치 검색
+                </h1>
+                
+                <!-- Main Search -->
+                <div class="relative mb-6">
+                    <input 
+                        type="text" 
+                        placeholder="지역, 건물명, 역 이름을 검색하세요"
+                        class="w-full px-5 py-4 border border-gray-200 rounded-2xl search-input focus:outline-none bg-gray-50 focus:bg-white font-medium"
+                    >
+                    <svg class="absolute right-4 top-4 w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                </div>
+                
+                <!-- Quick Filters -->
+                <div class="flex flex-wrap gap-2">
+                    <button class="filter-chip px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        강남구
+                    </button>
+                    <button class="filter-chip active px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        홍대입구
+                    </button>
+                    <button class="filter-chip px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        명동
+                    </button>
+                    <button class="filter-chip px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        여의도
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Advanced Filters -->
+            <div class="p-8 border-b border-gray-100">
+                <h3 class="font-semibold text-gray-900 mb-6 text-lg type-strong">상세 필터</h3>
+                
+                <!-- Ad Type Filter -->
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold text-gray-700 mb-4 type-bold">광고 유형</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900 mr-3">
+                            <span class="text-sm font-medium text-gray-700">디지털 사이니지</span>
+                        </label>
+                        <label class="flex items-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900 mr-3">
+                            <span class="text-sm font-medium text-gray-700">옥상 간판</span>
+                        </label>
+                        <label class="flex items-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900 mr-3">
+                            <span class="text-sm font-medium text-gray-700">지하철 광고</span>
+                        </label>
+                        <label class="flex items-center p-3 border border-gray-200 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors">
+                            <input type="checkbox" class="rounded border-gray-300 text-gray-900 focus:ring-gray-900 mr-3">
+                            <span class="text-sm font-medium text-gray-700">버스 정류장</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Price Range -->
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold text-gray-700 mb-4 type-bold">월 예산</label>
+                    <select class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 font-medium bg-gray-50 focus:bg-white">
+                        <option>예산 범위 선택</option>
+                        <option>100만원 이하</option>
+                        <option>100만원 - 300만원</option>
+                        <option>300만원 - 500만원</option>
+                        <option>500만원 - 1000만원</option>
+                        <option>1000만원 이상</option>
+                    </select>
+                </div>
+                
+                <!-- Target Audience -->
+                <div class="mb-8">
+                    <label class="block text-sm font-semibold text-gray-700 mb-4 type-bold">타겟 고객</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="filter-chip px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                            직장인
+                        </button>
+                        <button class="filter-chip active px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                            대학생
+                        </button>
+                        <button class="filter-chip px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                            관광객
+                        </button>
+                        <button class="filter-chip px-4 py-2.5 text-sm border border-gray-200 rounded-full bg-gray-50">
+                            주부
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Filter Actions -->
+                <div class="flex space-x-4">
+                    <button class="modern-button primary flex-1 text-white py-3 px-6 rounded-xl font-semibold type-strong">
+                        검색 적용
+                    </button>
+                    <button class="px-6 py-3 text-gray-600 hover:text-gray-900 font-semibold transition-colors">
+                        초기화
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Results Summary -->
+            <div class="p-8 border-b border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold type-display text-gray-900">검색 결과</h3>
+                    <span class="text-sm font-medium text-gray-500">총 1,247개</span>
+                </div>
+                
+                <!-- Sort Options -->
+                <div class="flex space-x-2">
+                    <button class="filter-chip active px-4 py-2 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        추천순
+                    </button>
+                    <button class="filter-chip px-4 py-2 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        가격순
+                    </button>
+                    <button class="filter-chip px-4 py-2 text-sm border border-gray-200 rounded-full bg-gray-50">
+                        거리순
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Location Cards Scroll Area -->
+            <div class="flex-1 overflow-y-auto minimal-scroll">
+                <div class="space-y-0">
+                    <!-- Location Card 1 -->
+                    <div class="location-card p-8 border-b border-gray-50 cursor-pointer animate-slide-up">
+                        <div class="flex items-start space-x-5">
+                            <div class="w-20 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-900 mb-2 text-lg type-strong">강남역 디지털 사이니지</h3>
+                                <p class="text-sm text-gray-500 mb-3 font-medium">서울 강남구 강남대로 지하 396</p>
+                                <div class="flex items-center space-x-6 text-sm text-gray-600 mb-3">
+                                    <span class="font-semibold">월 350만원</span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="font-medium">일 노출 12만회</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="flex text-yellow-400 text-sm">
+                                            ★★★★★
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-500 font-medium">4.8 (124)</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full font-medium">디지털</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Card 2 -->
+                    <div class="location-card p-8 border-b border-gray-50 cursor-pointer animate-slide-up" style="animation-delay: 0.1s">
+                        <div class="flex items-start space-x-5">
+                            <div class="w-20 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-900 mb-2 text-lg type-strong">홍대입구 건물 옥상간판</h3>
+                                <p class="text-sm text-gray-500 mb-3 font-medium">서울 마포구 와우산로21길 19</p>
+                                <div class="flex items-center space-x-6 text-sm text-gray-600 mb-3">
+                                    <span class="font-semibold">월 180만원</span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="font-medium">일 노출 8만회</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="flex text-yellow-400 text-sm">
+                                            ★★★★☆
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-500 font-medium">4.6 (89)</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full font-medium">옥상간판</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Card 3 -->
+                    <div class="location-card p-8 border-b border-gray-50 cursor-pointer animate-slide-up" style="animation-delay: 0.2s">
+                        <div class="flex items-start space-x-5">
+                            <div class="w-20 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-900 mb-2 text-lg type-strong">명동역 지하철 광고</h3>
+                                <p class="text-sm text-gray-500 mb-3 font-medium">서울 중구 명동길 지하 1층</p>
+                                <div class="flex items-center space-x-6 text-sm text-gray-600 mb-3">
+                                    <span class="font-semibold">월 280만원</span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="font-medium">일 노출 15만회</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="flex text-yellow-400 text-sm">
+                                            ★★★★★
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-500 font-medium">4.9 (203)</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full font-medium">지하철</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Location Card 4 -->
+                    <div class="location-card p-8 border-b border-gray-50 cursor-pointer animate-slide-up" style="animation-delay: 0.3s">
+                        <div class="flex items-start space-x-5">
+                            <div class="w-20 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10v11M20 10v11"/>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <h3 class="font-bold text-gray-900 mb-2 text-lg type-strong">여의도 버스정류장 광고</h3>
+                                <p class="text-sm text-gray-500 mb-3 font-medium">서울 영등포구 여의도동 국제금융로</p>
+                                <div class="flex items-center space-x-6 text-sm text-gray-600 mb-3">
+                                    <span class="font-semibold">월 120만원</span>
+                                    <span class="text-gray-300">•</span>
+                                    <span class="font-medium">일 노출 6만회</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <div class="flex text-yellow-400 text-sm">
+                                            ★★★★☆
+                                        </div>
+                                        <span class="ml-2 text-sm text-gray-500 font-medium">4.5 (67)</span>
+                                    </div>
+                                    <span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full font-medium">버스정류장</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Load More -->
+                    <div class="p-8 text-center">
+                        <button class="text-gray-600 hover:text-gray-900 font-semibold transition-colors">
+                            더 많은 결과 보기 →
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Panel - Map -->
+        <div class="flex-1 relative bg-gray-50 animate-fade-in">
+            <!-- Map Container -->
+            <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center relative overflow-hidden">
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 opacity-5">
+                    <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.15) 1px, transparent 0); background-size: 40px 40px;"></div>
+                </div>
+                
+                <!-- Floating Elements -->
+                <div class="absolute top-10 left-10 w-20 h-20 bg-gray-200 rounded-full opacity-20 floating-element"></div>
+                <div class="absolute bottom-20 right-20 w-32 h-32 bg-gray-300 rounded-full opacity-10 floating-element" style="animation-delay: -2s"></div>
+                <div class="absolute top-1/3 right-10 w-16 h-16 bg-gray-400 rounded-full opacity-15 floating-element" style="animation-delay: -4s"></div>
+                
+                <!-- Map Center Content -->
+                <div class="text-center z-10 animate-scale-in">
+                    <div class="w-24 h-24 bg-gray-900 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold type-display text-gray-900 mb-3">인터랙티브 지도</h3>
+                    <p class="text-gray-600 font-medium leading-relaxed">
+                        실시간 광고 위치 데이터와<br>
+                        상세한 지역 정보를 확인하세요
+                    </p>
+                </div>
+                
+                <!-- Map Controls -->
+                <div class="absolute top-6 right-6 flex flex-col space-y-3">
+                    <button class="w-12 h-12 glass-effect rounded-xl flex items-center justify-center hover:bg-white transition-all shadow-lg">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                        </svg>
+                    </button>
+                    <button class="w-12 h-12 glass-effect rounded-xl flex items-center justify-center hover:bg-white transition-all shadow-lg">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+                        </svg>
+                    </button>
+                    <button class="w-12 h-12 glass-effect rounded-xl flex items-center justify-center hover:bg-white transition-all shadow-lg">
+                        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Map Legend -->
+                <div class="absolute bottom-6 left-6 glass-effect rounded-2xl p-6 shadow-lg max-w-xs">
+                    <h4 class="font-bold text-gray-900 mb-4 type-strong">광고 유형별 범례</h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-red-500 rounded-full mr-3 map-marker"></div>
+                            <span class="text-sm font-medium text-gray-700">디지털 사이니지</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-blue-500 rounded-full mr-3 map-marker" style="animation-delay: 0.5s"></div>
+                            <span class="text-sm font-medium text-gray-700">옥상 간판</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-green-500 rounded-full mr-3 map-marker" style="animation-delay: 1s"></div>
+                            <span class="text-sm font-medium text-gray-700">지하철 광고</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-4 h-4 bg-yellow-500 rounded-full mr-3 map-marker" style="animation-delay: 1.5s"></div>
+                            <span class="text-sm font-medium text-gray-700">버스 정류장</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sample Map Markers -->
+                <div class="absolute top-1/4 left-1/3 w-5 h-5 bg-red-500 rounded-full shadow-lg map-marker animate-pulse"></div>
+                <div class="absolute top-1/2 right-1/4 w-5 h-5 bg-blue-500 rounded-full shadow-lg map-marker" style="animation-delay: 0.5s"></div>
+                <div class="absolute bottom-1/3 left-1/2 w-5 h-5 bg-green-500 rounded-full shadow-lg map-marker" style="animation-delay: 1s"></div>
+                <div class="absolute top-1/3 right-1/3 w-5 h-5 bg-yellow-500 rounded-full shadow-lg map-marker" style="animation-delay: 1.5s"></div>
+                <div class="absolute bottom-1/4 left-1/4 w-5 h-5 bg-purple-500 rounded-full shadow-lg map-marker" style="animation-delay: 2s"></div>
+            </div>
+            
+            <!-- Map View Toggle -->
+            <div class="absolute top-6 left-6 glass-effect rounded-xl shadow-lg overflow-hidden">
+                <div class="flex">
+                    <button class="px-5 py-3 bg-gray-900 text-white text-sm font-semibold transition-all">지도</button>
+                    <button class="px-5 py-3 text-gray-600 hover:bg-gray-100 text-sm font-semibold transition-all">위성</button>
+                    <button class="px-5 py-3 text-gray-600 hover:bg-gray-100 text-sm font-semibold transition-all">3D</button>
+                </div>
+            </div>
+            
+            <!-- Map Info Panel -->
+            <div class="absolute bottom-6 right-6 glass-effect rounded-2xl p-6 shadow-lg">
+                <div class="text-center">
+                    <div class="text-2xl font-bold type-display text-gray-900 mb-1">서울특별시</div>
+                    <div class="text-sm text-gray-500 font-medium mb-3">현재 검색 지역</div>
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="text-center">
+                            <div class="font-bold text-gray-900">1,247</div>
+                            <div class="text-gray-500">총 광고 위치</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="font-bold text-gray-900">89</div>
+                            <div class="text-gray-500">필터 결과</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

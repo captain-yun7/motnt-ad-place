@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motnt Ad Place - 모던 미니멀</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        neutral: {
+                            50: '#fafafa',
+                            100: '#f5f5f5',
+                            200: '#e5e5e5',
+                            600: '#525252',
+                            900: '#171717',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .floating-card {
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .floating-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg border-b border-neutral-200">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/>
+                        </svg>
+                    </div>
+                    <h1 class="text-xl font-semibold text-neutral-900">Motnt</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#" class="text-neutral-600 hover:text-neutral-900 font-medium transition-colors">광고 찾기</a>
+                    <a href="#" class="text-neutral-600 hover:text-neutral-900 font-medium transition-colors">서비스</a>
+                    <a href="#" class="text-neutral-600 hover:text-neutral-900 font-medium transition-colors">문의</a>
+                    <button class="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                        시작하기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 gradient-bg">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    옥외광고의<br>
+                    <span class="bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">새로운 기준</span>
+                </h1>
+                <p class="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed">
+                    데이터 기반의 스마트한 광고 솔루션으로 당신의 브랜드를 세상에 알리세요
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-primary-600 px-8 py-3 rounded-lg font-semibold hover:bg-neutral-50 transition-colors shadow-lg">
+                        무료로 시작하기
+                    </button>
+                    <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors">
+                        데모 보기
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Section -->
+    <section class="py-16 bg-neutral-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl shadow-lg p-8">
+                    <h2 class="text-2xl font-semibold text-neutral-900 mb-6 text-center">광고 위치 찾기</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-neutral-700">지역</label>
+                            <select class="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors">
+                                <option>전체 지역</option>
+                                <option>강남구</option>
+                                <option>홍대</option>
+                                <option>명동</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-neutral-700">광고 유형</label>
+                            <select class="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors">
+                                <option>전체 유형</option>
+                                <option>디지털 사이니지</option>
+                                <option>옥상 간판</option>
+                                <option>지하철 광고</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-neutral-700">예산</label>
+                            <select class="w-full px-4 py-3 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors">
+                                <option>예산 범위</option>
+                                <option>50만원 이하</option>
+                                <option>50-150만원</option>
+                                <option>150만원 이상</option>
+                            </select>
+                        </div>
+                        <button class="bg-primary-500 hover:bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors h-fit mt-7">
+                            검색
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-neutral-900 mb-4">왜 Motnt인가?</h2>
+                <p class="text-lg text-neutral-600 max-w-2xl mx-auto">
+                    효율적이고 투명한 광고 플랫폼으로 성공적인 마케팅을 시작하세요
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="floating-card bg-white rounded-xl p-8 border border-neutral-200">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-neutral-900 mb-3">실시간 데이터</h3>
+                    <p class="text-neutral-600 leading-relaxed">
+                        실시간 유동인구와 광고 효과 데이터를 기반으로 최적의 광고 위치를 추천합니다.
+                    </p>
+                </div>
+                
+                <div class="floating-card bg-white rounded-xl p-8 border border-neutral-200">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-neutral-900 mb-3">정확한 위치</h3>
+                    <p class="text-neutral-600 leading-relaxed">
+                        GPS 기반의 정확한 위치 정보와 상세한 주변 환경 분석을 제공합니다.
+                    </p>
+                </div>
+                
+                <div class="floating-card bg-white rounded-xl p-8 border border-neutral-200">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-neutral-900 mb-3">투명한 가격</h3>
+                    <p class="text-neutral-600 leading-relaxed">
+                        숨겨진 비용 없이 투명하고 합리적인 광고비를 책정하여 제공합니다.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Showcase Section -->
+    <section class="py-20 bg-neutral-50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-neutral-900 mb-6">
+                        인터랙티브 지도로<br>
+                        한눈에 보는 광고 위치
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-neutral-900 mb-2">실시간 업데이트</h3>
+                                <p class="text-neutral-600">광고 위치와 가격 정보가 실시간으로 업데이트됩니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-neutral-900 mb-2">상세 필터링</h3>
+                                <p class="text-neutral-600">위치, 가격, 광고 유형별로 세밀한 검색이 가능합니다.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-4">
+                            <div class="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-neutral-900 mb-2">즉시 예약</h3>
+                                <p class="text-neutral-600">마음에 드는 위치를 찾으면 바로 예약할 수 있습니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg h-80 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-primary-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3"/>
+                                    </svg>
+                                </div>
+                                <p class="text-neutral-600 font-medium">인터랙티브 지도</p>
+                                <p class="text-sm text-neutral-500 mt-1">클릭하면 상세 정보를 볼 수 있습니다</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-bg">
+        <div class="max-w-4xl mx-auto text-center px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-white mb-6">
+                지금 시작하세요
+            </h2>
+            <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+                Motnt와 함께 더 스마트한 광고를 경험해보세요
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="bg-white text-primary-600 px-8 py-4 rounded-lg font-semibold hover:bg-neutral-50 transition-colors shadow-lg">
+                    무료 회원가입
+                </button>
+                <button class="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary-600 transition-colors">
+                    더 알아보기
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-neutral-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2L3 7v11h4v-6h6v6h4V7l-7-5z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xl font-semibold">Motnt</span>
+                    </div>
+                    <p class="text-neutral-400 text-sm leading-relaxed">
+                        옥외광고의 새로운 기준을<br>
+                        만들어가는 플랫폼
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">서비스</h3>
+                    <ul class="space-y-2 text-sm text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition-colors">광고 찾기</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">가격 비교</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">데이터 분석</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">지원</h3>
+                    <ul class="space-y-2 text-sm text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition-colors">고객센터</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">이용가이드</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-4">회사</h3>
+                    <ul class="space-y-2 text-sm text-neutral-400">
+                        <li><a href="#" class="hover:text-white transition-colors">회사소개</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">채용정보</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">연락처</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-neutral-800 mt-8 pt-8 text-center text-sm text-neutral-400">
+                <p>&copy; 2024 Motnt. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
