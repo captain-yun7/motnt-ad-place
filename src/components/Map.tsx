@@ -7,6 +7,7 @@ import { debounce } from 'lodash';
 
 interface MapProps {
   ads?: AdResponse[];
+  selectedCategory?: string;
   center?: {
     lat: number;
     lng: number;
@@ -30,6 +31,7 @@ declare global {
 // Map 컴포넌트를 React.memo로 감싸서 불필요한 리렌더링 방지
 const Map = memo(function Map({
   ads = [],
+  selectedCategory = '',
   center = { lat: 37.566826, lng: 126.9786567 }, // 서울시청
   level = 7,
   style = { width: '100%', height: '500px' },
@@ -314,26 +316,65 @@ const Map = memo(function Map({
           };
         };
         
-        // 줌 레벨 13 이하에서는 1개짜리도 숫자로 표시, 14부터는 카테고리 아이콘
-        const markerIcon = currentZoom <= 13 ? {
-          content: `
-            <div style="
-              cursor: pointer;
-              width: 48px;
-              height: 48px;
-              line-height: 48px;
-              font-size: 21px;
-              color: black;
-              text-align: center;
-              font-weight: 800;
-              background: white;
-              border-radius: 50%;
-              border: 3px solid black;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-            ">1</div>
-          `,
-          anchor: new window.naver.maps.Point(24, 24),
-        } : getCategoryMarker(ad.category.name);
+        // 줌 레벨 13 이하에서는 1개짜리도 숫자로 표시
+        // 줌 레벨 14 이상에서:
+        //   - selectedCategory가 없거나 빈 문자열('')이면 카테고리 아이콘 표시
+        //   - selectedCategory가 있으면(특정 카테고리 선택) 가격 표시
+        let markerIcon;
+        if (currentZoom <= 13) {
+          // 줌 레벨 13 이하에서는 클러스터 모드용 숫자 표시
+          markerIcon = {
+            content: `
+              <div style="
+                cursor: pointer;
+                width: 48px;
+                height: 48px;
+                line-height: 48px;
+                font-size: 21px;
+                color: white;
+                text-align: center;
+                font-weight: 300;
+                background: rgba(0,0,0,0.75);
+                border-radius: 50%;
+                border: 1px solid rgba(255,255,255,0.3);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              ">1</div>
+            `,
+            anchor: new window.naver.maps.Point(24, 24),
+          };
+        } else if (!selectedCategory) {
+          // 줌 레벨 14 이상 + 광고 유형 '전체' 선택 시 카테고리 아이콘
+          markerIcon = getCategoryMarker(ad.category.name);
+        } else {
+          // 줌 레벨 14 이상 + 특정 광고 유형 선택 시 가격 표시
+          const monthlyPrice = ad.pricing.monthly;
+          const formattedPrice = monthlyPrice >= 10000 
+            ? `월/${Math.floor(monthlyPrice / 10000)}만`
+            : `월/${monthlyPrice.toLocaleString()}`;
+          
+          markerIcon = {
+            content: `
+              <div style="
+                cursor: pointer;
+                padding: 8px 12px;
+                background: black;
+                color: white;
+                font-size: 14px;
+                font-weight: 700;
+                border-radius: 4px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                white-space: nowrap;
+                transition: all 0.2s;
+                letter-spacing: -0.3px;
+              "
+              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';" 
+              onmouseout="this.style.transform='scale(1)'; this.style.zIndex='1';">
+                ${formattedPrice}
+              </div>
+            `,
+            anchor: new window.naver.maps.Point(40, 22),
+          };
+        }
         
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(lat, lng),
@@ -375,10 +416,11 @@ const Map = memo(function Map({
 
       // 줌 레벨에 따른 클러스터 크기 계산
       const getClusterSize = (baseSize: number) => {
-        if (currentZoom <= 10) return baseSize;
-        if (currentZoom === 11) return Math.round(baseSize * 0.9);
-        if (currentZoom === 12) return Math.round(baseSize * 0.9 * 0.9);
-        if (currentZoom === 13) return Math.round(baseSize * 0.9 * 0.9 * 0.9);
+        // 줌 레벨 10-13: 레벨 11 크기로 고정 (기본의 0.9배)
+        if (currentZoom >= 10 && currentZoom <= 13) {
+          return Math.round(baseSize * 0.9);
+        }
+        // 줌 레벨 9 이하: 기본 크기
         return baseSize;
       };
 
@@ -390,31 +432,31 @@ const Map = memo(function Map({
       const size5 = getClusterSize(120);
 
       const htmlMarker1 = {
-        content: `<div style="cursor:pointer;width:${size1}px;height:${size1}px;line-height:${size1}px;font-size:${Math.round(size1 * 0.4)}px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:3px solid black;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>`,
+        content: `<div style="cursor:pointer;width:${size1}px;height:${size1}px;line-height:${size1}px;font-size:${Math.round(size1 * 0.4)}px;color:white;text-align:center;font-weight:300;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
         size: new window.naver.maps.Size(size1, size1),
         anchor: new window.naver.maps.Point(size1/2, size1/2)
       };
 
       const htmlMarker2 = {
-        content: `<div style="cursor:pointer;width:${size2}px;height:${size2}px;line-height:${size2}px;font-size:${Math.round(size2 * 0.36)}px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:3px solid black;box-shadow:0 2px 10px rgba(0,0,0,0.2)"></div>`,
+        content: `<div style="cursor:pointer;width:${size2}px;height:${size2}px;line-height:${size2}px;font-size:${Math.round(size2 * 0.36)}px;color:white;text-align:center;font-weight:300;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 10px rgba(0,0,0,0.35)"></div>`,
         size: new window.naver.maps.Size(size2, size2),
         anchor: new window.naver.maps.Point(size2/2, size2/2)
       };
 
       const htmlMarker3 = {
-        content: `<div style="cursor:pointer;width:${size3}px;height:${size3}px;line-height:${size3}px;font-size:${Math.round(size3 * 0.33)}px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:3px solid black;box-shadow:0 3px 12px rgba(0,0,0,0.25)"></div>`,
+        content: `<div style="cursor:pointer;width:${size3}px;height:${size3}px;line-height:${size3}px;font-size:${Math.round(size3 * 0.33)}px;color:white;text-align:center;font-weight:400;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 3px 12px rgba(0,0,0,0.4)"></div>`,
         size: new window.naver.maps.Size(size3, size3),
         anchor: new window.naver.maps.Point(size3/2, size3/2)
       };
 
       const htmlMarker4 = {
-        content: `<div style="cursor:pointer;width:${size4}px;height:${size4}px;line-height:${size4}px;font-size:${Math.round(size4 * 0.31)}px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:4px solid black;box-shadow:0 3px 14px rgba(0,0,0,0.3)"></div>`,
+        content: `<div style="cursor:pointer;width:${size4}px;height:${size4}px;line-height:${size4}px;font-size:${Math.round(size4 * 0.31)}px;color:white;text-align:center;font-weight:400;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 3px 14px rgba(0,0,0,0.45)"></div>`,
         size: new window.naver.maps.Size(size4, size4),
         anchor: new window.naver.maps.Point(size4/2, size4/2)
       };
 
       const htmlMarker5 = {
-        content: `<div style="cursor:pointer;width:${size5}px;height:${size5}px;line-height:${size5}px;font-size:${Math.round(size5 * 0.3)}px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:4px solid black;box-shadow:0 4px 16px rgba(0,0,0,0.35)"></div>`,
+        content: `<div style="cursor:pointer;width:${size5}px;height:${size5}px;line-height:${size5}px;font-size:${Math.round(size5 * 0.3)}px;color:white;text-align:center;font-weight:400;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.5)"></div>`,
         size: new window.naver.maps.Size(size5, size5),
         anchor: new window.naver.maps.Point(size5/2, size5/2)
       };
@@ -506,7 +548,7 @@ const Map = memo(function Map({
   // 마커 업데이트 호출
   useEffect(() => {
     updateMarkers();
-  }, [ads, isMapLoaded, isClusteringEnabled, boundsKey]); // 필요한 의존성만 포함
+  }, [ads, isMapLoaded, isClusteringEnabled, boundsKey, selectedCategory]); // selectedCategory 추가
 
   // 광고 데이터 변경 시에만 fitBounds 리셋
   useEffect(() => {
@@ -665,6 +707,7 @@ const Map = memo(function Map({
   // React.memo의 비교 함수 - props가 변경되지 않았으면 리렌더링 방지
   return (
     prevProps.ads === nextProps.ads &&
+    prevProps.selectedCategory === nextProps.selectedCategory &&
     prevProps.center?.lat === nextProps.center?.lat &&
     prevProps.center?.lng === nextProps.center?.lng &&
     prevProps.level === nextProps.level &&

@@ -15,7 +15,7 @@ export default function FilterChip({
   size = 'md',
   className = ""
 }: FilterChipProps) {
-  const baseClasses = "border border-gray-300 rounded-full transition-all cursor-pointer hover:bg-gray-50";
+  const baseClasses = "border border-gray-300 rounded-full transition-all cursor-pointer";
   
   const sizeClasses = {
     sm: "px-3 py-1.5 text-sm",
@@ -24,11 +24,11 @@ export default function FilterChip({
   
   const variantClasses = {
     default: isActive 
-      ? "bg-gray-900 text-white border-gray-900" 
-      : "bg-white text-gray-700",
+      ? "bg-gray-900 text-white border-gray-900 hover:bg-gray-800" 
+      : "bg-white text-gray-700 hover:bg-gray-50",
     primary: isActive 
-      ? "bg-gray-900 text-white border-gray-900" 
-      : "bg-gray-50 text-gray-700"
+      ? "bg-gray-900 text-white border-gray-900 hover:bg-gray-800" 
+      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
   };
 
   return (

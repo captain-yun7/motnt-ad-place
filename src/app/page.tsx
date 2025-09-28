@@ -138,6 +138,7 @@ export default function Home() {
           }>
             <Map
               ads={filteredAds}
+              selectedCategory={filters.category}
               style={{ width: '100%', height: '100vh' }}
               onMarkerClick={handleAdClick}
               onBoundsChange={updateBounds}
