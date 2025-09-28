@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
-import { Map as KakaoMap, MapMarker, MapInfoWindow, useKakaoLoader } from 'react-kakao-maps-sdk';
+import { useEffect, useState, useCallback, useMemo } from 'react';
+import { Map as KakaoMap, MapMarker, MapInfoWindow, useKakaoLoader, MarkerClusterer } from 'react-kakao-maps-sdk';
 import { AdResponse } from '@/types/ad';
 
 interface MapProps {
@@ -34,6 +34,8 @@ export default function Map({
 
   const [mapInstance, setMapInstance] = useState<kakao.maps.Map | null>(null);
   const [selectedAd, setSelectedAd] = useState<AdResponse | null>(null);
+  const [currentLevel, setCurrentLevel] = useState<number>(level);
+  const [isClusteringEnabled, setIsClusteringEnabled] = useState<boolean>(true);
 
   // 지도 경계가 변경될 때 호출되는 함수
   const handleBoundsChanged = useCallback((map: kakao.maps.Map) => {
@@ -49,6 +51,37 @@ export default function Map({
     });
   }, [onBoundsChange]);
 
+  // 줌 레벨 변경 감지
+  const handleZoomChanged = useCallback((map: kakao.maps.Map) => {
+    const level = map.getLevel();
+    setCurrentLevel(level);
+    
+    // 줌 레벨 7 이하일 때만 클러스터링 활성화 (줌인 시 개별 마커)
+    setIsClusteringEnabled(level > 7);
+    
+    handleBoundsChanged(map);
+  }, [handleBoundsChanged]);
+
+  // 클러스터 클릭 시 줌인
+  const handleClusterClick = useCallback((_target: any, cluster: any) => {
+    if (!mapInstance) return;
+    
+    const level = mapInstance.getLevel() - 2;
+    mapInstance.setLevel(level > 1 ? level : 1);
+    mapInstance.panTo(cluster.getCenter());
+  }, [mapInstance]);
+
+  // 마커 위치 배열
+  const markerPositions = useMemo(() => {
+    return ads
+      .filter(ad => ad.location?.coordinates)
+      .map(ad => ({
+        lat: ad.location!.coordinates![1],
+        lng: ad.location!.coordinates![0],
+        ad: ad
+      }));
+  }, [ads]);
+
   // 초기 bounds 설정
   useEffect(() => {
     if (mapInstance && onBoundsChange) {
@@ -63,7 +96,7 @@ export default function Map({
     // 광고 위치들의 경계를 계산해서 지도 범위 조정
     const bounds = new kakao.maps.LatLngBounds();
     ads.forEach(ad => {
-      if (ad.location.coordinates) {
+      if (ad.location?.coordinates) {
         const [lng, lat] = ad.location.coordinates;
         bounds.extend(new kakao.maps.LatLng(lat, lng));
       }
@@ -113,31 +146,98 @@ export default function Map({
         }}
         onBoundsChanged={(map) => handleBoundsChanged(map)}
         onDragEnd={(map) => handleBoundsChanged(map)}
-        onZoomChanged={(map) => handleBoundsChanged(map)}
+        onZoomChanged={(map) => handleZoomChanged(map)}
         className="rounded-lg border border-gray-200"
         onClick={() => setSelectedAd(null)}
       >
-        {ads.map(ad => {
-          if (!ad.location.coordinates) return null;
-          
-          const [lng, lat] = ad.location.coordinates;
-          
-          return (
+        {/* 클러스터링이 활성화된 경우 */}
+        {isClusteringEnabled && markerPositions.length > 0 ? (
+          <MarkerClusterer
+            averageCenter={true}
+            minLevel={8}
+            disableClickZoom={true}
+            onClusterclick={handleClusterClick}
+            calculator={[10, 30, 50, 100]}
+            styles={[
+              {
+                width: '48px',
+                height: '48px',
+                background: 'rgba(59, 130, 246, 0.9)',
+                borderRadius: '50%',
+                color: '#fff',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                lineHeight: '48px',
+                fontSize: '14px',
+                border: '2px solid #2563eb'
+              },
+              {
+                width: '56px',
+                height: '56px',
+                background: 'rgba(37, 99, 235, 0.9)',
+                borderRadius: '50%',
+                color: '#fff',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                lineHeight: '56px',
+                fontSize: '16px',
+                border: '2px solid #1e40af'
+              },
+              {
+                width: '64px',
+                height: '64px',
+                background: 'rgba(79, 70, 229, 0.9)',
+                borderRadius: '50%',
+                color: '#fff',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                lineHeight: '64px',
+                fontSize: '18px',
+                border: '2px solid #4338ca'
+              },
+              {
+                width: '80px',
+                height: '80px',
+                background: 'rgba(124, 58, 237, 0.9)',
+                borderRadius: '50%',
+                color: '#fff',
+                textAlign: 'center',
+                fontWeight: 'bold',
+                lineHeight: '80px',
+                fontSize: '20px',
+                border: '2px solid #5b21b6'
+              }
+            ]}
+          >
+            {markerPositions.map(({ lat, lng, ad }) => (
+              <MapMarker
+                key={ad.id}
+                position={{ lat, lng }}
+                onClick={() => {
+                  setSelectedAd(ad);
+                  onMarkerClick?.(ad);
+                }}
+                zIndex={1}
+              />
+            ))}
+          </MarkerClusterer>
+        ) : (
+          // 클러스터링이 비활성화된 경우 (줌인 상태)
+          markerPositions.map(({ lat, lng, ad }) => (
             <MapMarker
               key={ad.id}
               position={{ lat, lng }}
-              title={ad.title}
               onClick={() => {
                 setSelectedAd(ad);
                 onMarkerClick?.(ad);
               }}
               zIndex={1}
             />
-          );
-        })}
+          ))
+        )}
         
         {/* 인포윈도우 */}
-        {selectedAd && selectedAd.location.coordinates && (
+        {selectedAd && selectedAd.location?.coordinates && (
           <MapInfoWindow
             position={{
               lat: selectedAd.location.coordinates[1],
@@ -153,7 +253,7 @@ export default function Map({
                 <p><span className="font-medium">카테고리:</span> {selectedAd.category.name}</p>
                 <p><span className="font-medium">지역:</span> {selectedAd.district.name}</p>
                 <p><span className="font-medium">월 금액:</span> {selectedAd.pricing.monthly.toLocaleString()}원</p>
-                <p><span className="font-medium">주소:</span> {selectedAd.location.address}</p>
+                <p><span className="font-medium">주소:</span> {selectedAd.location?.address}</p>
               </div>
               
               {/* 설명 영역 - 고정 높이로 균일한 여백 확보 */}
@@ -210,10 +310,13 @@ export default function Map({
         </button>
       </div>
 
-      {/* 광고 개수 표시 */}
-      <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-md px-3 py-2">
+      {/* 광고 개수 및 클러스터링 상태 표시 */}
+      <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-md px-3 py-2 space-y-1">
         <p className="text-sm text-gray-600">
           총 <span className="font-semibold text-blue-600">{ads.length}</span>개 광고
+        </p>
+        <p className="text-xs text-gray-500">
+          {isClusteringEnabled ? '클러스터 모드' : '개별 마커 모드'} (레벨: {currentLevel})
         </p>
       </div>
     </div>
