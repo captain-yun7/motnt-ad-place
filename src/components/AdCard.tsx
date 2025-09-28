@@ -3,12 +3,15 @@ import { AdResponse } from '@/types/ad';
 interface AdCardProps {
   ad: AdResponse;
   onClick: (ad: AdResponse) => void;
+  isSelected?: boolean;
 }
 
-export default function AdCard({ ad, onClick }: AdCardProps) {
+export default function AdCard({ ad, onClick, isSelected = false }: AdCardProps) {
   return (
     <div 
-      className="p-6 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors"
+      className={`p-6 border-b border-gray-100 cursor-pointer transition-colors ${
+        isSelected ? 'bg-blue-50 border-blue-200' : 'hover:bg-gray-50'
+      }`}
       onClick={() => onClick(ad)}
     >
       <div className="flex items-start space-x-4">

@@ -4,8 +4,10 @@ import { useEffect, useState, Suspense, lazy } from 'react';
 import { AdResponse } from '@/types/ad';
 import { useAdFilter } from '@/hooks/useAdFilter';
 import { useToggle } from '@/hooks/useToggle';
+import { useSelectedAd } from '@/hooks/useSelectedAd';
 import TopFilterBar from '@/components/TopFilterBar';
 import AdListPanel from '@/components/AdListPanel';
+import AdDetailPanel from '@/components/AdDetailPanel';
 
 const Map = lazy(() => import('@/components/Map'));
 
@@ -32,7 +34,8 @@ export default function Home() {
   
   // Custom hooks
   const { filters, filteredAds, updateFilter, resetFilters } = useAdFilter(allAds);
-  const { value: isPanelVisible, toggle: togglePanel } = useToggle(true);
+  const { value: isPanelVisible, toggle: togglePanel, setTrue: openPanel } = useToggle(true);
+  const { selectedAd, showDetail, selectAd, closeDetail } = useSelectedAd();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,8 +70,12 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const handleMarkerClick = (ad: AdResponse) => {
-    window.open(`/ad/${ad.id}`, '_blank');
+  const handleAdClick = (ad: AdResponse) => {
+    selectAd(ad);
+    // 리스트 패널이 닫혀있으면 자동으로 열기
+    if (!isPanelVisible) {
+      openPanel();
+    }
   };
 
   const handleSearch = () => {
@@ -96,13 +103,26 @@ export default function Home() {
           error={error}
           isVisible={isPanelVisible}
           onToggle={togglePanel}
-          onAdClick={handleMarkerClick}
+          onAdClick={handleAdClick}
+          selectedAdId={selectedAd?.id}
+          onCloseDetail={closeDetail}
+        />
+
+        {/* Ad Detail Panel */}
+        <AdDetailPanel
+          ad={selectedAd}
+          isVisible={showDetail}
+          onClose={closeDetail}
         />
 
         {/* Map Area */}
         <div 
           className={`h-screen transition-all duration-300 ${
-            isPanelVisible ? 'ml-[416px]' : 'ml-0'
+            isPanelVisible 
+              ? showDetail 
+                ? 'ml-[896px]' // 416px(리스트) + 480px(상세) = 896px
+                : 'ml-[416px]' // 리스트만 있을 때
+              : 'ml-0' // 모두 숨겨졌을 때
           }`}
           style={{ paddingTop: '0' }} // 여백 제거
         >
@@ -117,7 +137,7 @@ export default function Home() {
             <Map
               ads={filteredAds}
               style={{ width: '100%', height: '100vh' }}
-              onMarkerClick={handleMarkerClick}
+              onMarkerClick={handleAdClick}
             />
           </Suspense>
         </div>

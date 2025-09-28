@@ -8,6 +8,8 @@ interface AdListPanelProps {
   isVisible: boolean;
   onToggle: () => void;
   onAdClick: (ad: AdResponse) => void;
+  selectedAdId?: string | null;
+  onCloseDetail?: () => void;
 }
 
 export default function AdListPanel({
@@ -16,13 +18,23 @@ export default function AdListPanel({
   error,
   isVisible,
   onToggle,
-  onAdClick
+  onAdClick,
+  selectedAdId,
+  onCloseDetail
 }: AdListPanelProps) {
+  
+  const handleToggle = () => {
+    onToggle();
+    // 리스트 패널을 닫을 때 상세 패널도 함께 닫기
+    if (isVisible && onCloseDetail) {
+      onCloseDetail();
+    }
+  };
   return (
     <>
       {/* Toggle Button */}
       <button
-        onClick={onToggle}
+        onClick={handleToggle}
         className={`fixed top-1/2 -translate-y-1/2 z-40 bg-white border border-gray-200 shadow-lg rounded-r-lg p-2 hover:bg-gray-50 transition-all ${
           isVisible ? 'left-[416px]' : 'left-0'
         }`}
@@ -89,6 +101,7 @@ export default function AdListPanel({
                   key={ad.id}
                   ad={ad}
                   onClick={onAdClick}
+                  isSelected={selectedAdId === ad.id}
                 />
               ))
             )}

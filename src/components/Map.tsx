@@ -144,7 +144,8 @@ export default function Map({
               <div className="flex space-x-2">
                 <button 
                   onClick={() => {
-                    window.location.href = `/ad/${selectedAd.id}`;
+                    onMarkerClick?.(selectedAd);
+                    setSelectedAd(null);
                   }}
                   className="flex-1 bg-blue-600 text-white text-sm py-2 px-3 rounded hover:bg-blue-700"
                 >
