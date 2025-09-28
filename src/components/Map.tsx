@@ -227,31 +227,52 @@ const Map = memo(function Map({
       .map(ad => {
         const [lng, lat] = ad.location!.coordinates!;
         
+        // 줌 레벨 14 이하에서는 1개짜리도 숫자로 표시
+        const markerIcon = currentZoom <= 14 ? {
+          content: `
+            <div style="
+              cursor: pointer;
+              width: 32px;
+              height: 32px;
+              line-height: 32px;
+              font-size: 14px;
+              color: black;
+              text-align: center;
+              font-weight: 800;
+              background: white;
+              border-radius: 50%;
+              border: 2px solid black;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            ">1</div>
+          `,
+          anchor: new window.naver.maps.Point(16, 16),
+        } : {
+          content: `
+            <div style="
+              width: 32px;
+              height: 32px;
+              background: #3B82F6;
+              border: 2px solid white;
+              border-radius: 50%;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              transition: transform 0.2s;
+            ">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              </svg>
+            </div>
+          `,
+          anchor: new window.naver.maps.Point(16, 32),
+        };
+        
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(lat, lng),
           map: null, // 클러스터링에서 관리하므로 직접 맵에 추가하지 않음
-          icon: {
-            content: `
-              <div style="
-                width: 32px;
-                height: 32px;
-                background: #3B82F6;
-                border: 2px solid white;
-                border-radius: 50%;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: transform 0.2s;
-              ">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-                </svg>
-              </div>
-            `,
-            anchor: new window.naver.maps.Point(16, 32),
-          }
+          icon: markerIcon
         });
 
         // 마커 클릭 이벤트
@@ -286,33 +307,33 @@ const Map = memo(function Map({
         return 60; // 미세 그룹
       };
 
-      // 네이버 부동산 스타일 클러스터 마커 HTML
+      // 흰색 배경에 검정색 숫자 클러스터 마커
       const htmlMarker1 = {
-        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:40px;font-size:13px;color:white;text-align:center;font-weight:bold;background:#667eea;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:40px;font-size:16px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:2px solid black;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>',
         size: new window.naver.maps.Size(40, 40),
         anchor: new window.naver.maps.Point(20, 20)
       };
 
       const htmlMarker2 = {
-        content: '<div style="cursor:pointer;width:50px;height:50px;line-height:50px;font-size:15px;color:white;text-align:center;font-weight:bold;background:#3b82f6;border-radius:50%;border:2px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.3)"></div>',
+        content: '<div style="cursor:pointer;width:50px;height:50px;line-height:50px;font-size:18px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:2px solid black;box-shadow:0 2px 10px rgba(0,0,0,0.2)"></div>',
         size: new window.naver.maps.Size(50, 50),
         anchor: new window.naver.maps.Point(25, 25)
       };
 
       const htmlMarker3 = {
-        content: '<div style="cursor:pointer;width:60px;height:60px;line-height:60px;font-size:17px;color:white;text-align:center;font-weight:bold;background:#8b5cf6;border-radius:50%;border:2px solid white;box-shadow:0 2px 12px rgba(0,0,0,0.35)"></div>',
+        content: '<div style="cursor:pointer;width:60px;height:60px;line-height:60px;font-size:20px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:2px solid black;box-shadow:0 3px 12px rgba(0,0,0,0.25)"></div>',
         size: new window.naver.maps.Size(60, 60),
         anchor: new window.naver.maps.Point(30, 30)
       };
 
       const htmlMarker4 = {
-        content: '<div style="cursor:pointer;width:70px;height:70px;line-height:70px;font-size:19px;color:white;text-align:center;font-weight:bold;background:#ef4444;border-radius:50%;border:2px solid white;box-shadow:0 2px 14px rgba(0,0,0,0.4)"></div>',
+        content: '<div style="cursor:pointer;width:70px;height:70px;line-height:70px;font-size:22px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:3px solid black;box-shadow:0 3px 14px rgba(0,0,0,0.3)"></div>',
         size: new window.naver.maps.Size(70, 70),
         anchor: new window.naver.maps.Point(35, 35)
       };
 
       const htmlMarker5 = {
-        content: '<div style="cursor:pointer;width:80px;height:80px;line-height:80px;font-size:21px;color:white;text-align:center;font-weight:bold;background:#1f2937;border-radius:50%;border:2px solid #ef4444;box-shadow:0 2px 16px rgba(0,0,0,0.5)"></div>',
+        content: '<div style="cursor:pointer;width:80px;height:80px;line-height:80px;font-size:24px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:3px solid black;box-shadow:0 4px 16px rgba(0,0,0,0.35)"></div>',
         size: new window.naver.maps.Size(80, 80),
         anchor: new window.naver.maps.Point(40, 40)
       };
@@ -328,7 +349,7 @@ const Map = memo(function Map({
 
         // 클러스터링은 항상 생성하되, 줌 레벨에 따라 표시 여부 결정
         clustererRef.current = new MarkerClustering({
-          minClusterSize: 2,
+          minClusterSize: currentZoom <= 14 ? 1 : 2, // 줌 14 이하에서는 1개부터 클러스터링
           maxZoom: 15, // 줌 16부터 개별 마커
           map: isClusteringEnabled ? mapRef.current : null, // 줌 레벨에 따라 표시
           markers: markers,
