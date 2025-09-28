@@ -13,3 +13,37 @@
 
 - 그리고 현재는 광고 포인트를 지도에서 선택하거나 리스트에서 선택하면 상세 페이지로 가는데 그러지 말고 네이버 부동산처럼 리스트 옆에 새로운 컴포넌트로 보여줄 수 있도록 바꿔줘. 
   리팩토링 신경써서. 모듈화 해.
+
+- 현재 보여지는 지도에 해당하는 광고들만 리스트 패널에 나오게 가능하니? 지도를 이동하고 zoom in / zoom out 을 포함해서.
+
+[zoom in / zoom out 시 네이버 부동산 스타일의 마커 클러스터링 시스템 구축]
+
+[네이버 맵 API로 전환]
+- npm install -D @types/navermaps
+- [네이버 맵 버전 변경에 따른 참고 문서] https://navermaps.github.io/maps.js.ncp/docs/tutorial-2-Getting-Started.html 
+
+[지도 맵 사용 시 성능 최적화]
+- React.memo (o)
+- debounce (o)
+- virtual clustering - 뷰포트 내 광고만 처리 (o)
+- 동적 임포트 사용 
+- 마커 아이콘 캐싱
+- 이미지 최적화
+- 백엔드 페이징 API 구현 
+
+[지도가 자동으로 원위치로 돌아오는 문제 수정]
+1. 문제 원인
+- useEffect가 boundsKey 변경 시마다 재실행
+- fitBounds가 조건만 맞으면 계속 호출됨
+- 첫 로드와 이후를 구분하지 못함
+2. 해결 방법
+- 첫 로드 여부를 추적하는 useRef 추가
+- fitBounds를 첫 번째 로드 시에만 호출
+- 사용자가 지도를 조작한 후에는 fitBounds 호출 안 함
+3. 수정 내용
+- isFirstLoad useRef 추가
+- fitBounds 조건문 수정
+- 첫 로드 후 플래그 false로 변경
+
+[네이버 부동산 스타일 줌 레벨별 클러스터링 구현]
+- 

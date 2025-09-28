@@ -93,8 +93,8 @@ const Map = memo(function Map({
     const zoom = mapRef.current.getZoom();
     setCurrentZoom(zoom);
     
-    // 줌 레벨 11 이하에서 클러스터링, 12 이상에서 개별 마커
-    setIsClusteringEnabled(zoom <= 11);
+    // 네이버 부동산 스타일: 줌 레벨 15 이하에서 클러스터링, 16 이상에서 개별 마커
+    setIsClusteringEnabled(zoom <= 15);
     
     handleBoundsChange();
   }, [handleBoundsChange]);
@@ -143,6 +143,12 @@ const Map = memo(function Map({
       return;
     }
 
+    // 클러스터링 모듈 확인
+    console.log('Naver Maps Modules:', {
+      maps: !!window.naver.maps,
+      MarkerClustering: !!(window as any).MarkerClustering
+    });
+
     try {
       const mapOptions = {
         center: new window.naver.maps.LatLng(center.lat, center.lng),
@@ -187,33 +193,8 @@ const Map = memo(function Map({
 
   // Virtual Clustering - 뷰포트 내 광고만 필터링
   const getVisibleAds = useCallback((allAds: AdResponse[]) => {
-    if (!mapRef.current) return allAds;
-    
-    const bounds = mapRef.current.getBounds();
-    const sw = bounds.getSW();
-    const ne = bounds.getNE();
-    
-    // 뷰포트 경계에 20% 여유 공간 추가 (부드러운 전환을 위함)
-    const latBuffer = (ne.lat() - sw.lat()) * 0.2;
-    const lngBuffer = (ne.lng() - sw.lng()) * 0.2;
-    
-    const expandedBounds = {
-      minLat: sw.lat() - latBuffer,
-      maxLat: ne.lat() + latBuffer,
-      minLng: sw.lng() - lngBuffer,
-      maxLng: ne.lng() + lngBuffer
-    };
-    
-    return allAds.filter(ad => {
-      if (!ad.location?.coordinates) return false;
-      
-      const [lng, lat] = ad.location.coordinates;
-      
-      return lat >= expandedBounds.minLat && 
-             lat <= expandedBounds.maxLat &&
-             lng >= expandedBounds.minLng && 
-             lng <= expandedBounds.maxLng;
-    });
+    // Virtual Clustering 비활성화 - 모든 광고 표시
+    return allAds;
   }, []);
 
   // 마커 업데이트를 위한 별도 함수 - useCallback 제거하여 의존성 문제 해결
@@ -248,7 +229,7 @@ const Map = memo(function Map({
         
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(lat, lng),
-          map: isClusteringEnabled ? null : mapRef.current,
+          map: null, // 클러스터링에서 관리하므로 직접 맵에 추가하지 않음
           icon: {
             content: `
               <div style="
@@ -283,106 +264,107 @@ const Map = memo(function Map({
 
     markersRef.current = markers;
 
-    // 클러스터링 적용
-    if (isClusteringEnabled && window.naver.maps.MarkerClustering) {
+    // MarkerClustering은 window 객체에 직접 등록됨
+    const MarkerClustering = (window as any).MarkerClustering;
+    
+    // 디버깅 로그
+    console.log('Clustering Debug:', {
+      isClusteringEnabled,
+      currentZoom,
+      markersCount: markers.length,
+      hasMarkerClustering: !!MarkerClustering
+    });
+
+    // 클러스터링 적용 - 네이버 부동산 스타일  
+    if (MarkerClustering && markers.length > 0) {
+      // 줌 레벨에 따른 그리드 크기 동적 조정
+      const getGridSize = () => {
+        if (currentZoom <= 8) return 200;  // 광역 단위
+        if (currentZoom <= 10) return 150; // 시/구 단위
+        if (currentZoom <= 12) return 100; // 동 단위
+        if (currentZoom <= 14) return 80;  // 세부 그룹
+        return 60; // 미세 그룹
+      };
+
+      // 네이버 부동산 스타일 클러스터 마커 HTML
       const htmlMarker1 = {
-        content: `
-          <div style="
-            cursor: pointer;
-            width: 48px;
-            height: 48px;
-            line-height: 48px;
-            font-size: 14px;
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            background: rgba(59, 130, 246, 0.9);
-            border-radius: 50%;
-            border: 2px solid #2563eb;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          "></div>
-        `,
-        size: new window.naver.maps.Size(48, 48),
-        anchor: new window.naver.maps.Point(24, 24)
+        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:40px;font-size:13px;color:white;text-align:center;font-weight:bold;background:#667eea;border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+        size: new window.naver.maps.Size(40, 40),
+        anchor: new window.naver.maps.Point(20, 20)
       };
+
       const htmlMarker2 = {
-        content: `
-          <div style="
-            cursor: pointer;
-            width: 56px;
-            height: 56px;
-            line-height: 56px;
-            font-size: 16px;
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            background: rgba(37, 99, 235, 0.9);
-            border-radius: 50%;
-            border: 2px solid #1e40af;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          "></div>
-        `,
-        size: new window.naver.maps.Size(56, 56),
-        anchor: new window.naver.maps.Point(28, 28)
+        content: '<div style="cursor:pointer;width:50px;height:50px;line-height:50px;font-size:15px;color:white;text-align:center;font-weight:bold;background:#3b82f6;border-radius:50%;border:2px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.3)"></div>',
+        size: new window.naver.maps.Size(50, 50),
+        anchor: new window.naver.maps.Point(25, 25)
       };
+
       const htmlMarker3 = {
-        content: `
-          <div style="
-            cursor: pointer;
-            width: 64px;
-            height: 64px;
-            line-height: 64px;
-            font-size: 18px;
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            background: rgba(79, 70, 229, 0.9);
-            border-radius: 50%;
-            border: 2px solid #4338ca;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          "></div>
-        `,
-        size: new window.naver.maps.Size(64, 64),
-        anchor: new window.naver.maps.Point(32, 32)
+        content: '<div style="cursor:pointer;width:60px;height:60px;line-height:60px;font-size:17px;color:white;text-align:center;font-weight:bold;background:#8b5cf6;border-radius:50%;border:2px solid white;box-shadow:0 2px 12px rgba(0,0,0,0.35)"></div>',
+        size: new window.naver.maps.Size(60, 60),
+        anchor: new window.naver.maps.Point(30, 30)
       };
+
       const htmlMarker4 = {
-        content: `
-          <div style="
-            cursor: pointer;
-            width: 80px;
-            height: 80px;
-            line-height: 80px;
-            font-size: 20px;
-            color: white;
-            text-align: center;
-            font-weight: bold;
-            background: rgba(124, 58, 237, 0.9);
-            border-radius: 50%;
-            border: 2px solid #5b21b6;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-          "></div>
-        `,
+        content: '<div style="cursor:pointer;width:70px;height:70px;line-height:70px;font-size:19px;color:white;text-align:center;font-weight:bold;background:#ef4444;border-radius:50%;border:2px solid white;box-shadow:0 2px 14px rgba(0,0,0,0.4)"></div>',
+        size: new window.naver.maps.Size(70, 70),
+        anchor: new window.naver.maps.Point(35, 35)
+      };
+
+      const htmlMarker5 = {
+        content: '<div style="cursor:pointer;width:80px;height:80px;line-height:80px;font-size:21px;color:white;text-align:center;font-weight:bold;background:#1f2937;border-radius:50%;border:2px solid #ef4444;box-shadow:0 2px 16px rgba(0,0,0,0.5)"></div>',
         size: new window.naver.maps.Size(80, 80),
         anchor: new window.naver.maps.Point(40, 40)
       };
 
+
+
       try {
-        clustererRef.current = new window.naver.maps.MarkerClustering({
+        console.log('Creating MarkerClustering with:', {
+          gridSize: getGridSize(),
+          markersLength: markers.length,
+          isClusteringEnabled
+        });
+
+        // 클러스터링은 항상 생성하되, 줌 레벨에 따라 표시 여부 결정
+        clustererRef.current = new MarkerClustering({
           minClusterSize: 2,
-          maxZoom: 11,
-          map: mapRef.current,
+          maxZoom: 15, // 줌 16부터 개별 마커
+          map: isClusteringEnabled ? mapRef.current : null, // 줌 레벨에 따라 표시
           markers: markers,
-          disableClickZoom: false,
-          gridSize: 120,
-          icons: [htmlMarker1, htmlMarker2, htmlMarker3, htmlMarker4],
-          indexGenerator: [10, 30, 50],
+          disableClickZoom: false, // 기본 줌 기능 사용
+          gridSize: getGridSize(),
+          icons: [htmlMarker1, htmlMarker2, htmlMarker3, htmlMarker4, htmlMarker5],
+          indexGenerator: [10, 100, 1000, 10000], // 개수 구간
           stylingFunction: function(clusterMarker: any, count: number) {
             const element = clusterMarker.getElement();
-            if (element && element.firstChild) {
-              element.firstChild.innerHTML = count.toString();
+            if (element && element.firstElementChild) {
+              // 숫자 포맷팅 (천 단위 구분)
+              const formattedCount = count >= 10000 ? `${Math.floor(count/1000)}k+` : 
+                                   count >= 1000 ? `${(count/1000).toFixed(1)}k` : 
+                                   count.toString();
+              element.firstElementChild.innerHTML = formattedCount;
+              
+              // 호버 효과 추가
+              element.firstElementChild.onmouseover = function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.zIndex = '10000';
+              };
+              element.firstElementChild.onmouseout = function() {
+                this.style.transform = 'scale(1)';
+                this.style.zIndex = '1';
+              };
             }
           }
         });
+        
+        // 클러스터링이 성공적으로 생성되었는지 확인
+        console.log('MarkerClustering created:', !!clustererRef.current);
+        
+        // 줌 레벨 15 이하에서 클러스터가 표시되어야 함
+        if (isClusteringEnabled && clustererRef.current) {
+          clustererRef.current.setMap(mapRef.current);
+        }
       } catch (error) {
         console.error('클러스터링 초기화 실패:', error);
         // 클러스터링 실패 시 일반 마커로 표시
@@ -390,6 +372,12 @@ const Map = memo(function Map({
           marker.setMap(mapRef.current);
         });
       }
+    } else if (!isClusteringEnabled && markers.length > 0) {
+      // 줌 레벨 16 이상에서는 개별 마커 표시
+      console.log('Showing individual markers at zoom:', currentZoom);
+      markers.forEach(marker => {
+        marker.setMap(mapRef.current);
+      });
     }
 
     // 지도 범위 조정 - 첫 로드 시에만 (사용자가 조작하기 전)
@@ -465,9 +453,16 @@ const Map = memo(function Map({
   return (
     <>
       <Script
-        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&submodules=geocoder,clusterer`}
+        src={`https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=${process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID}&submodules=geocoder`}
         strategy="afterInteractive"
-        onLoad={initializeMap}
+        onLoad={() => {
+          // MarkerClustering.js 동적 로드
+          const script = document.createElement('script');
+          script.src = '/MarkerClustering.js';
+          script.onload = initializeMap;
+          script.onerror = () => setMapLoadError(true);
+          document.head.appendChild(script);
+        }}
         onError={() => setMapLoadError(true)}
       />
       <div className="relative">
