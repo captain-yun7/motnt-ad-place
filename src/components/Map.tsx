@@ -40,6 +40,7 @@ const Map = memo(function Map({
   const markersRef = useRef<any[]>([]);
   const clustererRef = useRef<any>(null);
   const infoWindowRef = useRef<any>(null);
+  const isFirstLoadRef = useRef<boolean>(true); // 첫 로드 여부 추적
   
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [selectedAd, setSelectedAd] = useState<AdResponse | null>(null);
@@ -215,8 +216,8 @@ const Map = memo(function Map({
     });
   }, []);
 
-  // 마커 업데이트 - Virtual Clustering 적용
-  useEffect(() => {
+  // 마커 업데이트를 위한 별도 함수 - useCallback 제거하여 의존성 문제 해결
+  const updateMarkers = () => {
     if (!isMapLoaded || !mapRef.current || !window.naver) return;
 
     // 기존 마커 제거
@@ -391,8 +392,8 @@ const Map = memo(function Map({
       }
     }
 
-    // 지도 범위 조정 - 첫 로드 시에만
-    if (ads.length > 1 && !selectedAd) {
+    // 지도 범위 조정 - 첫 로드 시에만 (사용자가 조작하기 전)
+    if (ads.length > 1 && isFirstLoadRef.current) {
       const bounds = new window.naver.maps.LatLngBounds(
         new window.naver.maps.LatLng(0, 0),
         new window.naver.maps.LatLng(0, 0)
@@ -406,8 +407,21 @@ const Map = memo(function Map({
       });
       
       mapRef.current.fitBounds(bounds);
+      isFirstLoadRef.current = false; // 첫 로드 완료 표시
     }
-  }, [ads, isMapLoaded, isClusteringEnabled, handleMarkerClickInternal, selectedAd, getVisibleAds, boundsKey]); // boundsKey 추가로 뷰포트 변경 시 재계산
+  };
+
+  // 마커 업데이트 호출
+  useEffect(() => {
+    updateMarkers();
+  }, [ads, isMapLoaded, isClusteringEnabled, boundsKey]); // 필요한 의존성만 포함
+
+  // 광고 데이터 변경 시에만 fitBounds 리셋
+  useEffect(() => {
+    if (ads.length > 0) {
+      isFirstLoadRef.current = true;
+    }
+  }, [ads.length]);
 
   // Cleanup
   useEffect(() => {
