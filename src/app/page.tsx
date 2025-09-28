@@ -5,6 +5,7 @@ import { AdResponse } from '@/types/ad';
 import { useAdFilter } from '@/hooks/useAdFilter';
 import { useToggle } from '@/hooks/useToggle';
 import { useSelectedAd } from '@/hooks/useSelectedAd';
+import { useMapBounds } from '@/hooks/useMapBounds';
 import TopFilterBar from '@/components/TopFilterBar';
 import AdListPanel from '@/components/AdListPanel';
 import AdDetailPanel from '@/components/AdDetailPanel';
@@ -36,6 +37,7 @@ export default function Home() {
   const { filters, filteredAds, updateFilter, resetFilters } = useAdFilter(allAds);
   const { value: isPanelVisible, toggle: togglePanel, setTrue: openPanel } = useToggle(true);
   const { selectedAd, showDetail, selectAd, closeDetail } = useSelectedAd();
+  const { visibleAds, updateBounds } = useMapBounds(filteredAds);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -98,7 +100,7 @@ export default function Home() {
       <div className="relative">
         {/* Ad List Panel (Toggleable) */}
         <AdListPanel
-          ads={filteredAds}
+          ads={visibleAds}
           loading={loading}
           error={error}
           isVisible={isPanelVisible}
@@ -138,6 +140,7 @@ export default function Home() {
               ads={filteredAds}
               style={{ width: '100%', height: '100vh' }}
               onMarkerClick={handleAdClick}
+              onBoundsChange={updateBounds}
             />
           </Suspense>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Map as KakaoMap, MapMarker, MapInfoWindow, useKakaoLoader } from 'react-kakao-maps-sdk';
 import { AdResponse } from '@/types/ad';
 
@@ -16,6 +16,7 @@ interface MapProps {
     height: string;
   };
   onMarkerClick?: (ad: AdResponse) => void;
+  onBoundsChange?: (bounds: { sw: { lat: number; lng: number }; ne: { lat: number; lng: number } }) => void;
 }
 
 export default function Map({
@@ -24,6 +25,7 @@ export default function Map({
   level = 7,
   style = { width: '100%', height: '500px' },
   onMarkerClick,
+  onBoundsChange,
 }: MapProps) {
   const [loading, error] = useKakaoLoader({
     appkey: process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY!,
@@ -32,6 +34,28 @@ export default function Map({
 
   const [mapInstance, setMapInstance] = useState<kakao.maps.Map | null>(null);
   const [selectedAd, setSelectedAd] = useState<AdResponse | null>(null);
+
+  // 지도 경계가 변경될 때 호출되는 함수
+  const handleBoundsChanged = useCallback((map: kakao.maps.Map) => {
+    if (!onBoundsChange) return;
+
+    const bounds = map.getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+
+    onBoundsChange({
+      sw: { lat: sw.getLat(), lng: sw.getLng() },
+      ne: { lat: ne.getLat(), lng: ne.getLng() }
+    });
+  }, [onBoundsChange]);
+
+  // 초기 bounds 설정
+  useEffect(() => {
+    if (mapInstance && onBoundsChange) {
+      // 지도가 생성되면 초기 bounds를 한 번 전달
+      handleBoundsChanged(mapInstance);
+    }
+  }, [mapInstance, handleBoundsChanged, onBoundsChange]);
 
   useEffect(() => {
     if (!mapInstance || ads.length === 0) return;
@@ -84,7 +108,12 @@ export default function Map({
         center={center}
         style={style}
         level={level}
-        onCreate={setMapInstance}
+        onCreate={(map) => {
+          setMapInstance(map);
+        }}
+        onBoundsChanged={(map) => handleBoundsChanged(map)}
+        onDragEnd={(map) => handleBoundsChanged(map)}
+        onZoomChanged={(map) => handleBoundsChanged(map)}
         className="rounded-lg border border-gray-200"
         onClick={() => setSelectedAd(null)}
       >
