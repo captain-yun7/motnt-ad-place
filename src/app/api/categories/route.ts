@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
+    console.log('Function region:', process.env.VERCEL_REGION);
     const categories = await prisma.category.findMany({
       orderBy: { name: 'asc' },
       include: {
