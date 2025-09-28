@@ -93,8 +93,8 @@ const Map = memo(function Map({
     const zoom = mapRef.current.getZoom();
     setCurrentZoom(zoom);
     
-    // 네이버 부동산 스타일: 줌 레벨 15 이하에서 클러스터링, 16 이상에서 개별 마커
-    setIsClusteringEnabled(zoom <= 15);
+    // 줌 레벨 13 이하에서 클러스터링, 14 이상에서 개별 마커
+    setIsClusteringEnabled(zoom <= 13);
     
     handleBoundsChange();
   }, [handleBoundsChange]);
@@ -227,47 +227,113 @@ const Map = memo(function Map({
       .map(ad => {
         const [lng, lat] = ad.location!.coordinates!;
         
-        // 줌 레벨 14 이하에서는 1개짜리도 숫자로 표시
-        const markerIcon = currentZoom <= 14 ? {
+        // 카테고리별 마커 디자인 함수
+        const getCategoryMarker = (categoryName: string) => {
+          let icon = '';
+          
+          switch(categoryName) {
+            case '전광판':
+              icon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                <rect x="2" y="4" width="20" height="12" rx="1" stroke="white" stroke-width="2" fill="none"/>
+                <circle cx="6" cy="8" r="1" fill="white"/>
+                <circle cx="10" cy="8" r="1" fill="white"/>
+                <circle cx="14" cy="8" r="1" fill="white"/>
+                <circle cx="18" cy="8" r="1" fill="white"/>
+                <circle cx="6" cy="12" r="1" fill="white"/>
+                <circle cx="10" cy="12" r="1" fill="white"/>
+                <circle cx="14" cy="12" r="1" fill="white"/>
+                <circle cx="18" cy="12" r="1" fill="white"/>
+                <rect x="10" y="16" width="4" height="4" fill="white"/>
+              </svg>`;
+              break;
+            case '현수막':
+              icon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                <path d="M4 5h16v10c0 0-2 2-4 0s-4 2-4 0-4 2-4 0-4 2-4 0V5z" stroke="white" stroke-width="1.5" fill="white" opacity="0.9"/>
+                <line x1="4" y1="5" x2="20" y2="5" stroke="white" stroke-width="2"/>
+              </svg>`;
+              break;
+            case '버스정류장':
+              icon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                <rect x="5" y="6" width="14" height="10" rx="2" stroke="white" stroke-width="1.5" fill="none"/>
+                <circle cx="8" cy="18" r="1.5" fill="white"/>
+                <circle cx="16" cy="18" r="1.5" fill="white"/>
+                <rect x="7" y="8" width="4" height="3" fill="white"/>
+                <rect x="13" y="8" width="4" height="3" fill="white"/>
+              </svg>`;
+              break;
+            case '지하철':
+              icon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                <rect x="4" y="7" width="16" height="10" rx="2" stroke="white" stroke-width="2" fill="none"/>
+                <rect x="6" y="9" width="3" height="3" fill="white"/>
+                <rect x="11" y="9" width="3" height="3" fill="white"/>
+                <rect x="16" y="9" width="2" height="3" fill="white"/>
+                <circle cx="7" cy="19" r="1.5" fill="white"/>
+                <circle cx="17" cy="19" r="1.5" fill="white"/>
+                <line x1="2" y1="21" x2="22" y2="21" stroke="white" stroke-width="1.5"/>
+                <line x1="4" y1="5" x2="7" y2="7" stroke="white" stroke-width="1.5"/>
+                <line x1="20" y1="5" x2="17" y2="7" stroke="white" stroke-width="1.5"/>
+              </svg>`;
+              break;
+            case '팝업스토어':
+              icon = `<svg width="30" height="30" viewBox="0 0 24 24" fill="white">
+                <path d="M3 7h18l-1 13H4L3 7z" stroke="white" stroke-width="2" fill="none"/>
+                <path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2" stroke="white" stroke-width="2" fill="none"/>
+                <circle cx="9" cy="13" r="1" fill="white"/>
+                <circle cx="15" cy="13" r="1" fill="white"/>
+                <path d="M9 16c0 1 1.5 2 3 2s3-1 3-2" stroke="white" stroke-width="1.5" fill="none"/>
+              </svg>`;
+              break;
+            default:
+              icon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
+              </svg>`;
+          }
+          
+          return {
+            content: `
+              <div style="
+                width: 54px;
+                height: 54px;
+                background: black;
+                border: 3px solid white;
+                border-radius: 50%;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.2s;
+              " 
+              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';" 
+              onmouseout="this.style.transform='scale(1)'; this.style.zIndex='1';"
+              title="${categoryName}">
+                ${icon}
+              </div>
+            `,
+            anchor: new window.naver.maps.Point(27, 54),
+          };
+        };
+        
+        // 줌 레벨 13 이하에서는 1개짜리도 숫자로 표시, 14부터는 카테고리 아이콘
+        const markerIcon = currentZoom <= 13 ? {
           content: `
             <div style="
               cursor: pointer;
-              width: 32px;
-              height: 32px;
-              line-height: 32px;
-              font-size: 14px;
+              width: 48px;
+              height: 48px;
+              line-height: 48px;
+              font-size: 21px;
               color: black;
               text-align: center;
               font-weight: 800;
               background: white;
               border-radius: 50%;
-              border: 2px solid black;
+              border: 3px solid black;
               box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             ">1</div>
           `,
-          anchor: new window.naver.maps.Point(16, 16),
-        } : {
-          content: `
-            <div style="
-              width: 32px;
-              height: 32px;
-              background: #3B82F6;
-              border: 2px solid white;
-              border-radius: 50%;
-              box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              cursor: pointer;
-              transition: transform 0.2s;
-            ">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              </svg>
-            </div>
-          `,
-          anchor: new window.naver.maps.Point(16, 32),
-        };
+          anchor: new window.naver.maps.Point(24, 24),
+        } : getCategoryMarker(ad.category.name);
         
         const marker = new window.naver.maps.Marker({
           position: new window.naver.maps.LatLng(lat, lng),
@@ -307,35 +373,50 @@ const Map = memo(function Map({
         return 60; // 미세 그룹
       };
 
-      // 흰색 배경에 검정색 숫자 클러스터 마커
+      // 줌 레벨에 따른 클러스터 크기 계산
+      const getClusterSize = (baseSize: number) => {
+        if (currentZoom <= 10) return baseSize;
+        if (currentZoom === 11) return Math.round(baseSize * 0.9);
+        if (currentZoom === 12) return Math.round(baseSize * 0.9 * 0.9);
+        if (currentZoom === 13) return Math.round(baseSize * 0.9 * 0.9 * 0.9);
+        return baseSize;
+      };
+
+      // 흰색 배경에 검정색 숫자 클러스터 마커 (줌 레벨에 따라 크기 조정)
+      const size1 = getClusterSize(60);
+      const size2 = getClusterSize(75);
+      const size3 = getClusterSize(90);
+      const size4 = getClusterSize(105);
+      const size5 = getClusterSize(120);
+
       const htmlMarker1 = {
-        content: '<div style="cursor:pointer;width:40px;height:40px;line-height:40px;font-size:16px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:2px solid black;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>',
-        size: new window.naver.maps.Size(40, 40),
-        anchor: new window.naver.maps.Point(20, 20)
+        content: `<div style="cursor:pointer;width:${size1}px;height:${size1}px;line-height:${size1}px;font-size:${Math.round(size1 * 0.4)}px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:3px solid black;box-shadow:0 2px 8px rgba(0,0,0,0.15)"></div>`,
+        size: new window.naver.maps.Size(size1, size1),
+        anchor: new window.naver.maps.Point(size1/2, size1/2)
       };
 
       const htmlMarker2 = {
-        content: '<div style="cursor:pointer;width:50px;height:50px;line-height:50px;font-size:18px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:2px solid black;box-shadow:0 2px 10px rgba(0,0,0,0.2)"></div>',
-        size: new window.naver.maps.Size(50, 50),
-        anchor: new window.naver.maps.Point(25, 25)
+        content: `<div style="cursor:pointer;width:${size2}px;height:${size2}px;line-height:${size2}px;font-size:${Math.round(size2 * 0.36)}px;color:black;text-align:center;font-weight:800;background:white;border-radius:50%;border:3px solid black;box-shadow:0 2px 10px rgba(0,0,0,0.2)"></div>`,
+        size: new window.naver.maps.Size(size2, size2),
+        anchor: new window.naver.maps.Point(size2/2, size2/2)
       };
 
       const htmlMarker3 = {
-        content: '<div style="cursor:pointer;width:60px;height:60px;line-height:60px;font-size:20px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:2px solid black;box-shadow:0 3px 12px rgba(0,0,0,0.25)"></div>',
-        size: new window.naver.maps.Size(60, 60),
-        anchor: new window.naver.maps.Point(30, 30)
+        content: `<div style="cursor:pointer;width:${size3}px;height:${size3}px;line-height:${size3}px;font-size:${Math.round(size3 * 0.33)}px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:3px solid black;box-shadow:0 3px 12px rgba(0,0,0,0.25)"></div>`,
+        size: new window.naver.maps.Size(size3, size3),
+        anchor: new window.naver.maps.Point(size3/2, size3/2)
       };
 
       const htmlMarker4 = {
-        content: '<div style="cursor:pointer;width:70px;height:70px;line-height:70px;font-size:22px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:3px solid black;box-shadow:0 3px 14px rgba(0,0,0,0.3)"></div>',
-        size: new window.naver.maps.Size(70, 70),
-        anchor: new window.naver.maps.Point(35, 35)
+        content: `<div style="cursor:pointer;width:${size4}px;height:${size4}px;line-height:${size4}px;font-size:${Math.round(size4 * 0.31)}px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:4px solid black;box-shadow:0 3px 14px rgba(0,0,0,0.3)"></div>`,
+        size: new window.naver.maps.Size(size4, size4),
+        anchor: new window.naver.maps.Point(size4/2, size4/2)
       };
 
       const htmlMarker5 = {
-        content: '<div style="cursor:pointer;width:80px;height:80px;line-height:80px;font-size:24px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:3px solid black;box-shadow:0 4px 16px rgba(0,0,0,0.35)"></div>',
-        size: new window.naver.maps.Size(80, 80),
-        anchor: new window.naver.maps.Point(40, 40)
+        content: `<div style="cursor:pointer;width:${size5}px;height:${size5}px;line-height:${size5}px;font-size:${Math.round(size5 * 0.3)}px;color:black;text-align:center;font-weight:900;background:white;border-radius:50%;border:4px solid black;box-shadow:0 4px 16px rgba(0,0,0,0.35)"></div>`,
+        size: new window.naver.maps.Size(size5, size5),
+        anchor: new window.naver.maps.Point(size5/2, size5/2)
       };
 
 
@@ -349,8 +430,8 @@ const Map = memo(function Map({
 
         // 클러스터링은 항상 생성하되, 줌 레벨에 따라 표시 여부 결정
         clustererRef.current = new MarkerClustering({
-          minClusterSize: currentZoom <= 14 ? 1 : 2, // 줌 14 이하에서는 1개부터 클러스터링
-          maxZoom: 15, // 줌 16부터 개별 마커
+          minClusterSize: currentZoom <= 13 ? 1 : 2, // 줌 13 이하에서는 1개부터 클러스터링
+          maxZoom: 13, // 줌 14부터 개별 마커
           map: isClusteringEnabled ? mapRef.current : null, // 줌 레벨에 따라 표시
           markers: markers,
           disableClickZoom: false, // 기본 줌 기능 사용
@@ -382,7 +463,7 @@ const Map = memo(function Map({
         // 클러스터링이 성공적으로 생성되었는지 확인
         console.log('MarkerClustering created:', !!clustererRef.current);
         
-        // 줌 레벨 15 이하에서 클러스터가 표시되어야 함
+        // 줌 레벨 13 이하에서 클러스터가 표시되어야 함
         if (isClusteringEnabled && clustererRef.current) {
           clustererRef.current.setMap(mapRef.current);
         }
@@ -393,8 +474,10 @@ const Map = memo(function Map({
           marker.setMap(mapRef.current);
         });
       }
-    } else if (!isClusteringEnabled && markers.length > 0) {
-      // 줌 레벨 16 이상에서는 개별 마커 표시
+    }
+    
+    // 줌 레벨 14 이상에서는 개별 마커 표시
+    if (!isClusteringEnabled && markers.length > 0) {
       console.log('Showing individual markers at zoom:', currentZoom);
       markers.forEach(marker => {
         marker.setMap(mapRef.current);
