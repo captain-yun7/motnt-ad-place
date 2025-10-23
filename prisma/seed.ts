@@ -59,31 +59,81 @@ async function main() {
       description: '강남역 2번 출구 정면 대형 LED 전광판입니다.',
       categoryId: categories[0].id, // LED 전광판
       districtId: districts[0].id, // 강남구
+      status: 'ACTIVE',
+      featured: true,
+      tags: ['강남', '역세권', 'LED', '대형', '24시간'],
+      viewCount: 1234,
+      favoriteCount: 45,
+      inquiryCount: 12,
+      verified: true,
       location: {
         address: '서울시 강남구 강남대로 396',
         coordinates: [127.027926, 37.497954],
         landmarks: ['강남역', '강남역사거리', 'CGV 강남'],
-        district: '강남구'
+        district: '강남구',
+        nearestStation: {
+          name: '강남역',
+          line: '2호선',
+          exit: '2번 출구',
+          walkingTime: '1분'
+        },
+        parking: {
+          available: false,
+          capacity: null,
+          fee: null
+        }
       },
       specs: {
         type: 'LED 전광판',
         size: '10m x 3m',
         resolution: '1920x576',
         material: 'LED',
-        installation: '건물 외벽'
+        installation: '건물 외벽',
+        allowedContentTypes: ['이미지', '동영상'],
+        maxFileSize: '50MB',
+        supportedFormats: ['JPG', 'PNG', 'MP4'],
+        updateFrequency: '실시간',
+        approvalRequired: true,
+        approvalTime: '1-2 영업일'
       },
       pricing: {
         monthly: 3000000,
+        weekly: 800000,
+        daily: 150000,
         deposit: 1000000,
         minimumPeriod: 3,
-        currency: 'KRW'
+        currency: 'KRW',
+        discounts: {
+          '3months': 5,
+          '6months': 10,
+          '12months': 20
+        },
+        additionalCosts: {
+          installation: 500000,
+          design: 300000
+        }
+      },
+      availability: {
+        bookingStatus: 'available',
+        availableFrom: '2025-02-01',
+        availableUntil: '2025-12-31'
       },
       metadata: {
         traffic: '일평균 10만명 이상',
         visibility: '매우 좋음',
         nearbyBusinesses: ['강남역', 'CGV', '스타벅스', '맥도날드'],
         operatingHours: '24시간',
-        restrictions: ['음주 광고 불가', '의료 광고 제한']
+        restrictions: ['음주 광고 불가', '의료 광고 제한'],
+        targetAudience: {
+          ageRange: '20-40대',
+          gender: '전체',
+          interests: ['패션', '뷰티', 'IT', '엔터테인먼트']
+        },
+        performanceMetrics: {
+          averageViews: 100000,
+          peakHours: ['08:00-09:00', '18:00-20:00'],
+          engagementRate: 3.5
+        }
       }
     },
     {
@@ -92,38 +142,94 @@ async function main() {
       description: '홍대입구역 인근 주요 버스정류장 광고판입니다.',
       categoryId: categories[2].id, // 버스정류장
       districtId: districts[4].id, // 마포구
+      status: 'ACTIVE',
+      featured: false,
+      tags: ['홍대', '버스정류장', '젊은층', '대학가'],
+      viewCount: 567,
+      favoriteCount: 23,
+      inquiryCount: 8,
+      verified: true,
       location: {
         address: '서울시 마포구 양화로 160',
         coordinates: [126.924910, 37.556628],
         landmarks: ['홍대입구역', '홍익대학교', '홍대거리'],
-        district: '마포구'
+        district: '마포구',
+        nearestStation: {
+          name: '홍대입구역',
+          line: '2호선',
+          exit: '9번 출구',
+          walkingTime: '3분'
+        },
+        parking: {
+          available: true,
+          capacity: '30대',
+          fee: '시간당 2000원'
+        }
       },
       specs: {
         type: '버스정류장 광고판',
         size: '2m x 1.2m',
         material: '후면조명 필름',
-        installation: '버스정류장'
+        installation: '버스정류장',
+        allowedContentTypes: ['이미지'],
+        maxFileSize: '10MB',
+        supportedFormats: ['JPG', 'PNG'],
+        updateFrequency: '월 1회',
+        approvalRequired: true,
+        approvalTime: '3-5 영업일'
       },
       pricing: {
         monthly: 800000,
+        weekly: 220000,
+        daily: 40000,
         deposit: 300000,
         minimumPeriod: 6,
-        currency: 'KRW'
+        currency: 'KRW',
+        discounts: {
+          '6months': 8,
+          '12months': 15
+        },
+        additionalCosts: {
+          installation: 100000,
+          design: 150000
+        }
+      },
+      availability: {
+        bookingStatus: 'partially_booked',
+        availableFrom: '2025-03-01',
+        availableUntil: '2025-12-31'
       },
       metadata: {
         traffic: '일평균 5만명',
         visibility: '좋음',
         nearbyBusinesses: ['홍익대학교', '클럽', '카페', '음식점'],
         operatingHours: '24시간',
-        restrictions: []
+        restrictions: [],
+        targetAudience: {
+          ageRange: '10-30대',
+          gender: '전체',
+          interests: ['패션', '음악', '예술', '문화']
+        },
+        performanceMetrics: {
+          averageViews: 50000,
+          peakHours: ['12:00-13:00', '19:00-21:00'],
+          engagementRate: 2.8
+        }
       }
     },
     {
       title: '잠실역 지하철 광고',
       slug: 'jamsil-subway-ad',
       description: '잠실역 대합실 메인 광고 공간입니다.',
-      categoryId: categories[3].id, // 지하철역
-      districtId: districts[2].id, // 송파구
+      categoryId: categories[3].id,
+      districtId: districts[2].id,
+      status: 'ACTIVE',
+      featured: true,
+      tags: ['잠실', '지하철', '대형'],
+      viewCount: 2345,
+      favoriteCount: 78,
+      inquiryCount: 25,
+      verified: true,
       location: {
         address: '서울시 송파구 올림픽로 지하 265',
         coordinates: [127.100311, 37.513292],
@@ -138,9 +244,15 @@ async function main() {
       },
       pricing: {
         monthly: 1500000,
+        weekly: 400000,
+        daily: 70000,
         deposit: 500000,
         minimumPeriod: 3,
-        currency: 'KRW'
+        currency: 'KRW',
+        discounts: { '3months': 7, '6months': 12 }
+      },
+      availability: {
+        bookingStatus: 'available'
       },
       metadata: {
         traffic: '일평균 15만명',
@@ -154,8 +266,15 @@ async function main() {
       title: '명동 현수막 광고',
       slug: 'myeongdong-banner',
       description: '명동 메인스트리트 현수막 광고 위치입니다.',
-      categoryId: categories[1].id, // 현수막
-      districtId: districts[6].id, // 중구
+      categoryId: categories[1].id,
+      districtId: districts[6].id,
+      status: 'ACTIVE',
+      featured: false,
+      tags: ['명동', '현수막', '관광지'],
+      viewCount: 890,
+      favoriteCount: 34,
+      inquiryCount: 15,
+      verified: true,
       location: {
         address: '서울시 중구 명동길 26',
         coordinates: [126.981893, 37.563692],
@@ -170,9 +289,15 @@ async function main() {
       },
       pricing: {
         monthly: 500000,
+        weekly: 140000,
+        daily: 25000,
         deposit: 200000,
         minimumPeriod: 1,
-        currency: 'KRW'
+        currency: 'KRW',
+        discounts: { '3months': 10 }
+      },
+      availability: {
+        bookingStatus: 'available'
       },
       metadata: {
         traffic: '일평균 8만명',
@@ -186,8 +311,15 @@ async function main() {
       title: '이태원 옥외간판',
       slug: 'itaewon-outdoor-sign',
       description: '이태원 메인스트리트 건물 외벽 간판 광고입니다.',
-      categoryId: categories[4].id, // 옥외간판
-      districtId: districts[5].id, // 용산구
+      categoryId: categories[4].id,
+      districtId: districts[5].id,
+      status: 'ACTIVE',
+      featured: false,
+      tags: ['이태원', '외국인', '야간'],
+      viewCount: 456,
+      favoriteCount: 19,
+      inquiryCount: 7,
+      verified: false,
       location: {
         address: '서울시 용산구 이태원로 200',
         coordinates: [126.994041, 37.534567],
@@ -202,9 +334,15 @@ async function main() {
       },
       pricing: {
         monthly: 1200000,
+        weekly: 330000,
+        daily: 60000,
         deposit: 400000,
         minimumPeriod: 6,
-        currency: 'KRW'
+        currency: 'KRW',
+        discounts: { '6months': 10 }
+      },
+      availability: {
+        bookingStatus: 'available'
       },
       metadata: {
         traffic: '일평균 6만명',

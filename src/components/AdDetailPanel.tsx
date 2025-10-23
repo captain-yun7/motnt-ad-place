@@ -92,21 +92,21 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
               <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
                 <span className="text-sm font-medium text-gray-700">월 광고료</span>
                 <span className="text-xl font-bold text-blue-600">
-                  {ad.pricing.monthly.toLocaleString()}원
+                  {ad.pricing?.monthly?.toLocaleString() || '문의'}원
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-gray-50 rounded-lg text-center">
                   <div className="text-lg font-bold text-gray-900">
-                    {ad.pricing.weekly.toLocaleString()}원
+                    {ad.pricing?.deposit?.toLocaleString() || '문의'}원
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">주 광고료</div>
+                  <div className="text-xs text-gray-600 mt-1">보증금</div>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg text-center">
                   <div className="text-lg font-bold text-gray-900">
-                    {ad.pricing.daily.toLocaleString()}원
+                    {ad.pricing?.minimumPeriod || '-'}개월
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">일 광고료</div>
+                  <div className="text-xs text-gray-600 mt-1">최소 계약 기간</div>
                 </div>
               </div>
             </div>

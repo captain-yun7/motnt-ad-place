@@ -1,11 +1,22 @@
-import { Ad, Category, District, AdImage } from '@prisma/client';
+import { Ad, Category, District, AdImage, AdStatus } from '@prisma/client';
 
 // 광고 위치 정보 타입
 export interface AdLocation {
   address: string;
   coordinates: [number, number]; // [lng, lat]
   landmarks?: string[];
-  district?: string;  
+  district?: string;
+  nearestStation?: {
+    name: string;
+    line: string;
+    exit: string;
+    walkingTime: string;
+  };
+  parking?: {
+    available: boolean;
+    capacity: string | null;
+    fee: string | null;
+  };
 }
 
 // 광고판 사양 타입
@@ -18,16 +29,43 @@ export interface AdSpecs {
   resolution?: string;
   material?: string;
   installation?: string;
+  // Phase 1 추가
+  allowedContentTypes?: string[];
+  maxFileSize?: string;
+  supportedFormats?: string[];
+  updateFrequency?: string;
+  approvalRequired?: boolean;
+  approvalTime?: string;
 }
 
 // 가격 정보 타입
 export interface AdPricing {
   monthly: number;
+  weekly?: number;
+  daily?: number;
   deposit?: number;
-  setup?: number;  
+  setup?: number;
   design?: number;
   minimumPeriod: number; // 최소 계약 기간 (월)
-  currency: string;    
+  currency: string;
+  // Phase 1 추가
+  discounts?: {
+    [key: string]: number; // '3months': 5 (5% 할인)
+  };
+  additionalCosts?: {
+    installation?: number;
+    design?: number;
+    [key: string]: number | undefined;
+  };
+}
+
+// 예약 가능 여부 타입
+export interface AdAvailability {
+  bookingStatus: 'available' | 'partially_booked' | 'fully_booked';
+  availableDates?: string[];
+  bookedDates?: string[];
+  availableFrom?: string;
+  availableUntil?: string;
 }
 
 // 메타데이터 타입
@@ -37,6 +75,23 @@ export interface AdMetadata {
   nearbyBusinesses?: string[];
   operatingHours?: string;
   restrictions?: string[];
+  // Phase 1 추가
+  targetAudience?: {
+    ageRange?: string;
+    gender?: string;
+    interests?: string[];
+  };
+  demographics?: {
+    primaryAge?: string;
+    income?: string;
+    occupation?: string[];
+  };
+  performanceMetrics?: {
+    averageViews?: number;
+    peakHours?: string[];
+    clickThroughRate?: number;
+    engagementRate?: number;
+  };
 }
 
 // 완전한 광고 정보 (관계 포함)
@@ -55,8 +110,18 @@ export interface AdResponse {
   location: AdLocation | null;
   specs: AdSpecs;
   pricing: AdPricing;
+  availability?: AdAvailability;
   metadata?: AdMetadata;
-  isActive?: boolean,  
+  // Phase 1 추가
+  status: AdStatus;
+  featured: boolean;
+  tags: string[];
+  viewCount: number;
+  favoriteCount: number;
+  inquiryCount: number;
+  verified: boolean;
+  verifiedAt?: string | null;
+  isActive?: boolean;
   category: {
     id: string;
     name: string;
@@ -83,6 +148,11 @@ export interface AdFilters {
   priceMin?: number;
   priceMax?: number;
   type?: string;
+  // Phase 1 추가
+  status?: AdStatus;
+  featured?: boolean;
+  tags?: string[];
+  verified?: boolean;
 }
 
 // 광고 검색 파라미터
@@ -90,6 +160,9 @@ export interface AdSearchParams extends AdFilters {
   query?: string;
   page?: number;
   limit?: number;
-  sort?: 'price' | 'date' | 'title';
+  sort?: 'price' | 'date' | 'title' | 'views' | 'popularity';
   order?: 'asc' | 'desc';
 }
+
+// Inquiry 타입 export
+export { AdStatus } from '@prisma/client';
