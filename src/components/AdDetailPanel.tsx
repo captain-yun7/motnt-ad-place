@@ -69,46 +69,124 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
         <div className="flex-1 overflow-y-auto">
           {/* Image Gallery */}
           <div className="p-6 border-b border-gray-200">
-            <div className="bg-gray-200 rounded-lg h-56 flex items-center justify-center mb-4">
-              <svg className="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-              </svg>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="aspect-square bg-gray-100 rounded border border-gray-200 flex items-center justify-center">
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            {ad.images && ad.images.length > 0 ? (
+              <>
+                <div className="bg-gray-200 rounded-lg h-56 overflow-hidden mb-4">
+                  <img
+                    src={ad.images[0].url}
+                    alt={ad.images[0].alt || ad.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="grid grid-cols-4 gap-2">
+                  {ad.images.slice(1, 5).map((image) => (
+                    <div key={image.id} className="aspect-square bg-gray-100 rounded border border-gray-200 overflow-hidden">
+                      <img
+                        src={image.url}
+                        alt={image.alt || ad.title}
+                        className="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity"
+                      />
+                    </div>
+                  ))}
+                  {ad.images.length > 5 && (
+                    <div className="aspect-square bg-gray-800 bg-opacity-50 rounded border border-gray-200 flex items-center justify-center text-white text-sm font-medium">
+                      +{ad.images.length - 5}
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="bg-gray-200 rounded-lg h-56 flex items-center justify-center mb-4">
+                  <svg className="w-20 h-20 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                   </svg>
                 </div>
-              ))}
-            </div>
+                <div className="text-center text-sm text-gray-500">이미지가 없습니다</div>
+              </>
+            )}
           </div>
 
           {/* Pricing Information */}
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">가격 정보</h4>
             <div className="space-y-3">
-              <div className="flex justify-between items-center p-4 bg-blue-50 rounded-lg border border-blue-100">
-                <span className="text-sm font-medium text-gray-700">월 광고료</span>
-                <span className="text-xl font-bold text-blue-600">
-                  {ad.pricing?.monthly?.toLocaleString() || '문의'}원
-                </span>
+              {/* 주요 가격 옵션 */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="p-3 bg-blue-50 rounded-lg text-center border border-blue-100">
+                  <div className="text-lg font-bold text-blue-600">
+                    {ad.pricing?.monthly?.toLocaleString() || '문의'}원
+                  </div>
+                  <div className="text-xs text-gray-600 mt-1">월</div>
+                </div>
+                {ad.pricing?.weekly && (
+                  <div className="p-3 bg-gray-50 rounded-lg text-center">
+                    <div className="text-lg font-bold text-gray-900">
+                      {ad.pricing.weekly.toLocaleString()}원
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">주</div>
+                  </div>
+                )}
+                {ad.pricing?.daily && (
+                  <div className="p-3 bg-gray-50 rounded-lg text-center">
+                    <div className="text-lg font-bold text-gray-900">
+                      {ad.pricing.daily.toLocaleString()}원
+                    </div>
+                    <div className="text-xs text-gray-600 mt-1">일</div>
+                  </div>
+                )}
               </div>
+
+              {/* 보증금 및 계약 기간 */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-gray-50 rounded-lg text-center">
-                  <div className="text-lg font-bold text-gray-900">
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-600">보증금</div>
+                  <div className="text-lg font-bold text-gray-900 mt-1">
                     {ad.pricing?.deposit?.toLocaleString() || '문의'}원
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">보증금</div>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg text-center">
-                  <div className="text-lg font-bold text-gray-900">
+                <div className="p-3 bg-gray-50 rounded-lg">
+                  <div className="text-sm text-gray-600">최소 계약</div>
+                  <div className="text-lg font-bold text-gray-900 mt-1">
                     {ad.pricing?.minimumPeriod || '-'}개월
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">최소 계약 기간</div>
                 </div>
               </div>
+
+              {/* 할인 정보 */}
+              {ad.pricing?.discounts && Object.keys(ad.pricing.discounts).length > 0 && (
+                <div className="p-3 bg-green-50 rounded-lg border border-green-100">
+                  <div className="text-sm font-medium text-green-800 mb-2">🎉 장기 계약 할인</div>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
+                      <span key={period} className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                        {period.replace('months', '개월')}: {discount}% 할인
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 추가 비용 */}
+              {ad.pricing?.additionalCosts && (
+                <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
+                  <div className="text-sm font-medium text-orange-800 mb-2">추가 비용</div>
+                  <div className="space-y-1">
+                    {ad.pricing.additionalCosts.installation && (
+                      <div className="flex justify-between text-xs text-orange-700">
+                        <span>설치비</span>
+                        <span>{ad.pricing.additionalCosts.installation.toLocaleString()}원</span>
+                      </div>
+                    )}
+                    {ad.pricing.additionalCosts.design && (
+                      <div className="flex justify-between text-xs text-orange-700">
+                        <span>디자인비</span>
+                        <span>{ad.pricing.additionalCosts.design.toLocaleString()}원</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -137,6 +215,43 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             </div>
           </div>
 
+          {/* Transportation Info */}
+          {(ad.location?.nearestStation || ad.location?.parking) && (
+            <div className="p-6 border-b border-gray-200">
+              <h4 className="text-lg font-semibold text-gray-900 mb-4">교통 정보</h4>
+              <div className="space-y-3">
+                {ad.location.nearestStation && (
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <span className="text-lg">🚇</span>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">
+                          {ad.location.nearestStation.name} ({ad.location.nearestStation.line})
+                        </div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          {ad.location.nearestStation.exit} · 도보 {ad.location.nearestStation.walkingTime}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {ad.location.parking && ad.location.parking.available && (
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <span className="text-lg">🅿️</span>
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">주차 가능</div>
+                        <div className="text-sm text-gray-600 mt-1">
+                          {ad.location.parking.capacity} · {ad.location.parking.fee}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Specifications */}
           {ad.specs && (
             <div className="p-6 border-b border-gray-200">
@@ -154,21 +269,47 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
           {/* Statistics */}
           <div className="p-6 border-b border-gray-200">
-            <h4 className="text-lg font-semibold text-gray-900 mb-4">예상 노출 통계</h4>
-            <div className="grid grid-cols-2 gap-4">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4">노출 및 참여 통계</h4>
+            <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="text-center p-4 bg-blue-50 rounded-lg">
                 <div className="text-2xl font-bold text-blue-600">
-                  {Math.floor(Math.random() * 200000 + 50000).toLocaleString()}
+                  {(ad.metadata?.performanceMetrics?.averageViews || ad.viewCount * 10).toLocaleString()}
                 </div>
-                <div className="text-sm text-blue-600 mt-1">일 노출수</div>
+                <div className="text-sm text-blue-600 mt-1">일 평균 노출</div>
               </div>
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <div className="text-2xl font-bold text-green-600">
-                  {Math.floor(Math.random() * 100000 + 20000).toLocaleString()}
+                  {ad.viewCount.toLocaleString()}
                 </div>
-                <div className="text-sm text-green-600 mt-1">월 노출수</div>
+                <div className="text-sm text-green-600 mt-1">페이지 조회</div>
+              </div>
+              <div className="text-center p-4 bg-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">
+                  {ad.favoriteCount.toLocaleString()}
+                </div>
+                <div className="text-sm text-purple-600 mt-1">관심 등록</div>
+              </div>
+              <div className="text-center p-4 bg-orange-50 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">
+                  {ad.inquiryCount.toLocaleString()}
+                </div>
+                <div className="text-sm text-orange-600 mt-1">문의</div>
               </div>
             </div>
+
+            {/* Peak Hours */}
+            {ad.metadata?.performanceMetrics?.peakHours && ad.metadata.performanceMetrics.peakHours.length > 0 && (
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <div className="text-sm font-medium text-gray-700 mb-2">피크 시간대</div>
+                <div className="flex flex-wrap gap-2">
+                  {ad.metadata.performanceMetrics.peakHours.map((time, index) => (
+                    <span key={index} className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                      {time}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Action Buttons */}
