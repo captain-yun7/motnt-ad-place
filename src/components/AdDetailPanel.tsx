@@ -111,25 +111,25 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">가격 정보</h4>
             <div className="space-y-3">
-              {/* 주요 가격 옵션 */}
+              {/* 주요 가격 옵션 - 시인성 최우선 */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-3 bg-blue-50 rounded-lg text-center border border-blue-100">
-                  <div className="text-lg font-bold text-blue-600">
+                <div className="p-4 bg-gray-900 rounded-lg text-center">
+                  <div className="text-xl font-bold text-white">
                     {ad.pricing?.monthly?.toLocaleString() || '문의'}원
                   </div>
-                  <div className="text-xs text-gray-600 mt-1">월</div>
+                  <div className="text-xs text-gray-300 mt-1">월</div>
                 </div>
                 {ad.pricing?.weekly && (
-                  <div className="p-3 bg-gray-50 rounded-lg text-center">
-                    <div className="text-lg font-bold text-gray-900">
+                  <div className="p-4 bg-white rounded-lg text-center border-2 border-gray-900">
+                    <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.weekly.toLocaleString()}원
                     </div>
                     <div className="text-xs text-gray-600 mt-1">주</div>
                   </div>
                 )}
                 {ad.pricing?.daily && (
-                  <div className="p-3 bg-gray-50 rounded-lg text-center">
-                    <div className="text-lg font-bold text-gray-900">
+                  <div className="p-4 bg-white rounded-lg text-center border-2 border-gray-900">
+                    <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.daily.toLocaleString()}원
                     </div>
                     <div className="text-xs text-gray-600 mt-1">일</div>
@@ -139,49 +139,49 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
               {/* 보증금 및 계약 기간 */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <div className="text-sm text-gray-600">보증금</div>
-                  <div className="text-lg font-bold text-gray-900 mt-1">
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-xs text-gray-600 mb-1">보증금</div>
+                  <div className="text-lg font-bold text-gray-900">
                     {ad.pricing?.deposit?.toLocaleString() || '문의'}원
                   </div>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <div className="text-sm text-gray-600">최소 계약</div>
-                  <div className="text-lg font-bold text-gray-900 mt-1">
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-xs text-gray-600 mb-1">최소 계약</div>
+                  <div className="text-lg font-bold text-gray-900">
                     {ad.pricing?.minimumPeriod || '-'}개월
                   </div>
                 </div>
               </div>
 
-              {/* 할인 정보 */}
+              {/* 할인 정보 - 단순화 */}
               {ad.pricing?.discounts && Object.keys(ad.pricing.discounts).length > 0 && (
-                <div className="p-3 bg-green-50 rounded-lg border border-green-100">
-                  <div className="text-sm font-medium text-green-800 mb-2">🎉 장기 계약 할인</div>
+                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="text-sm font-semibold text-gray-900 mb-2">장기 계약 할인</div>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
-                      <span key={period} className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                        {period.replace('months', '개월')}: {discount}% 할인
+                      <span key={period} className="text-xs bg-gray-900 text-white px-2 py-1 rounded font-medium">
+                        {period.replace('months', '개월')}: {discount}%
                       </span>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* 추가 비용 */}
+              {/* 추가 비용 - 단순화 */}
               {ad.pricing?.additionalCosts && (
-                <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
-                  <div className="text-sm font-medium text-orange-800 mb-2">추가 비용</div>
+                <div className="p-3 bg-white rounded-lg border border-gray-300">
+                  <div className="text-sm font-medium text-gray-700 mb-2">추가 비용</div>
                   <div className="space-y-1">
                     {ad.pricing.additionalCosts.installation && (
-                      <div className="flex justify-between text-xs text-orange-700">
-                        <span>설치비</span>
-                        <span>{ad.pricing.additionalCosts.installation.toLocaleString()}원</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">설치비</span>
+                        <span className="font-semibold text-gray-900">{ad.pricing.additionalCosts.installation.toLocaleString()}원</span>
                       </div>
                     )}
                     {ad.pricing.additionalCosts.design && (
-                      <div className="flex justify-between text-xs text-orange-700">
-                        <span>디자인비</span>
-                        <span>{ad.pricing.additionalCosts.design.toLocaleString()}원</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">디자인비</span>
+                        <span className="font-semibold text-gray-900">{ad.pricing.additionalCosts.design.toLocaleString()}원</span>
                       </div>
                     )}
                   </div>
@@ -215,17 +215,19 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             </div>
           </div>
 
-          {/* Transportation Info */}
+          {/* Transportation Info - 단순화 */}
           {(ad.location?.nearestStation || ad.location?.parking) && (
             <div className="p-6 border-b border-gray-200">
               <h4 className="text-lg font-semibold text-gray-900 mb-4">교통 정보</h4>
               <div className="space-y-3">
                 {ad.location.nearestStation && (
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <span className="text-lg">🚇</span>
+                  <div className="p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-sm">🚇</span>
+                      </div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900">
+                        <div className="font-semibold text-gray-900">
                           {ad.location.nearestStation.name} ({ad.location.nearestStation.line})
                         </div>
                         <div className="text-sm text-gray-600 mt-1">
@@ -236,11 +238,13 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                   </div>
                 )}
                 {ad.location.parking && ad.location.parking.available && (
-                  <div className="p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-start gap-2">
-                      <span className="text-lg">🅿️</span>
+                  <div className="p-3 bg-white rounded-lg border border-gray-200">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-sm">🅿️</span>
+                      </div>
                       <div className="flex-1">
-                        <div className="font-medium text-gray-900">주차 가능</div>
+                        <div className="font-semibold text-gray-900">주차 가능</div>
                         <div className="text-sm text-gray-600 mt-1">
                           {ad.location.parking.capacity} · {ad.location.parking.fee}
                         </div>
@@ -267,43 +271,43 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             </div>
           )}
 
-          {/* Statistics */}
+          {/* Statistics - 시인성 최우선 */}
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">노출 및 참여 통계</h4>
-            <div className="grid grid-cols-2 gap-4 mb-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <div className="text-center p-4 bg-gray-900 rounded-lg">
+                <div className="text-3xl font-bold text-white">
                   {(ad.metadata?.performanceMetrics?.averageViews || ad.viewCount * 10).toLocaleString()}
                 </div>
-                <div className="text-sm text-blue-600 mt-1">일 평균 노출</div>
+                <div className="text-xs text-gray-300 mt-1">일 평균 노출</div>
               </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
+              <div className="text-center p-4 bg-white rounded-lg border-2 border-gray-900">
+                <div className="text-3xl font-bold text-gray-900">
                   {ad.viewCount.toLocaleString()}
                 </div>
-                <div className="text-sm text-green-600 mt-1">페이지 조회</div>
+                <div className="text-xs text-gray-600 mt-1">페이지 조회</div>
               </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
+              <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-2xl font-bold text-gray-900">
                   {ad.favoriteCount.toLocaleString()}
                 </div>
-                <div className="text-sm text-purple-600 mt-1">관심 등록</div>
+                <div className="text-xs text-gray-600 mt-1">관심 등록</div>
               </div>
-              <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">
+              <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="text-2xl font-bold text-gray-900">
                   {ad.inquiryCount.toLocaleString()}
                 </div>
-                <div className="text-sm text-orange-600 mt-1">문의</div>
+                <div className="text-xs text-gray-600 mt-1">문의</div>
               </div>
             </div>
 
             {/* Peak Hours */}
             {ad.metadata?.performanceMetrics?.peakHours && ad.metadata.performanceMetrics.peakHours.length > 0 && (
-              <div className="p-3 bg-gray-50 rounded-lg">
+              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="text-sm font-medium text-gray-700 mb-2">피크 시간대</div>
                 <div className="flex flex-wrap gap-2">
                   {ad.metadata.performanceMetrics.peakHours.map((time, index) => (
-                    <span key={index} className="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">
+                    <span key={index} className="text-xs bg-gray-900 text-white px-2 py-1 rounded font-medium">
                       {time}
                     </span>
                   ))}
