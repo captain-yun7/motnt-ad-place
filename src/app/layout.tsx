@@ -1,21 +1,35 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_KR } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import SkipToContent from "@/components/SkipToContent";
 import MonitoringSetup from "@/components/MonitoringSetup";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+// Pretendard 폰트 - 한글 최적화, 모던한 디자인
+const pretendard = localFont({
+  src: [
+    {
+      path: "../../public/fonts/PretendardVariable.woff2",
+      weight: "45 920",
+      style: "normal",
+    },
+  ],
+  variable: "--font-pretendard",
   display: "swap",
-  weight: ["400", "500", "600", "700"],
-});
-
-const notoSansKR = Noto_Sans_KR({
-  variable: "--font-noto-sans-kr",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700"],
+  fallback: [
+    "-apple-system",
+    "BlinkMacSystemFont",
+    "system-ui",
+    "Roboto",
+    "Helvetica Neue",
+    "Segoe UI",
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    "Malgun Gothic",
+    "Apple Color Emoji",
+    "Segoe UI Emoji",
+    "Segoe UI Symbol",
+    "sans-serif",
+  ],
 });
 
 export const metadata: Metadata = {
@@ -70,9 +84,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body
-        className={`${inter.variable} ${notoSansKR.variable} font-sans antialiased`}
-      >
+      <body className={`${pretendard.variable} font-pretendard antialiased`}>
         <SkipToContent />
         <MonitoringSetup />
         {children}
