@@ -237,7 +237,7 @@ async function main() {
       prisma.adImage.create({
         data: {
           adId: ad.id,
-          url: `https://picsum.photos/800/600?random=${ad.id}-1`,
+          url: `https://placehold.co/800x600/png?text=Ad+Image+1`,
           alt: `${ad.title} 메인 이미지`,
           order: 0,
         },
@@ -245,7 +245,7 @@ async function main() {
       prisma.adImage.create({
         data: {
           adId: ad.id,
-          url: `https://picsum.photos/800/600?random=${ad.id}-2`,
+          url: `https://placehold.co/800x600/png?text=Ad+Image+2`,
           alt: `${ad.title} 측면 뷰`,
           order: 1,
         },
