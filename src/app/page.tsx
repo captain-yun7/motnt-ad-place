@@ -32,7 +32,8 @@ export default function Home() {
   const [districts, setDistricts] = useState<District[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [showSubFilters, setShowSubFilters] = useState(true); // 검색 조건 필터 토글 상태
+
   // Custom hooks
   const { filters, filteredAds, updateFilter, resetFilters } = useAdFilter(allAds);
   const { value: isPanelVisible, toggle: togglePanel, setTrue: openPanel } = useToggle(true);
@@ -94,6 +95,8 @@ export default function Home() {
         onFilterChange={updateFilter}
         onSearch={handleSearch}
         onReset={resetFilters}
+        showSubFilters={showSubFilters}
+        onToggleSubFilters={() => setShowSubFilters(!showSubFilters)}
       />
 
       {/* Main Content Area */}
@@ -108,6 +111,7 @@ export default function Home() {
           onAdClick={handleAdClick}
           selectedAdId={selectedAd?.id}
           onCloseDetail={closeDetail}
+          showSubFilters={showSubFilters}
         />
 
         {/* Ad Detail Panel */}
@@ -115,6 +119,7 @@ export default function Home() {
           ad={selectedAd}
           isVisible={showDetail}
           onClose={closeDetail}
+          showSubFilters={showSubFilters}
         />
 
         {/* Map Area */}

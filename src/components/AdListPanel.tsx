@@ -10,6 +10,7 @@ interface AdListPanelProps {
   onAdClick: (ad: AdResponse) => void;
   selectedAdId?: string | null;
   onCloseDetail?: () => void;
+  showSubFilters: boolean;
 }
 
 export default function AdListPanel({
@@ -20,7 +21,8 @@ export default function AdListPanel({
   onToggle,
   onAdClick,
   selectedAdId,
-  onCloseDetail
+  onCloseDetail,
+  showSubFilters
 }: AdListPanelProps) {
   
   const handleToggle = () => {
@@ -51,11 +53,16 @@ export default function AdListPanel({
       </button>
 
       {/* Panel */}
-      <div 
-        className={`fixed top-0 left-0 h-full bg-white border-r border-gray-200 z-30 transition-transform duration-300 ease-in-out ${
+      <div
+        className={`fixed left-0 bg-white border-r border-gray-200 z-30 transition-all duration-300 ease-in-out ${
           isVisible ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ width: '416px', paddingTop: '100px' }} // TopFilterBar 높이만큼 패딩 (서브필터 고려) - 320px * 1.3 = 416px
+        style={{
+          width: '416px',
+          top: '0',
+          height: '100vh',
+          paddingTop: showSubFilters ? '180px' : '80px' // 서브필터 열림/닫힘에 따라 동적 조절
+        }}
       >
         {/* Results Summary */}
         <div className="p-6 border-b border-gray-200">

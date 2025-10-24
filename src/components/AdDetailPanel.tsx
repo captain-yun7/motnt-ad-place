@@ -4,9 +4,10 @@ interface AdDetailPanelProps {
   ad: AdResponse | null;
   isVisible: boolean;
   onClose: () => void;
+  showSubFilters: boolean;
 }
 
-export default function AdDetailPanel({ ad, isVisible, onClose }: AdDetailPanelProps) {
+export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }: AdDetailPanelProps) {
   if (!ad) return null;
 
   return (
@@ -41,14 +42,16 @@ export default function AdDetailPanel({ ad, isVisible, onClose }: AdDetailPanelP
       )}
 
       {/* Panel */}
-      <div 
-        className={`fixed top-0 h-full bg-white border-r border-gray-200 z-35 transition-transform duration-300 ease-in-out ${
+      <div
+        className={`fixed bg-white border-r border-gray-200 z-35 transition-all duration-300 ease-in-out ${
           isVisible ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ 
-          left: '416px', 
-          width: '480px', 
-          paddingTop: '100px' 
+        style={{
+          left: '416px',
+          width: '480px',
+          top: '0',
+          height: '100vh',
+          paddingTop: showSubFilters ? '180px' : '80px' // 서브필터 열림/닫힘에 따라 동적 조절
         }}
       >
         {/* Header */}

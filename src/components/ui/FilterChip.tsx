@@ -15,28 +15,28 @@ export default function FilterChip({
   size = 'md',
   className = ""
 }: FilterChipProps) {
-  const baseClasses = "border border-gray-300 rounded-full transition-all cursor-pointer";
-  
+  const baseClasses = "rounded-lg transition-all duration-200 cursor-pointer font-semibold";
+
   const sizeClasses = {
-    sm: "px-3 py-1.5 text-sm",
-    md: "px-4 py-2 text-sm"
+    sm: "px-4 py-2 text-[15px]",
+    md: "px-5 py-2.5 text-[16px]"
   };
-  
+
   const variantClasses = {
-    default: isActive 
-      ? "bg-gray-900 text-white border-gray-900 hover:bg-gray-800" 
-      : "bg-white text-gray-700 hover:bg-gray-50",
-    primary: isActive 
-      ? "bg-gray-900 text-white border-gray-900 hover:bg-gray-800" 
-      : "bg-gray-50 text-gray-700 hover:bg-gray-100"
+    default: isActive
+      ? "bg-gray-900 text-white shadow-sm hover:bg-gray-800 hover:shadow-md"
+      : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200",
+    primary: isActive
+      ? "bg-gray-900 text-white shadow-sm hover:bg-gray-800 hover:shadow-md"
+      : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200"
   };
 
   return (
-    <button 
+    <button
       onClick={onClick}
       className={`
-        ${baseClasses} 
-        ${sizeClasses[size]} 
+        ${baseClasses}
+        ${sizeClasses[size]}
         ${variantClasses[variant]}
         ${className}
       `}
