@@ -48,8 +48,7 @@ export async function GET(
       );
     }
 
-    // AdResponse 타입에 isActive 필드 추가
-    const adResponse: AdResponse & { isActive: boolean } = {
+    const adResponse: AdResponse = {
       id: ad.id,
       title: ad.title,
       slug: ad.slug,
@@ -57,7 +56,18 @@ export async function GET(
       location: ad.location as any,
       specs: ad.specs as any,
       pricing: ad.pricing as any,
+      availability: ad.availability as any,
       metadata: ad.metadata as any,
+      // Phase 1 필드 추가
+      status: ad.status,
+      featured: ad.featured,
+      tags: ad.tags,
+      viewCount: ad.viewCount,
+      favoriteCount: ad.favoriteCount,
+      inquiryCount: ad.inquiryCount,
+      verified: ad.verified,
+      verifiedAt: ad.verifiedAt?.toISOString() || null,
+      isActive: ad.isActive,
       category: {
         id: ad.category.id,
         name: ad.category.name,
@@ -73,7 +83,6 @@ export async function GET(
         alt: img.alt,
         order: img.order,
       })),
-      isActive: ad.isActive,
       createdAt: ad.createdAt.toISOString(),
       updatedAt: ad.updatedAt.toISOString(),
     };

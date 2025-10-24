@@ -84,7 +84,17 @@ export async function GET(request: NextRequest) {
       location: ad.location as any,
       specs: ad.specs as any,
       pricing: ad.pricing as any,
+      availability: ad.availability as any,
       metadata: ad.metadata as any,
+      // Phase 1 필드 추가
+      status: ad.status,
+      featured: ad.featured,
+      tags: ad.tags,
+      viewCount: ad.viewCount,
+      favoriteCount: ad.favoriteCount,
+      inquiryCount: ad.inquiryCount,
+      verified: ad.verified,
+      verifiedAt: ad.verifiedAt?.toISOString() || null,
       category: {
         id: ad.category.id,
         name: ad.category.name,
