@@ -43,7 +43,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
       {/* Panel */}
       <div
-        className={`fixed bg-white border-r border-gray-200 z-35 transition-all duration-300 ease-in-out ${
+        className={`fixed bg-white border-r border-gray-200 z-35 transition-all duration-300 ease-in-out flex flex-col ${
           isVisible ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
@@ -55,11 +55,11 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
         }}
       >
         {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <div className="mb-4">
             <h2 className="text-xl font-bold text-gray-900">광고 상세정보</h2>
           </div>
-          
+
           {/* Ad Title */}
           <h3 className="text-lg font-semibold text-gray-900 mb-2">{ad.title}</h3>
           <p className="text-sm text-gray-600">{ad.location?.address}</p>

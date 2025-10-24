@@ -54,7 +54,7 @@ export default function AdListPanel({
 
       {/* Panel */}
       <div
-        className={`fixed left-0 bg-white border-r border-gray-200 z-30 transition-all duration-300 ease-in-out ${
+        className={`fixed left-0 bg-white border-r border-gray-200 z-30 transition-all duration-300 ease-in-out flex flex-col ${
           isVisible ? 'translate-x-0' : '-translate-x-full'
         }`}
         style={{
@@ -65,12 +65,12 @@ export default function AdListPanel({
         }}
       >
         {/* Results Summary */}
-        <div className="p-6 border-b border-gray-200">
+        <div className="p-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-gray-900">검색 결과</h3>
             <span className="text-sm text-gray-500">총 {ads.length}개</span>
           </div>
-          
+
           {/* Sort Options */}
           <div className="flex space-x-2">
             <button className="px-3 py-1.5 text-sm bg-gray-900 text-white rounded-full">
@@ -84,7 +84,7 @@ export default function AdListPanel({
             </button>
           </div>
         </div>
-        
+
         {/* Ad List */}
         <div className="flex-1 overflow-y-auto">
           <div className="space-y-0">
@@ -111,15 +111,6 @@ export default function AdListPanel({
                   isSelected={selectedAdId === ad.id}
                 />
               ))
-            )}
-            
-            {/* Load More */}
-            {ads.length > 0 && (
-              <div className="p-6 text-center">
-                <button className="text-gray-600 hover:text-gray-900 transition-colors">
-                  더 많은 결과 보기 →
-                </button>
-              </div>
             )}
           </div>
         </div>
