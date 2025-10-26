@@ -8,7 +8,7 @@ export default async function AdminAdEditPage({
 }: { 
   params: Promise<{ id: string }> 
 }) {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { id } = await params
   
   const {

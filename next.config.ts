@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     domains: [
       'localhost',
       'placehold.co',
+      'picsum.photos',
     ],
     remotePatterns: [
       {

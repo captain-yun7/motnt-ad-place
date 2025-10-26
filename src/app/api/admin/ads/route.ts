@@ -32,6 +32,11 @@ export async function POST(request: NextRequest) {
       description,
       categoryId,
       districtId,
+      // Phase 1 필드
+      status,
+      featured,
+      tags,
+      verified,
       location,
       specs,
       pricing,
@@ -117,6 +122,14 @@ export async function POST(request: NextRequest) {
         description: description?.trim() || '',
         categoryId,
         districtId,
+        // Phase 1 필드
+        status: status || 'ACTIVE',
+        featured: featured || false,
+        tags: tags || [],
+        verified: verified || false,
+        viewCount: 0,
+        favoriteCount: 0,
+        inquiryCount: 0,
         location: {
           address: location.address.trim(),
           landmark: location.landmark?.trim() || '',
@@ -132,11 +145,14 @@ export async function POST(request: NextRequest) {
         },
         pricing: {
           monthly: pricing.monthly,
+          weekly: pricing.weekly || null,
+          daily: pricing.daily || null,
           setup: pricing.setup || 0,
           design: pricing.design || 0,
           deposit: pricing.deposit || 0,
           currency: pricing.currency || 'KRW',
-          minimumPeriod: pricing.minimumPeriod || 1
+          minimumPeriod: pricing.minimumPeriod || 1,
+          discounts: pricing.discounts || {}
         },
         metadata: {
           traffic: metadata?.traffic?.trim() || '',

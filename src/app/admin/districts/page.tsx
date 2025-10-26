@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import AdminDistrictsPage from '@/components/admin/AdminDistrictsPage'
 
 export default async function AdminDistrictsListPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const {
     data: { user },

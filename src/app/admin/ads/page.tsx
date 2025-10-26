@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import AdminAdsPage from '@/components/admin/AdminAdsPage'
 
 export default async function AdminAdsListPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const {
     data: { user },

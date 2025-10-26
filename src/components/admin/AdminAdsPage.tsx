@@ -333,8 +333,16 @@ export default function AdminAdsPage({ user, initialAds, categories, districts }
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-gray-900 flex items-center gap-2">
                           {ad.title}
+                          {!ad.location?.coordinates && (
+                            <span
+                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800"
+                              title="좌표 없음 - 지도에 표시되지 않습니다"
+                            >
+                              ⚠️ 좌표없음
+                            </span>
+                          )}
                         </div>
                         <div className="text-sm text-gray-500">
                           {ad.location.address}

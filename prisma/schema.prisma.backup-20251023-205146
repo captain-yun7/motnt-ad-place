@@ -1,0 +1,322 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id                String  @id
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model bank_transfers {
+  id                  String    @id
+  paymentId           String    @unique
+  depositorName       String
+  expectedDepositDate DateTime
+  approvedAt          DateTime?
+  rejectedAt          DateTime?
+  rejectReason        String?
+  createdAt           DateTime  @default(now())
+  payments            payments  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+}
+
+model course_files {
+  id        String   @id
+  courseId  String
+  fileName  String
+  fileUrl   String
+  fileSize  Int
+  createdAt DateTime @default(now())
+  courses   courses  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+}
+
+model courses {
+  id              String         @id
+  title           String
+  description     String
+  price           Int
+  thumbnailUrl    String?
+  instructorName  String
+  instructorIntro String?
+  isPublished     Boolean        @default(false)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime
+  course_files    course_files[]
+  enrollments     enrollments[]
+  purchases       purchases[]
+  videos          videos[]
+}
+
+model devices {
+  id             String   @id
+  userId         String
+  deviceId       String
+  deviceName     String
+  userAgent      String
+  ipAddress      String?
+  lastAccessedAt DateTime @default(now())
+  createdAt      DateTime @default(now())
+  users          users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, deviceId])
+  @@index([userId])
+}
+
+model enrollments {
+  id         String   @id
+  userId     String
+  courseId   String
+  enrolledAt DateTime @default(now())
+  courses    courses  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  users      users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+  @@index([userId])
+}
+
+model inquiries {
+  id              String            @id
+  userId          String
+  title           String
+  content         String
+  isPrivate       Boolean           @default(true)
+  status          InquiryStatus     @default(PENDING)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime
+  users           users             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inquiry_replies inquiry_replies[]
+
+  @@index([userId])
+}
+
+model inquiry_replies {
+  id        String    @id
+  inquiryId String
+  adminId   String
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  inquiries inquiries @relation(fields: [inquiryId], references: [id], onDelete: Cascade)
+
+  @@index([inquiryId])
+}
+
+model notices {
+  id            String   @id
+  title         String
+  content       String
+  isPinned      Boolean  @default(false)
+  views         Int      @default(0)
+  attachmentUrl String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime
+}
+
+model payments {
+  id             String          @id
+  purchaseId     String          @unique
+  paymentKey     String?         @unique
+  orderId        String          @unique
+  method         PaymentMethod
+  status         PaymentStatus   @default(PENDING)
+  paidAt         DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime
+  bank_transfers bank_transfers?
+  purchases      purchases       @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([paymentKey])
+}
+
+model progresses {
+  id           String    @id
+  userId       String
+  videoId      String
+  lastPosition Int       @default(0)
+  isCompleted  Boolean   @default(false)
+  completedAt  DateTime?
+  updatedAt    DateTime
+  users        users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videos       videos    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, videoId])
+  @@index([userId])
+  @@index([videoId])
+}
+
+model purchases {
+  id           String         @id
+  userId       String
+  courseId     String
+  amount       Int
+  status       PurchaseStatus @default(PENDING)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  payments     payments?
+  courses      courses        @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  users        users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  receipts     receipts?
+  refunds      refunds?
+  tax_invoices tax_invoices?
+
+  @@index([courseId])
+  @@index([userId])
+}
+
+model receipts {
+  id            String    @id
+  purchaseId    String    @unique
+  receiptNumber String    @unique
+  issuedAt      DateTime  @default(now())
+  purchases     purchases @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  @@index([receiptNumber])
+}
+
+model refunds {
+  id            String       @id
+  purchaseId    String       @unique
+  reason        String
+  refundAmount  Int
+  accountBank   String?
+  accountNumber String?
+  accountHolder String?
+  status        RefundStatus @default(PENDING)
+  requestedAt   DateTime     @default(now())
+  processedAt   DateTime?
+  rejectReason  String?
+  purchases     purchases    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+}
+
+model sessions {
+  id           String   @id
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model tax_invoices {
+  id               String           @id
+  purchaseId       String           @unique
+  businessNumber   String
+  companyName      String
+  ceoName          String
+  address          String
+  businessType     String
+  businessCategory String
+  email            String
+  issuedAt         DateTime?
+  status           TaxInvoiceStatus @default(REQUESTED)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime
+  purchases        purchases        @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+}
+
+model users {
+  id            String        @id
+  name          String?
+  email         String?       @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  phone         String?
+  role          Role          @default(STUDENT)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime
+  accounts      accounts[]
+  devices       devices[]
+  enrollments   enrollments[]
+  inquiries     inquiries[]
+  progresses    progresses[]
+  purchases     purchases[]
+  sessions      sessions[]
+}
+
+model verification_tokens {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model videos {
+  id          String       @id
+  courseId    String
+  vimeoUrl    String
+  vimeoId     String?
+  title       String
+  description String?
+  duration    Int?
+  order       Int
+  isPreview   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  progresses  progresses[]
+  courses     courses      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+}
+
+enum InquiryStatus {
+  PENDING
+  ANSWERED
+}
+
+enum PaymentMethod {
+  CARD
+  BANK_TRANSFER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum PurchaseStatus {
+  PENDING
+  COMPLETED
+  CANCELED
+  REFUNDED
+}
+
+enum RefundStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum TaxInvoiceStatus {
+  REQUESTED
+  ISSUED
+}

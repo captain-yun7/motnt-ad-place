@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 import AdminCategoriesPage from '@/components/admin/AdminCategoriesPage'
 
 export default async function AdminCategoriesListPage() {
-  const supabase = createClient()
+  const supabase = await createClient()
   
   const {
     data: { user },

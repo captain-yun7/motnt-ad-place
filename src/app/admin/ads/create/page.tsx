@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 import AdCreateForm from '@/components/admin/AdCreateForm'
 
 export default async function AdminAdCreatePage() {
-  const supabase = createClient()
-  
+  const supabase = await createClient()
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
