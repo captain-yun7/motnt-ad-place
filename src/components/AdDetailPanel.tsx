@@ -113,14 +113,14 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             <div className="space-y-3">
               {/* 주요 가격 옵션 - 시인성 최우선 */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-4 bg-gray-900 rounded-lg text-center">
-                  <div className="text-xl font-bold text-white">
+                <div className="p-4 bg-amber-500 rounded-lg text-center shadow-sm">
+                  <div className="text-xl font-bold text-gray-900">
                     {ad.pricing?.monthly?.toLocaleString() || '문의'}원
                   </div>
-                  <div className="text-xs text-gray-300 mt-1">월</div>
+                  <div className="text-xs text-amber-900 mt-1">월</div>
                 </div>
                 {ad.pricing?.weekly && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2 border-gray-900">
+                  <div className="p-4 bg-white rounded-lg text-center border-2 border-amber-500">
                     <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.weekly.toLocaleString()}원
                     </div>
@@ -128,7 +128,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                   </div>
                 )}
                 {ad.pricing?.daily && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2 border-gray-900">
+                  <div className="p-4 bg-white rounded-lg text-center border-2 border-amber-500">
                     <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.daily.toLocaleString()}원
                     </div>
@@ -155,11 +155,11 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
               {/* 할인 정보 - 단순화 */}
               {ad.pricing?.discounts && Object.keys(ad.pricing.discounts).length > 0 && (
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
                   <div className="text-sm font-semibold text-gray-900 mb-2">장기 계약 할인</div>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
-                      <span key={period} className="text-xs bg-gray-900 text-white px-2 py-1 rounded font-medium">
+                      <span key={period} className="text-xs bg-amber-500 text-gray-900 px-2 py-1 rounded font-semibold">
                         {period.replace('months', '개월')}: {discount}%
                       </span>
                     ))}
@@ -223,8 +223,8 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 {ad.location.nearestStation && (
                   <div className="p-3 bg-white rounded-lg border border-gray-200">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-sm">🚇</span>
+                      <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-gray-900 text-sm">🚇</span>
                       </div>
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">
@@ -240,8 +240,8 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 {ad.location.parking && ad.location.parking.available && (
                   <div className="p-3 bg-white rounded-lg border border-gray-200">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-gray-900 rounded-full flex items-center justify-center flex-shrink-0">
-                        <span className="text-white text-sm">🅿️</span>
+                      <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-gray-900 text-sm">🅿️</span>
                       </div>
                       <div className="flex-1">
                         <div className="font-semibold text-gray-900">주차 가능</div>
@@ -275,13 +275,13 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">노출 및 참여 통계</h4>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="text-center p-4 bg-gray-900 rounded-lg">
-                <div className="text-3xl font-bold text-white">
+              <div className="text-center p-4 bg-amber-500 rounded-lg shadow-sm">
+                <div className="text-3xl font-bold text-gray-900">
                   {(ad.metadata?.performanceMetrics?.averageViews || ad.viewCount * 10).toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-300 mt-1">일 평균 노출</div>
+                <div className="text-xs text-amber-900 mt-1">일 평균 노출</div>
               </div>
-              <div className="text-center p-4 bg-white rounded-lg border-2 border-gray-900">
+              <div className="text-center p-4 bg-white rounded-lg border-2 border-amber-500">
                 <div className="text-3xl font-bold text-gray-900">
                   {ad.viewCount.toLocaleString()}
                 </div>
@@ -307,7 +307,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 <div className="text-sm font-medium text-gray-700 mb-2">피크 시간대</div>
                 <div className="flex flex-wrap gap-2">
                   {ad.metadata.performanceMetrics.peakHours.map((time, index) => (
-                    <span key={index} className="text-xs bg-gray-900 text-white px-2 py-1 rounded font-medium">
+                    <span key={index} className="text-xs bg-amber-500 text-gray-900 px-2 py-1 rounded font-semibold">
                       {time}
                     </span>
                   ))}
@@ -319,13 +319,13 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           {/* Action Buttons */}
           <div className="p-6">
             <div className="space-y-3">
-              <button className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition-colors font-medium">
+              <button className="w-full bg-amber-500 text-gray-900 py-3 rounded-lg hover:bg-amber-600 transition-colors font-bold shadow-sm">
                 광고 문의하기
               </button>
-              <button className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+              <button className="w-full border-2 border-amber-500 text-amber-600 py-3 rounded-lg hover:bg-amber-50 transition-colors font-semibold">
                 관심 광고 저장
               </button>
-              <button 
+              <button
                 onClick={() => window.open(`/ad/${ad.id}`, '_blank')}
                 className="w-full border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
