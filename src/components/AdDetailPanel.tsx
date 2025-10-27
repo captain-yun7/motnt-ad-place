@@ -277,25 +277,25 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="text-center p-4 bg-amber-500 rounded-lg shadow-sm">
                 <div className="text-3xl font-bold text-gray-900">
-                  {(ad.metadata?.performanceMetrics?.averageViews || ad.viewCount * 10).toLocaleString()}
+                  {(ad.metadata?.performanceMetrics?.averageViews || (ad.viewCount || 0) * 10).toLocaleString()}
                 </div>
                 <div className="text-xs text-amber-900 mt-1">일 평균 노출</div>
               </div>
               <div className="text-center p-4 bg-white rounded-lg border-2 border-amber-500">
                 <div className="text-3xl font-bold text-gray-900">
-                  {ad.viewCount.toLocaleString()}
+                  {(ad.viewCount || 0).toLocaleString()}
                 </div>
                 <div className="text-xs text-gray-600 mt-1">페이지 조회</div>
               </div>
               <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="text-2xl font-bold text-gray-900">
-                  {ad.favoriteCount.toLocaleString()}
+                  {(ad.favoriteCount || 0).toLocaleString()}
                 </div>
                 <div className="text-xs text-gray-600 mt-1">관심 등록</div>
               </div>
               <div className="text-center p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <div className="text-2xl font-bold text-gray-900">
-                  {ad.inquiryCount.toLocaleString()}
+                  {(ad.inquiryCount || 0).toLocaleString()}
                 </div>
                 <div className="text-xs text-gray-600 mt-1">문의</div>
               </div>
