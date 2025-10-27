@@ -129,15 +129,42 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
   const supabase = createClient()
 
   // Daum Postcode 주소 선택 핸들러
-  const handleAddressComplete = (data: any) => {
+  const handleAddressComplete = async (data: any) => {
     const fullAddress = data.roadAddress || data.jibunAddress
+
+    // 카카오 지오코딩 API로 주소 → 좌표 변환
+    let coordinates: [number, number] = [127.0276, 37.4979] // 기본값: 강남역
+
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY
+      if (apiKey) {
+        const response = await fetch(
+          `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(fullAddress)}`,
+          {
+            headers: {
+              Authorization: `KakaoAK ${apiKey}`
+            }
+          }
+        )
+
+        if (response.ok) {
+          const result = await response.json()
+          if (result.documents && result.documents.length > 0) {
+            const { x, y } = result.documents[0]
+            coordinates = [parseFloat(x), parseFloat(y)]
+          }
+        }
+      }
+    } catch (error) {
+      console.error('좌표 변환 실패:', error)
+    }
 
     setFormData(prev => ({
       ...prev,
       location: {
         ...prev.location,
         address: fullAddress,
-        coordinates: [0, 0] // 좌표는 Naver Map API로 별도 변환 가능
+        coordinates: coordinates
       }
     }))
 

@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       priceMax: searchParams.get('priceMax') ? parseInt(searchParams.get('priceMax')!) : undefined,
       query: searchParams.get('query') || undefined,
       page: parseInt(searchParams.get('page') || '1'),
-      limit: parseInt(searchParams.get('limit') || '10'),
+      limit: parseInt(searchParams.get('limit') || '100'), // 기본값 100개로 증가
       sort: (searchParams.get('sort') as 'price' | 'date' | 'title') || 'date',
       order: (searchParams.get('order') as 'asc' | 'desc') || 'desc',
     };
