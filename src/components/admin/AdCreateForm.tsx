@@ -128,7 +128,7 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
   const [addressResults, setAddressResults] = useState<any[]>([])
   const [showResults, setShowResults] = useState(false)
   const [isSearching, setIsSearching] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
   const supabase = createClient()
@@ -216,7 +216,7 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
   // 드롭다운 외부 클릭 감지
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setShowResults(false)
       }
     }
@@ -876,7 +876,7 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
                   주소 검색 *
                 </label>
 
-                <div className="relative">
+                <div className="relative" ref={containerRef}>
                   {/* Search Input with Current Location Button */}
                   <div className="flex gap-2">
                     <div className="relative flex-1">
@@ -886,7 +886,6 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
                         </svg>
                       </div>
                       <input
-                        ref={inputRef}
                         type="text"
                         value={addressQuery}
                         onChange={(e) => setAddressQuery(e.target.value)}
