@@ -1,6 +1,5 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { isAdmin } from '@/lib/auth/check-admin'
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -33,15 +32,12 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // 관리자 페이지 보호
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  // 관리자 페이지 보호 (API 경로는 제외)
+  if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/api')) {
     if (request.nextUrl.pathname === '/admin/login') {
-      // 이미 로그인된 관리자가 로그인 페이지에 접근하면 대시보드로 리다이렉트
+      // 이미 로그인된 사용자가 로그인 페이지에 접근하면 대시보드로 리다이렉트
       if (user) {
-        const adminCheck = await isAdmin(user.email!)
-        if (adminCheck) {
-          return NextResponse.redirect(new URL('/admin/dashboard', request.url))
-        }
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url))
       }
     } else {
       // 관리자 페이지에 접근하려는데 로그인하지 않은 경우
@@ -49,11 +45,11 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/admin/login', request.url))
       }
 
-      // 로그인은 되어 있지만 관리자가 아닌 경우
-      const adminCheck = await isAdmin(user.email!)
-      if (!adminCheck) {
-        return NextResponse.redirect(new URL('/admin/login', request.url))
-      }
+      // TODO: 나중에 관리자 체크 추가
+      // const adminCheck = await isAdmin(user.email!)
+      // if (!adminCheck) {
+      //   return NextResponse.redirect(new URL('/admin/login', request.url))
+      // }
     }
   }
 
@@ -70,11 +66,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
+     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * Feel free to modify this pattern to include more paths.
      */
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
