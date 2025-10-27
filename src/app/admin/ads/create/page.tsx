@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import AdCreateForm from '@/components/admin/AdCreateForm'
+import { prisma } from '@/lib/prisma'
 
 export default async function AdminAdCreatePage() {
   const supabase = await createClient()
@@ -13,24 +14,21 @@ export default async function AdminAdCreatePage() {
     redirect('/admin/login')
   }
 
-  // 카테고리와 지역 정보 조회
-  const [categoriesRes, districtsRes] = await Promise.all([
-    fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/categories`, {
-      cache: 'no-store'
+  // 카테고리와 지역 정보 직접 조회
+  const [categories, districts] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { name: 'asc' },
     }),
-    fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/districts`, {
-      cache: 'no-store'
-    })
+    prisma.district.findMany({
+      orderBy: { name: 'asc' },
+    }),
   ])
 
-  const categoriesData = await categoriesRes.json()
-  const districtsData = await districtsRes.json()
-
   return (
-    <AdCreateForm 
+    <AdCreateForm
       user={user}
-      categories={categoriesData.data || []}
-      districts={districtsData.data || []}
+      categories={categories}
+      districts={districts}
     />
   )
 }
