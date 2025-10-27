@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 // 관리자 인증 확인
 async function checkAdminAuth() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
   
   if (error || !user) {

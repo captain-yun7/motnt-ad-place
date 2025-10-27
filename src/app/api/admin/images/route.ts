@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 // 관리자 인증 확인
 async function checkAdminAuth() {
-  const supabase = createClient()
+  const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
   
   if (error || !user) {
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = createClient()
+    const supabase = await createClient()
     const uploadedImages = []
 
     // 현재 이미지 개수 확인하여 order 설정

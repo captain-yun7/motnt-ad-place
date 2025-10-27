@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import DaumPostcode from 'react-daum-postcode'
 
 interface Category {
   id: string
@@ -122,59 +123,25 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
   const [error, setError] = useState<string | null>(null)
   const [images, setImages] = useState<File[]>([])
   const [showTemplates, setShowTemplates] = useState(true)
-  const [addressSearch, setAddressSearch] = useState('')
-  const [addressResults, setAddressResults] = useState<any[]>([])
-  const [showAddressResults, setShowAddressResults] = useState(false)
+  const [showPostcode, setShowPostcode] = useState(false)
 
   const router = useRouter()
   const supabase = createClient()
 
-  // 카카오 주소 검색 API
-  const searchAddress = async (query: string) => {
-    if (!query.trim()) {
-      setAddressResults([])
-      return
-    }
-
-    try {
-      const response = await fetch(
-        `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(query)}`,
-        {
-          headers: {
-            Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`
-          }
-        }
-      )
-
-      if (!response.ok) throw new Error('주소 검색 실패')
-
-      const data = await response.json()
-      setAddressResults(data.documents || [])
-      setShowAddressResults(true)
-    } catch (error) {
-      console.error('주소 검색 오류:', error)
-      setAddressResults([])
-    }
-  }
-
-  // 주소 선택 핸들러
-  const selectAddress = (result: any) => {
-    const address = result.address_name || result.road_address_name
-    const lng = parseFloat(result.x)
-    const lat = parseFloat(result.y)
+  // Daum Postcode 주소 선택 핸들러
+  const handleAddressComplete = (data: any) => {
+    const fullAddress = data.roadAddress || data.jibunAddress
 
     setFormData(prev => ({
       ...prev,
       location: {
         ...prev.location,
-        address: address,
-        coordinates: [lng, lat]
+        address: fullAddress,
+        coordinates: [0, 0] // 좌표는 Naver Map API로 별도 변환 가능
       }
     }))
 
-    setAddressSearch('')
-    setAddressResults([])
-    setShowAddressResults(false)
+    setShowPostcode(false)
   }
 
   // 템플릿 데이터
@@ -749,74 +716,62 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
             <h2 className="text-lg font-semibold text-gray-900 mb-4">위치 정보</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   주소 검색 *
                 </label>
-                <div className="relative">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={addressSearch}
-                      onChange={(e) => setAddressSearch(e.target.value)}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          e.preventDefault()
-                          searchAddress(addressSearch)
-                        }
-                      }}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-                      placeholder="주소를 입력하세요 (예: 강남역)"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => searchAddress(addressSearch)}
-                      className="px-4 py-2 bg-amber-600 text-white rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
-                    >
-                      🔍 검색
-                    </button>
-                  </div>
 
-                  {/* 검색 결과 드롭다운 */}
-                  {showAddressResults && addressResults.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-y-auto">
-                      {addressResults.map((result, index) => (
+                <button
+                  type="button"
+                  onClick={() => setShowPostcode(true)}
+                  className="w-full px-4 py-3 border-2 border-amber-500 text-amber-600 rounded-md hover:bg-amber-50 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  주소 검색하기
+                </button>
+
+                {/* Daum Postcode 팝업 */}
+                {showPostcode && (
+                  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+                      <div className="flex items-center justify-between p-4 border-b">
+                        <h3 className="text-lg font-semibold text-gray-900">주소 검색</h3>
                         <button
-                          key={index}
                           type="button"
-                          onClick={() => selectAddress(result)}
-                          className="w-full text-left px-4 py-3 hover:bg-amber-50 border-b border-gray-100 last:border-b-0"
+                          onClick={() => setShowPostcode(false)}
+                          className="text-gray-400 hover:text-gray-600"
                         >
-                          <div className="font-medium text-gray-900">
-                            {result.address_name}
-                          </div>
-                          {result.road_address_name && (
-                            <div className="text-sm text-gray-600 mt-1">
-                              🛣️ {result.road_address_name}
-                            </div>
-                          )}
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
                         </button>
-                      ))}
+                      </div>
+                      <div className="p-4">
+                        <DaumPostcode
+                          onComplete={handleAddressComplete}
+                          autoClose={false}
+                          style={{ height: '400px' }}
+                        />
+                      </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* 선택된 주소 표시 */}
                 {formData.location.address && (
-                  <div className="mt-2 p-3 bg-green-50 border border-green-200 rounded-md">
+                  <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-md">
                     <div className="flex items-start gap-2">
-                      <span className="text-green-600">✓</span>
+                      <svg className="w-5 h-5 text-green-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
                       <div className="flex-1">
-                        <div className="text-sm font-medium text-green-900">
+                        <div className="text-sm font-semibold text-green-900 mb-1">
                           선택된 주소
                         </div>
-                        <div className="text-sm text-green-700 mt-1">
+                        <div className="text-sm text-green-700">
                           {formData.location.address}
                         </div>
-                        {formData.location.coordinates && (
-                          <div className="text-xs text-green-600 mt-1">
-                            좌표: {formData.location.coordinates[0].toFixed(6)}, {formData.location.coordinates[1].toFixed(6)}
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
