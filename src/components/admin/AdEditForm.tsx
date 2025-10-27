@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
@@ -107,7 +107,14 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
   const [error, setError] = useState<string | null>(null)
   const [images, setImages] = useState<File[]>([])
   const [existingImages, setExistingImages] = useState<any[]>([])
-  
+
+  // 주소 검색 관련 상태
+  const [addressQuery, setAddressQuery] = useState('')
+  const [addressResults, setAddressResults] = useState<any[]>([])
+  const [showResults, setShowResults] = useState(false)
+  const [isSearching, setIsSearching] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
   const router = useRouter()
   const supabase = createClient()
 
@@ -153,6 +160,173 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
       })
     }
   }, [ad])
+
+  // 카카오 주소 검색 API (키워드 + 주소 병합)
+  const searchAddress = async (query: string) => {
+    if (!query.trim()) {
+      setAddressResults([])
+      setShowResults(false)
+      return
+    }
+
+    setIsSearching(true)
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY
+      if (!apiKey) return
+
+      // 키워드 검색과 주소 검색을 병렬로 실행
+      const [keywordResponse, addressResponse] = await Promise.all([
+        fetch(
+          `https://dapi.kakao.com/v2/local/search/keyword.json?query=${encodeURIComponent(query)}`,
+          {
+            headers: {
+              Authorization: `KakaoAK ${apiKey}`
+            }
+          }
+        ),
+        fetch(
+          `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(query)}`,
+          {
+            headers: {
+              Authorization: `KakaoAK ${apiKey}`
+            }
+          }
+        )
+      ])
+
+      const results: any[] = []
+
+      // 키워드 검색 결과
+      if (keywordResponse.ok) {
+        const keywordData = await keywordResponse.json()
+        if (keywordData.documents) {
+          results.push(...keywordData.documents)
+        }
+      }
+
+      // 주소 검색 결과
+      if (addressResponse.ok) {
+        const addressData = await addressResponse.json()
+        if (addressData.documents) {
+          results.push(...addressData.documents)
+        }
+      }
+
+      // 중복 제거 (같은 좌표의 결과는 하나만)
+      const uniqueResults = results.filter((item, index, self) =>
+        index === self.findIndex((t) => t.x === item.x && t.y === item.y)
+      )
+
+      setAddressResults(uniqueResults)
+      setShowResults(true)
+    } catch (error) {
+      console.error('주소 검색 오류:', error)
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  // 타이핑 debounce
+  useEffect(() => {
+    if (!addressQuery.trim()) {
+      setAddressResults([])
+      setShowResults(false)
+      return
+    }
+
+    const timer = setTimeout(() => {
+      searchAddress(addressQuery)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [addressQuery])
+
+  // 드롭다운 외부 클릭 감지
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setShowResults(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // 주소 선택
+  const selectAddress = async (result: any) => {
+    const fullAddress = result.address_name || result.road_address_name
+    const coordinates: [number, number] = [parseFloat(result.x), parseFloat(result.y)]
+
+    setFormData(prev => ({
+      ...prev,
+      location: {
+        ...prev.location,
+        address: fullAddress,
+        coordinates: coordinates
+      }
+    }))
+
+    setAddressQuery('')
+    setShowResults(false)
+    setAddressResults([])
+  }
+
+  // 현재 위치 가져오기
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      alert('브라우저가 위치 서비스를 지원하지 않습니다.')
+      return
+    }
+
+    setIsSearching(true)
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+
+        try {
+          const apiKey = process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY
+          if (!apiKey) return
+
+          // 좌표 → 주소 변환
+          const response = await fetch(
+            `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${longitude}&y=${latitude}`,
+            {
+              headers: {
+                Authorization: `KakaoAK ${apiKey}`
+              }
+            }
+          )
+
+          if (response.ok) {
+            const result = await response.json()
+            if (result.documents && result.documents.length > 0) {
+              const address = result.documents[0].address?.address_name ||
+                            result.documents[0].road_address?.address_name
+
+              setFormData(prev => ({
+                ...prev,
+                location: {
+                  ...prev.location,
+                  address: address,
+                  coordinates: [longitude, latitude]
+                }
+              }))
+            }
+          }
+        } catch (error) {
+          console.error('위치 변환 오류:', error)
+          alert('현재 위치를 가져올 수 없습니다.')
+        } finally {
+          setIsSearching(false)
+        }
+      },
+      (error) => {
+        setIsSearching(false)
+        alert('위치 권한이 거부되었습니다.')
+      }
+    )
+  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -453,17 +627,138 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
             <h2 className="text-lg font-semibold text-gray-900 mb-4">위치 정보</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  주소 *
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  주소 검색 *
                 </label>
-                <input
-                  type="text"
-                  value={formData.location.address}
-                  onChange={(e) => handleInputChange('location.address', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="서울시 강남구 테헤란로 123"
-                  required
-                />
+
+                <div className="relative" ref={containerRef}>
+                  {/* Search Input with Current Location Button */}
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        value={addressQuery}
+                        onChange={(e) => setAddressQuery(e.target.value)}
+                        onFocus={() => setShowResults(true)}
+                        placeholder="주소를 검색하세요 (예: 강남구 테헤란로)"
+                        className="w-full pl-10 pr-4 py-3 border-2 border-gray-300 rounded-md focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all"
+                      />
+                      {isSearching && (
+                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-amber-500"></div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Current Location Button */}
+                    <button
+                      type="button"
+                      onClick={getCurrentLocation}
+                      className="px-4 py-3 bg-amber-500 text-white rounded-md hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 font-medium flex items-center gap-2 whitespace-nowrap transition-colors"
+                      title="현재 위치"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="hidden sm:inline">현재 위치</span>
+                    </button>
+                  </div>
+
+                  {/* Dropdown Results */}
+                  {showResults && addressResults.length > 0 && (
+                    <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-80 overflow-y-auto">
+                      {addressResults.map((result, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => selectAddress(result)}
+                          className="w-full px-4 py-3 text-left hover:bg-amber-50 focus:bg-amber-50 focus:outline-none border-b border-gray-100 last:border-b-0 transition-colors"
+                        >
+                          <div className="flex items-start gap-3">
+                            <svg className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-sm font-medium text-gray-900 truncate">
+                                {result.place_name || result.address_name}
+                              </div>
+                              {result.road_address_name && (
+                                <div className="text-xs text-gray-600 mt-1">
+                                  도로명: {result.road_address_name}
+                                </div>
+                              )}
+                              <div className="text-xs text-gray-500 mt-1">
+                                지번: {result.address_name}
+                              </div>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Empty State */}
+                  {showResults && addressQuery && !isSearching && addressResults.length === 0 && (
+                    <div className="absolute z-10 mt-2 w-full bg-white border border-gray-200 rounded-md shadow-lg p-4 text-center">
+                      <svg className="w-12 h-12 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      <p className="text-sm text-gray-600">검색 결과가 없습니다</p>
+                      <p className="text-xs text-gray-500 mt-1">다른 키워드로 검색해보세요</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Selected Address Display */}
+                {formData.location.address && (
+                  <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-md animate-fadeIn">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold text-green-900 mb-1">
+                          선택된 주소
+                        </div>
+                        <div className="text-sm text-green-700 break-words">
+                          {formData.location.address}
+                        </div>
+                        {formData.location.coordinates && (
+                          <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            </svg>
+                            좌표: {formData.location.coordinates[1].toFixed(6)}, {formData.location.coordinates[0].toFixed(6)}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            location: { ...prev.location, address: '', coordinates: null }
+                          }))
+                          setAddressQuery('')
+                          setAddressResults([])
+                        }}
+                        className="text-green-600 hover:text-green-800 focus:outline-none"
+                        title="주소 삭제"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="md:col-span-2">
