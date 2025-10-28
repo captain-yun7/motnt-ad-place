@@ -155,7 +155,7 @@ export default function TopFilterBar({
                 value={filters.priceRange}
                 onChange={(value) => onFilterChange('priceRange', value)}
                 min={0}
-                max={5000000}
+                max={20000000}
                 step={100000}
               />
             </div>
