@@ -1,4 +1,5 @@
 import { AdResponse } from '@/types/ad';
+import { useState } from 'react';
 
 interface AdDetailPanelProps {
   ad: AdResponse | null;
@@ -8,7 +9,31 @@ interface AdDetailPanelProps {
 }
 
 export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }: AdDetailPanelProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
   if (!ad) return null;
+
+  const openLightbox = (index: number) => {
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+  };
+
+  const nextImage = () => {
+    if (ad.images && ad.images.length > 0) {
+      setLightboxIndex((prev) => (prev + 1) % ad.images.length);
+    }
+  };
+
+  const prevImage = () => {
+    if (ad.images && ad.images.length > 0) {
+      setLightboxIndex((prev) => (prev - 1 + ad.images.length) % ad.images.length);
+    }
+  };
 
   return (
     <>
@@ -71,7 +96,10 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           <div className="p-6 border-b border-gray-200">
             {ad.images && ad.images.length > 0 ? (
               <>
-                <div className="bg-gray-200 rounded-lg h-56 overflow-hidden mb-4">
+                <div
+                  className="bg-gray-200 rounded-lg h-56 overflow-hidden mb-4 cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => openLightbox(0)}
+                >
                   <img
                     src={ad.images[0].url}
                     alt={ad.images[0].alt || ad.title}
@@ -79,17 +107,25 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                   />
                 </div>
                 <div className="grid grid-cols-4 gap-2">
-                  {ad.images.slice(1, 5).map((image) => (
-                    <div key={image.id} className="aspect-square bg-gray-100 rounded border border-gray-200 overflow-hidden">
+                  {ad.images.slice(1, 5).map((image, idx) => (
+                    <div
+                      key={image.id}
+                      className="aspect-square bg-gray-100 rounded border border-gray-200 overflow-hidden cursor-pointer hover:opacity-75 transition-opacity"
+                      onClick={() => openLightbox(idx + 1)}
+                    >
                       <img
                         src={image.url}
                         alt={image.alt || ad.title}
-                        className="w-full h-full object-cover cursor-pointer hover:opacity-75 transition-opacity"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                   ))}
                   {ad.images.length > 5 && (
-                    <div className="aspect-square bg-gray-800 bg-opacity-50 rounded border border-gray-200 flex items-center justify-center text-white text-sm font-medium">
+                    <div
+                      className="aspect-square rounded border border-gray-200 flex items-center justify-center text-white text-sm font-medium cursor-pointer hover:opacity-80 transition-opacity"
+                      style={{ backgroundColor: 'rgba(200, 84, 80, 0.8)' }}
+                      onClick={() => openLightbox(5)}
+                    >
                       +{ad.images.length - 5}
                     </div>
                   )}
@@ -111,46 +147,48 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">가격 정보</h4>
             <div className="space-y-3">
-              {/* 주요 가격 옵션 - 시인성 최우선 */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="p-4 rounded-lg text-center shadow-sm" style={{ backgroundColor: '#C85450' }}>
-                  <div className="text-xl font-bold text-white">
-                    {ad.pricing?.monthly?.toLocaleString() || '문의'}원
-                  </div>
-                  <div className="text-xs mt-1" style={{ color: '#ffd7d5' }}>월</div>
+              {/* 주요 가격 - 월 광고비 강조 */}
+              <div className="p-5 rounded-lg text-center shadow-md" style={{ backgroundColor: '#C85450' }}>
+                <div className="text-xs mb-1" style={{ color: '#ffd7d5' }}>월 광고비</div>
+                <div className="text-3xl font-bold text-white">
+                  {ad.pricing?.monthly?.toLocaleString() || '문의'}원
                 </div>
+              </div>
+
+              {/* 기타 가격 옵션 */}
+              <div className="grid grid-cols-2 gap-3">
                 {ad.pricing?.weekly && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
-                    <div className="text-xl font-bold text-gray-900">
+                  <div className="p-3 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
+                    <div className="text-xs text-gray-600 mb-1">주 광고비</div>
+                    <div className="text-lg font-bold text-gray-900">
                       {ad.pricing.weekly.toLocaleString()}원
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">주</div>
                   </div>
                 )}
                 {ad.pricing?.daily && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
-                    <div className="text-xl font-bold text-gray-900">
+                  <div className="p-3 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
+                    <div className="text-xs text-gray-600 mb-1">일 광고비</div>
+                    <div className="text-lg font-bold text-gray-900">
                       {ad.pricing.daily.toLocaleString()}원
                     </div>
-                    <div className="text-xs text-gray-600 mt-1">일</div>
                   </div>
                 )}
-              </div>
-
-              {/* 광고비 및 계약 기간 */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-xs text-gray-600 mb-1">광고비</div>
-                  <div className="text-lg font-bold text-gray-900">
-                    {ad.pricing?.deposit?.toLocaleString() || '문의'}원
+                {ad.pricing?.deposit && (
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-xs text-gray-600 mb-1">광고비</div>
+                    <div className="text-lg font-bold text-gray-900">
+                      {ad.pricing.deposit.toLocaleString()}원
+                    </div>
                   </div>
-                </div>
-                <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-xs text-gray-600 mb-1">최소 계약</div>
-                  <div className="text-lg font-bold text-gray-900">
-                    {ad.pricing?.minimumPeriod || '-'}개월
+                )}
+                {ad.pricing?.minimumPeriod && (
+                  <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="text-xs text-gray-600 mb-1">최소 계약</div>
+                    <div className="text-lg font-bold text-gray-900">
+                      {ad.pricing.minimumPeriod}개월
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               {/* 할인 정보 - 단순화 */}
@@ -335,6 +373,71 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           </div>
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {lightboxOpen && ad.images && ad.images.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center"
+          onClick={closeLightbox}
+        >
+          {/* Close Button */}
+          <button
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {/* Previous Button */}
+          {ad.images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                prevImage();
+              }}
+              className="absolute left-4 text-white hover:text-gray-300 transition-colors"
+            >
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Image */}
+          <div
+            className="max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={ad.images[lightboxIndex].url}
+              alt={ad.images[lightboxIndex].alt || ad.title}
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+
+          {/* Next Button */}
+          {ad.images.length > 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                nextImage();
+              }}
+              className="absolute right-4 text-white hover:text-gray-300 transition-colors"
+            >
+              <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          )}
+
+          {/* Image Counter */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 px-4 py-2 rounded-full text-sm">
+            {lightboxIndex + 1} / {ad.images.length}
+          </div>
+        </div>
+      )}
     </>
   );
 }

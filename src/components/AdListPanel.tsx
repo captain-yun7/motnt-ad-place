@@ -25,38 +25,11 @@ export default function AdListPanel({
   showSubFilters
 }: AdListPanelProps) {
   
-  const handleToggle = () => {
-    onToggle();
-    // 리스트 패널을 닫을 때 상세 패널도 함께 닫기
-    if (isVisible && onCloseDetail) {
-      onCloseDetail();
-    }
-  };
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        onClick={handleToggle}
-        className={`fixed top-1/2 -translate-y-1/2 z-40 bg-white border border-gray-200 shadow-lg rounded-r-lg p-2 hover:bg-gray-50 transition-all ${
-          isVisible ? 'left-[416px]' : 'left-0'
-        }`}
-        title={isVisible ? "패널 숨기기" : "패널 보이기"}
-      >
-        <svg 
-          className={`w-4 h-4 text-gray-600 transition-transform ${isVisible ? 'rotate-180' : ''}`} 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"/>
-        </svg>
-      </button>
-
-      {/* Panel */}
+      {/* Panel - 항상 표시 */}
       <div
-        className={`fixed left-0 bg-white border-r border-gray-200 z-30 transition-all duration-300 ease-in-out flex flex-col ${
-          isVisible ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className="fixed left-0 bg-white border-r border-gray-200 z-30 flex flex-col"
         style={{
           width: '416px',
           top: '0',
