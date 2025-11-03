@@ -39,9 +39,11 @@ export default function ClusterMarker({ position, count, onClick }: ClusterMarke
     } else {
       return {
         size: 'w-20 h-20 text-xl',
-        background: 'bg-purple-600',
+        background: '',
         textColor: 'text-white',
-        borderColor: 'border-purple-700',
+        borderColor: '',
+        customBg: '#C85450',
+        customBorder: '#a84440',
       };
     }
   };
@@ -61,15 +63,19 @@ export default function ClusterMarker({ position, count, onClick }: ClusterMarke
           font-bold
           relative
         `}
+        style={{
+          backgroundColor: (style as any).customBg,
+          borderColor: (style as any).customBorder
+        }}
       >
         <span className="relative z-10">{count}</span>
-        
+
         {/* 네이버 부동산 스타일 효과 */}
         <div className="absolute inset-0 rounded-full opacity-30 animate-pulse bg-white"></div>
-        
+
         {/* 클러스터 링 효과 */}
         {count >= 50 && (
-          <div className="absolute -inset-1 rounded-full border-2 border-purple-400 opacity-50 animate-ping"></div>
+          <div className="absolute -inset-1 rounded-full border-2 opacity-50 animate-ping" style={{ borderColor: '#f5a9a6' }}></div>
         )}
       </div>
     </CustomOverlayMap>

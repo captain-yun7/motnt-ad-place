@@ -452,7 +452,7 @@ export default function AdDetailPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-28 space-y-6">
               {/* 가격 정보 - 메인 강조 */}
-              <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl shadow-2xl overflow-hidden">
+              <div className="rounded-2xl shadow-2xl overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #C85450, #a84440)' }}>
                 <div className="p-8 text-white">
                   <h2 className="text-2xl font-bold mb-6 flex items-center">
                     <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -463,34 +463,34 @@ export default function AdDetailPage() {
 
                   {/* 주요 가격 */}
                   <div className="mb-6">
-                    <div className="text-sm font-semibold text-purple-200 mb-2">월 광고료</div>
+                    <div className="text-sm font-semibold mb-2" style={{ color: '#ffd7d5' }}>월 광고료</div>
                     <div className="text-5xl font-black mb-1">{ad.pricing.monthly.toLocaleString()}<span className="text-2xl">원</span></div>
-                    <div className="text-purple-200 text-sm">VAT 별도</div>
+                    <div className="text-sm" style={{ color: '#ffd7d5' }}>VAT 별도</div>
                   </div>
 
                   {/* 추가 가격 */}
-                  <div className="space-y-3 pt-6 border-t border-purple-500/50">
+                  <div className="space-y-3 pt-6 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.3)' }}>
                     {ad.pricing.weekly && (
                       <div className="flex justify-between items-center">
-                        <span className="text-purple-100 font-medium">주 광고료</span>
+                        <span className="font-medium" style={{ color: '#ffd7d5' }}>주 광고료</span>
                         <span className="text-xl font-bold">{ad.pricing.weekly.toLocaleString()}원</span>
                       </div>
                     )}
                     {ad.pricing.daily && (
                       <div className="flex justify-between items-center">
-                        <span className="text-purple-100 font-medium">일 광고료</span>
+                        <span className="font-medium" style={{ color: '#ffd7d5' }}>일 광고료</span>
                         <span className="text-xl font-bold">{ad.pricing.daily.toLocaleString()}원</span>
                       </div>
                     )}
                     {ad.pricing.deposit && (
                       <div className="flex justify-between items-center">
-                        <span className="text-purple-100 font-medium">보증금</span>
+                        <span className="font-medium" style={{ color: '#ffd7d5' }}>광고비</span>
                         <span className="text-xl font-bold">{ad.pricing.deposit.toLocaleString()}원</span>
                       </div>
                     )}
                     {ad.pricing.minimumPeriod && (
                       <div className="flex justify-between items-center">
-                        <span className="text-purple-100 font-medium">최소 계약</span>
+                        <span className="font-medium" style={{ color: '#ffd7d5' }}>최소 계약</span>
                         <span className="text-xl font-bold">{ad.pricing.minimumPeriod}개월</span>
                       </div>
                     )}
@@ -502,7 +502,7 @@ export default function AdDetailPage() {
                       <div className="text-sm font-bold text-white mb-3">장기 계약 할인</div>
                       <div className="flex flex-wrap gap-2">
                         {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
-                          <span key={period} className="px-3 py-1.5 bg-white text-purple-700 text-xs font-bold rounded-full">
+                          <span key={period} className="px-3 py-1.5 bg-white text-xs font-bold rounded-full" style={{ color: '#C85450' }}>
                             {period.replace('months', '개월')}: {discount}%
                           </span>
                         ))}
@@ -512,18 +512,18 @@ export default function AdDetailPage() {
 
                   {/* 추가 비용 */}
                   {ad.pricing.additionalCosts && (
-                    <div className="mt-6 pt-6 border-t border-purple-500/50">
-                      <div className="text-sm font-bold text-purple-100 mb-3">추가 비용</div>
+                    <div className="mt-6 pt-6 border-t" style={{ borderColor: 'rgba(255, 255, 255, 0.3)' }}>
+                      <div className="text-sm font-bold mb-3" style={{ color: '#ffd7d5' }}>추가 비용</div>
                       <div className="space-y-2">
                         {ad.pricing.additionalCosts.installation && (
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-purple-100">설치비</span>
+                            <span style={{ color: '#ffd7d5' }}>설치비</span>
                             <span className="font-bold">{ad.pricing.additionalCosts.installation.toLocaleString()}원</span>
                           </div>
                         )}
                         {ad.pricing.additionalCosts.design && (
                           <div className="flex justify-between items-center text-sm">
-                            <span className="text-purple-100">디자인비</span>
+                            <span style={{ color: '#ffd7d5' }}>디자인비</span>
                             <span className="font-bold">{ad.pricing.additionalCosts.design.toLocaleString()}원</span>
                           </div>
                         )}
@@ -534,10 +534,10 @@ export default function AdDetailPage() {
 
                 {/* CTA 버튼 */}
                 <div className="p-6 bg-white">
-                  <button className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] mb-3">
+                  <button className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] mb-3" style={{ background: 'linear-gradient(to right, #C85450, #a84440)' }}>
                     광고 문의하기
                   </button>
-                  <button className="w-full border-2 border-purple-600 text-purple-600 hover:bg-purple-50 py-3 px-6 rounded-xl font-semibold transition-all">
+                  <button className="w-full border-2 py-3 px-6 rounded-xl font-semibold transition-all" style={{ borderColor: '#C85450', color: '#C85450' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                     관심 광고 저장
                   </button>
                   <p className="text-xs text-gray-500 mt-3 text-center">
@@ -550,7 +550,7 @@ export default function AdDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2" style={{ color: '#C85450' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>

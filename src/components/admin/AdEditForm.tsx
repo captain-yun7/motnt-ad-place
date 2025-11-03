@@ -881,7 +881,7 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  보증금 (원)
+                  광고비 (원)
                 </label>
                 <input
                   type="number"

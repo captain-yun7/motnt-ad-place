@@ -113,14 +113,14 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             <div className="space-y-3">
               {/* 주요 가격 옵션 - 시인성 최우선 */}
               <div className="grid grid-cols-3 gap-2">
-                <div className="p-4 bg-purple-700 rounded-lg text-center shadow-sm">
+                <div className="p-4 rounded-lg text-center shadow-sm" style={{ backgroundColor: '#C85450' }}>
                   <div className="text-xl font-bold text-white">
                     {ad.pricing?.monthly?.toLocaleString() || '문의'}원
                   </div>
-                  <div className="text-xs text-purple-100 mt-1">월</div>
+                  <div className="text-xs mt-1" style={{ color: '#ffd7d5' }}>월</div>
                 </div>
                 {ad.pricing?.weekly && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2 border-purple-600">
+                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
                     <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.weekly.toLocaleString()}원
                     </div>
@@ -128,7 +128,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                   </div>
                 )}
                 {ad.pricing?.daily && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2 border-purple-600">
+                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
                     <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.daily.toLocaleString()}원
                     </div>
@@ -137,10 +137,10 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 )}
               </div>
 
-              {/* 보증금 및 계약 기간 */}
+              {/* 광고비 및 계약 기간 */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                  <div className="text-xs text-gray-600 mb-1">보증금</div>
+                  <div className="text-xs text-gray-600 mb-1">광고비</div>
                   <div className="text-lg font-bold text-gray-900">
                     {ad.pricing?.deposit?.toLocaleString() || '문의'}원
                   </div>
@@ -155,11 +155,11 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
               {/* 할인 정보 - 단순화 */}
               {ad.pricing?.discounts && Object.keys(ad.pricing.discounts).length > 0 && (
-                <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="p-3 rounded-lg border" style={{ backgroundColor: '#fef2f2', borderColor: '#fecaca' }}>
                   <div className="text-sm font-semibold text-gray-900 mb-2">장기 계약 할인</div>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
-                      <span key={period} className="text-xs bg-purple-700 text-white px-2 py-1 rounded font-semibold">
+                      <span key={period} className="text-xs text-white px-2 py-1 rounded font-semibold" style={{ backgroundColor: '#C85450' }}>
                         {period.replace('months', '개월')}: {discount}%
                       </span>
                     ))}
@@ -223,7 +223,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 {ad.location.nearestStation && (
                   <div className="p-3 bg-white rounded-lg border border-gray-200">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#C85450' }}>
                         <span className="text-white text-sm">🚇</span>
                       </div>
                       <div className="flex-1">
@@ -240,7 +240,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 {ad.location.parking && ad.location.parking.available && (
                   <div className="p-3 bg-white rounded-lg border border-gray-200">
                     <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-purple-700 rounded-full flex items-center justify-center flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#C85450' }}>
                         <span className="text-white text-sm">🅿️</span>
                       </div>
                       <div className="flex-1">
@@ -275,13 +275,13 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-lg font-semibold text-gray-900 mb-4">노출 및 참여 통계</h4>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="text-center p-4 bg-purple-700 rounded-lg shadow-sm">
+              <div className="text-center p-4 rounded-lg shadow-sm" style={{ backgroundColor: '#C85450' }}>
                 <div className="text-3xl font-bold text-white">
                   {(ad.metadata?.performanceMetrics?.averageViews || (ad.viewCount || 0) * 10).toLocaleString()}
                 </div>
-                <div className="text-xs text-purple-100 mt-1">일 평균 노출</div>
+                <div className="text-xs mt-1" style={{ color: '#ffd7d5' }}>일 평균 노출</div>
               </div>
-              <div className="text-center p-4 bg-white rounded-lg border-2 border-purple-600">
+              <div className="text-center p-4 bg-white rounded-lg border-2" style={{ borderColor: '#C85450' }}>
                 <div className="text-3xl font-bold text-gray-900">
                   {(ad.viewCount || 0).toLocaleString()}
                 </div>
@@ -307,7 +307,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 <div className="text-sm font-medium text-gray-700 mb-2">피크 시간대</div>
                 <div className="flex flex-wrap gap-2">
                   {ad.metadata.performanceMetrics.peakHours.map((time, index) => (
-                    <span key={index} className="text-xs bg-purple-700 text-white px-2 py-1 rounded font-semibold">
+                    <span key={index} className="text-xs text-white px-2 py-1 rounded font-semibold" style={{ backgroundColor: '#C85450' }}>
                       {time}
                     </span>
                   ))}
@@ -319,10 +319,10 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           {/* Action Buttons */}
           <div className="p-6">
             <div className="space-y-3">
-              <button className="w-full bg-purple-700 text-white py-3 rounded-lg hover:bg-purple-800 transition-colors font-bold shadow-sm">
+              <button className="w-full text-white py-3 rounded-lg transition-colors font-bold shadow-sm" style={{ backgroundColor: '#C85450' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b04946'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C85450'}>
                 광고 문의하기
               </button>
-              <button className="w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg hover:bg-purple-50 transition-colors font-semibold">
+              <button className="w-full border-2 py-3 rounded-lg transition-colors font-semibold" style={{ borderColor: '#C85450', color: '#C85450' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 관심 광고 저장
               </button>
               <button

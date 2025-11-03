@@ -1154,7 +1154,7 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  보증금 (원)
+                  광고비 (원)
                 </label>
                 <input
                   type="number"

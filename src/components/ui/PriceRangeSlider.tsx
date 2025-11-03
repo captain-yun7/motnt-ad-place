@@ -107,7 +107,7 @@ export default function PriceRangeSlider({
   return (
     <div className="flex items-center gap-5 w-full max-w-2xl">
       {/* 최소가격 표시 */}
-      <div className="text-[15px] font-bold text-purple-700 whitespace-nowrap min-w-[70px] text-right">
+      <div className="text-[15px] font-bold whitespace-nowrap min-w-[70px] text-right" style={{ color: '#C85450' }}>
         {formatPrice(minValue)}
       </div>
 
@@ -120,8 +120,9 @@ export default function PriceRangeSlider({
         >
           {/* 선택된 범위 표시 */}
           <div
-            className="h-2 bg-gradient-to-r from-purple-600 to-purple-700 rounded-full absolute shadow-sm pointer-events-none"
+            className="h-2 rounded-full absolute shadow-sm pointer-events-none"
             style={{
+              background: 'linear-gradient(to right, #C85450, #a84440)',
               left: `${((minValue - min) / (max - min)) * 100}%`,
               right: `${100 - ((maxValue - min) / (max - min)) * 100}%`
             }}
@@ -136,7 +137,10 @@ export default function PriceRangeSlider({
           step={step}
           value={minValue}
           onChange={handleMinChange}
-          className="absolute w-full h-2 -top-0 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-purple-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-purple-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg"
+          style={{
+            '--thumb-color': '#C85450'
+          } as React.CSSProperties}
+          className="absolute w-full h-2 -top-0 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg [&::-webkit-slider-thumb]:border-[#C85450] [&::-moz-range-thumb]:border-[#C85450]"
         />
 
         {/* 최대값 슬라이더 */}
@@ -147,12 +151,15 @@ export default function PriceRangeSlider({
           step={step}
           value={maxValue}
           onChange={handleMaxChange}
-          className="absolute w-full h-2 -top-0 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-purple-600 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-purple-600 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg"
+          style={{
+            '--thumb-color': '#C85450'
+          } as React.CSSProperties}
+          className="absolute w-full h-2 -top-0 appearance-none bg-transparent pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:shadow-lg [&::-webkit-slider-thumb]:hover:scale-110 [&::-webkit-slider-thumb]:transition-transform [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:appearance-none [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:shadow-lg [&::-webkit-slider-thumb]:border-[#C85450] [&::-moz-range-thumb]:border-[#C85450]"
         />
       </div>
 
       {/* 최대가격 표시 */}
-      <div className="text-[15px] font-bold text-purple-700 whitespace-nowrap min-w-[70px]">
+      <div className="text-[15px] font-bold whitespace-nowrap min-w-[70px]" style={{ color: '#C85450' }}>
         {formatPrice(maxValue)}
       </div>
 
@@ -160,7 +167,10 @@ export default function PriceRangeSlider({
       {(minValue !== min || maxValue !== max) && (
         <button
           onClick={handleReset}
-          className="text-[14px] text-purple-600 hover:text-purple-800 font-semibold whitespace-nowrap transition-colors"
+          className="text-[14px] font-semibold whitespace-nowrap transition-colors"
+          style={{ color: '#C85450' }}
+          onMouseEnter={(e) => e.currentTarget.style.color = '#a84440'}
+          onMouseLeave={(e) => e.currentTarget.style.color = '#C85450'}
         >
           초기화
         </button>
