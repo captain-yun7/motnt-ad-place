@@ -109,32 +109,6 @@ const Map = memo(function Map({
   const handleMarkerClickInternal = useCallback((ad: AdResponse) => {
     setSelectedAd(ad);
     onMarkerClick?.(ad);
-    
-    // 인포윈도우 표시
-    if (mapRef.current && ad.location?.coordinates && infoWindowRef.current) {
-      const [lng, lat] = ad.location.coordinates;
-      
-      infoWindowRef.current.setContent(`
-        <div style="padding: 16px; min-width: 256px;">
-          <h3 style="font-weight: 600; color: #111827; margin-bottom: 8px;">
-            ${ad.title}
-          </h3>
-          <div style="font-size: 14px; color: #4B5563; margin-bottom: 12px;">
-            <p style="margin: 4px 0;"><strong>카테고리:</strong> ${ad.category.name}</p>
-            <p style="margin: 4px 0;"><strong>지역:</strong> ${ad.district.name}</p>
-            <p style="margin: 4px 0;"><strong>월 금액:</strong> ${ad.pricing.monthly.toLocaleString()}원</p>
-            <p style="margin: 4px 0;"><strong>주소:</strong> ${ad.location?.address || '주소 정보 없음'}</p>
-          </div>
-          ${ad.description ? `
-            <p style="font-size: 12px; color: #6B7280; margin-bottom: 12px;">
-              ${ad.description.length > 50 ? ad.description.substring(0, 50) + '...' : ad.description}
-            </p>
-          ` : ''}
-        </div>
-      `);
-      
-      infoWindowRef.current.open(mapRef.current, new window.naver.maps.LatLng(lat, lng));
-    }
   }, [onMarkerClick]);
 
   // 지도 초기화
@@ -668,36 +642,6 @@ const Map = memo(function Map({
                 </p>
               )}
             </div>
-            
-            {/* 선택된 광고 정보 패널 */}
-            {selectedAd && (
-              <div className="absolute bottom-4 right-4 bg-white rounded-lg shadow-lg p-4 max-w-sm">
-                <h3 className="font-semibold text-gray-900 mb-2">
-                  {selectedAd.title}
-                </h3>
-                <button
-                  onClick={() => {
-                    setSelectedAd(null);
-                    if (infoWindowRef.current) {
-                      infoWindowRef.current.close();
-                    }
-                  }}
-                  className="absolute top-2 right-2 text-gray-400 hover:text-gray-600"
-                >
-                  ✕
-                </button>
-                <div className="text-sm text-gray-600 space-y-1">
-                  <p><span className="font-medium">카테고리:</span> {selectedAd.category.name}</p>
-                  <p><span className="font-medium">월 금액:</span> {selectedAd.pricing.monthly.toLocaleString()}원</p>
-                </div>
-                <button 
-                  onClick={() => onMarkerClick?.(selectedAd)}
-                  className="mt-3 w-full bg-blue-600 text-white text-sm py-2 px-3 rounded hover:bg-blue-700"
-                >
-                  상세 보기
-                </button>
-              </div>
-            )}
           </>
         )}
       </div>

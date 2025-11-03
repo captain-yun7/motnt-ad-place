@@ -1,5 +1,6 @@
 import { AdResponse } from '@/types/ad';
 import AdCard from './AdCard';
+import { useEffect, useRef } from 'react';
 
 interface AdListPanelProps {
   ads: AdResponse[];
@@ -24,7 +25,18 @@ export default function AdListPanel({
   onCloseDetail,
   showSubFilters
 }: AdListPanelProps) {
-  
+  const adRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+
+  // selectedAdId가 변경될 때 해당 광고로 스크롤
+  useEffect(() => {
+    if (selectedAdId && adRefs.current[selectedAdId]) {
+      adRefs.current[selectedAdId]?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, [selectedAdId]);
+
   return (
     <>
       {/* Panel - 항상 표시 */}
@@ -77,12 +89,18 @@ export default function AdListPanel({
               </div>
             ) : (
               ads.map((ad) => (
-                <AdCard
+                <div
                   key={ad.id}
-                  ad={ad}
-                  onClick={onAdClick}
-                  isSelected={selectedAdId === ad.id}
-                />
+                  ref={(el) => {
+                    adRefs.current[ad.id] = el;
+                  }}
+                >
+                  <AdCard
+                    ad={ad}
+                    onClick={onAdClick}
+                    isSelected={selectedAdId === ad.id}
+                  />
+                </div>
               ))
             )}
           </div>

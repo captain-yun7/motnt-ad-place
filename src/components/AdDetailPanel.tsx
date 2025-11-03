@@ -86,7 +86,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           </div>
 
           {/* Ad Title */}
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{ad.title}</h3>
+          <h3 className="text-xl font-bold mb-2" style={{ color: '#C85450' }}>{ad.title}</h3>
           <p className="text-base font-medium text-gray-700">{ad.location?.address}</p>
         </div>
 
