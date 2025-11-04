@@ -414,7 +414,12 @@ export default function AdDetailPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div className="text-center p-5 rounded-xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #C85450, #a84440)' }}>
                     <div className="text-3xl font-bold text-white mb-1">
-                      {(ad.metadata?.performanceMetrics?.averageViews || (ad.viewCount || 0) * 10).toLocaleString()}
+                      {(() => {
+                        const averageViews = Number(ad.metadata?.performanceMetrics?.averageViews);
+                        const viewCount = Number(ad.viewCount) || 0;
+                        const value = averageViews || viewCount * 10;
+                        return Number.isFinite(value) ? value.toLocaleString() : '0';
+                      })()}
                     </div>
                     <div className="text-xs font-semibold" style={{ color: '#ffd7d5' }}>일 평균 노출</div>
                   </div>
