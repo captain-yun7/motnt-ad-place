@@ -451,7 +451,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 관심 광고 저장
               </button>
               <button
-                onClick={() => window.open(`/ad/${ad.id}`, '_blank')}
+                onClick={() => window.location.href = `/ad/${ad.id}`}
                 className="w-full border-2 border-gray-300 text-gray-900 py-4 rounded-lg hover:bg-gray-50 transition-colors text-base font-bold"
               >
                 상세 페이지 보기

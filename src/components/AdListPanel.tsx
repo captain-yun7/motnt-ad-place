@@ -1,6 +1,6 @@
 import { AdResponse } from '@/types/ad';
 import AdCard from './AdCard';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 
 interface AdListPanelProps {
   ads: AdResponse[];
@@ -26,6 +26,8 @@ export default function AdListPanel({
   showSubFilters
 }: AdListPanelProps) {
   const adRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const [sortType, setSortType] = useState<'recommended' | 'price'>('recommended');
+  const [priceOrder, setPriceOrder] = useState<'asc' | 'desc'>('asc');
 
   // selectedAdId가 변경될 때 해당 광고로 스크롤
   useEffect(() => {
@@ -36,6 +38,67 @@ export default function AdListPanel({
       });
     }
   }, [selectedAdId]);
+
+  // 추천순 점수 계산
+  const calculateRecommendedScore = (ad: AdResponse): number => {
+    let score = 0;
+
+    // 추천 광고 최우선
+    if (ad.featured) score += 1000;
+
+    // 광고 가능 여부
+    if (ad.isActive) score += 500;
+
+    // 검증된 광고
+    if (ad.verified) score += 100;
+
+    // 조회수
+    score += (ad.viewCount || 0) * 0.3;
+
+    // 일 평균 노출
+    score += (ad.metadata?.performanceMetrics?.averageViews || 0) * 0.25;
+
+    // 관심 등록
+    score += (ad.favoriteCount || 0) * 0.2;
+
+    // 문의 수
+    score += (ad.inquiryCount || 0) * 0.15;
+
+    return score;
+  };
+
+  // 정렬된 광고 목록
+  const sortedAds = useMemo(() => {
+    if (sortType === 'recommended') {
+      return [...ads].sort((a, b) => {
+        return calculateRecommendedScore(b) - calculateRecommendedScore(a);
+      });
+    } else {
+      // 가격순
+      return [...ads].sort((a, b) => {
+        const priceA = a.pricing?.monthly || 999999999; // 가격 없으면 맨 뒤로
+        const priceB = b.pricing?.monthly || 999999999;
+
+        if (priceOrder === 'asc') {
+          return priceA - priceB;
+        } else {
+          return priceB - priceA;
+        }
+      });
+    }
+  }, [ads, sortType, priceOrder]);
+
+  // 가격순 버튼 클릭 핸들러
+  const handlePriceSort = () => {
+    if (sortType === 'price') {
+      // 이미 가격순이면 오름차순/내림차순 토글
+      setPriceOrder(priceOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      // 가격순으로 변경
+      setSortType('price');
+      setPriceOrder('asc'); // 기본 오름차순
+    }
+  };
 
   return (
     <>
@@ -58,14 +121,36 @@ export default function AdListPanel({
 
           {/* Sort Options */}
           <div className="flex space-x-2">
-            <button className="px-3 py-1.5 text-sm bg-gray-900 text-white rounded-full">
+            <button
+              onClick={() => setSortType('recommended')}
+              className={`px-3 py-1.5 text-sm rounded-full font-semibold transition-colors ${
+                sortType === 'recommended'
+                  ? 'text-white'
+                  : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+              style={sortType === 'recommended' ? { backgroundColor: '#C85450' } : {}}
+            >
               추천순
             </button>
-            <button className="px-3 py-1.5 text-sm border border-gray-300 rounded-full hover:bg-gray-50">
+            <button
+              onClick={handlePriceSort}
+              className={`px-3 py-1.5 text-sm rounded-full font-semibold transition-colors flex items-center gap-1 ${
+                sortType === 'price'
+                  ? 'text-white'
+                  : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
+              }`}
+              style={sortType === 'price' ? { backgroundColor: '#C85450' } : {}}
+            >
               가격순
-            </button>
-            <button className="px-3 py-1.5 text-sm border border-gray-300 rounded-full hover:bg-gray-50">
-              거리순
+              {sortType === 'price' && (
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  {priceOrder === 'asc' ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 15l7-7 7 7" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M19 9l-7 7-7-7" />
+                  )}
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -88,7 +173,7 @@ export default function AdListPanel({
                 <p className="text-sm">검색 결과가 없습니다</p>
               </div>
             ) : (
-              ads.map((ad) => (
+              sortedAds.map((ad) => (
                 <div
                   key={ad.id}
                   ref={(el) => {

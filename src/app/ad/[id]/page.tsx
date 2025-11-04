@@ -80,7 +80,7 @@ export default function AdDetailPage() {
         <header className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-20">
-              <button className="text-purple-600 hover:text-purple-700 flex items-center space-x-2 font-semibold transition-colors">
+              <button className="flex items-center space-x-2 font-semibold transition-colors" style={{ color: '#C85450' }}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
                 </svg>
