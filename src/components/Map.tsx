@@ -270,7 +270,7 @@ const Map = memo(function Map({
               <div style="
                 width: 54px;
                 height: 54px;
-                background: black;
+                background: #C85450;
                 border: 3px solid white;
                 border-radius: 50%;
                 box-shadow: 0 3px 10px rgba(0,0,0,0.5);
@@ -279,8 +279,8 @@ const Map = memo(function Map({
                 justify-content: center;
                 cursor: pointer;
                 transition: all 0.2s;
-              " 
-              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';" 
+              "
+              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';"
               onmouseout="this.style.transform='scale(1)'; this.style.zIndex='1';"
               title="${categoryName}">
                 ${icon}
@@ -308,7 +308,7 @@ const Map = memo(function Map({
                 color: white;
                 text-align: center;
                 font-weight: 300;
-                background: rgba(0,0,0,0.75);
+                background: rgba(200, 84, 80, 0.9);
                 border-radius: 50%;
                 border: 1px solid rgba(255,255,255,0.3);
                 box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -331,7 +331,7 @@ const Map = memo(function Map({
               <div style="
                 cursor: pointer;
                 padding: 8px 12px;
-                background: black;
+                background: #C85450;
                 color: white;
                 font-size: 14px;
                 font-weight: 700;
@@ -341,7 +341,7 @@ const Map = memo(function Map({
                 transition: all 0.2s;
                 letter-spacing: -0.3px;
               "
-              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';" 
+              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';"
               onmouseout="this.style.transform='scale(1)'; this.style.zIndex='1';">
                 ${formattedPrice}
               </div>
@@ -406,31 +406,31 @@ const Map = memo(function Map({
       const size5 = getClusterSize(120);
 
       const htmlMarker1 = {
-        content: `<div style="cursor:pointer;width:${size1}px;height:${size1}px;line-height:${size1}px;font-size:${Math.round(size1 * 0.4)}px;color:white;text-align:center;font-weight:300;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
+        content: `<div style="cursor:pointer;width:${size1}px;height:${size1}px;line-height:${size1}px;font-size:${Math.round(size1 * 0.4)}px;color:white;text-align:center;font-weight:300;background:rgba(200, 84, 80, 0.9);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>`,
         size: new window.naver.maps.Size(size1, size1),
         anchor: new window.naver.maps.Point(size1/2, size1/2)
       };
 
       const htmlMarker2 = {
-        content: `<div style="cursor:pointer;width:${size2}px;height:${size2}px;line-height:${size2}px;font-size:${Math.round(size2 * 0.36)}px;color:white;text-align:center;font-weight:300;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 10px rgba(0,0,0,0.35)"></div>`,
+        content: `<div style="cursor:pointer;width:${size2}px;height:${size2}px;line-height:${size2}px;font-size:${Math.round(size2 * 0.36)}px;color:white;text-align:center;font-weight:300;background:rgba(200, 84, 80, 0.9);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 2px 10px rgba(0,0,0,0.35)"></div>`,
         size: new window.naver.maps.Size(size2, size2),
         anchor: new window.naver.maps.Point(size2/2, size2/2)
       };
 
       const htmlMarker3 = {
-        content: `<div style="cursor:pointer;width:${size3}px;height:${size3}px;line-height:${size3}px;font-size:${Math.round(size3 * 0.33)}px;color:white;text-align:center;font-weight:400;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 3px 12px rgba(0,0,0,0.4)"></div>`,
+        content: `<div style="cursor:pointer;width:${size3}px;height:${size3}px;line-height:${size3}px;font-size:${Math.round(size3 * 0.33)}px;color:white;text-align:center;font-weight:400;background:rgba(200, 84, 80, 0.9);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 3px 12px rgba(0,0,0,0.4)"></div>`,
         size: new window.naver.maps.Size(size3, size3),
         anchor: new window.naver.maps.Point(size3/2, size3/2)
       };
 
       const htmlMarker4 = {
-        content: `<div style="cursor:pointer;width:${size4}px;height:${size4}px;line-height:${size4}px;font-size:${Math.round(size4 * 0.31)}px;color:white;text-align:center;font-weight:400;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 3px 14px rgba(0,0,0,0.45)"></div>`,
+        content: `<div style="cursor:pointer;width:${size4}px;height:${size4}px;line-height:${size4}px;font-size:${Math.round(size4 * 0.31)}px;color:white;text-align:center;font-weight:400;background:rgba(200, 84, 80, 0.9);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 3px 14px rgba(0,0,0,0.45)"></div>`,
         size: new window.naver.maps.Size(size4, size4),
         anchor: new window.naver.maps.Point(size4/2, size4/2)
       };
 
       const htmlMarker5 = {
-        content: `<div style="cursor:pointer;width:${size5}px;height:${size5}px;line-height:${size5}px;font-size:${Math.round(size5 * 0.3)}px;color:white;text-align:center;font-weight:400;background:rgba(0,0,0,0.75);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.5)"></div>`,
+        content: `<div style="cursor:pointer;width:${size5}px;height:${size5}px;line-height:${size5}px;font-size:${Math.round(size5 * 0.3)}px;color:white;text-align:center;font-weight:400;background:rgba(200, 84, 80, 0.9);border-radius:50%;border:1px solid rgba(255,255,255,0.3);box-shadow:0 4px 16px rgba(0,0,0,0.5)"></div>`,
         size: new window.naver.maps.Size(size5, size5),
         anchor: new window.naver.maps.Point(size5/2, size5/2)
       };
