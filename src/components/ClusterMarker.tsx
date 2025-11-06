@@ -42,7 +42,7 @@ export default function ClusterMarker({ position, count, onClick }: ClusterMarke
         background: '',
         textColor: 'text-white',
         borderColor: '',
-        customBg: '#C85450',
+        customBg: '#B8312F',
         customBorder: '#a84440',
       };
     }

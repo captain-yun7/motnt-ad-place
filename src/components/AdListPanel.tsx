@@ -128,7 +128,7 @@ export default function AdListPanel({
                   ? 'text-white'
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
-              style={sortType === 'recommended' ? { backgroundColor: '#C85450' } : {}}
+              style={sortType === 'recommended' ? { backgroundColor: '#B8312F' } : {}}
             >
               추천순
             </button>
@@ -139,7 +139,7 @@ export default function AdListPanel({
                   ? 'text-white'
                   : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
               }`}
-              style={sortType === 'price' ? { backgroundColor: '#C85450' } : {}}
+              style={sortType === 'price' ? { backgroundColor: '#B8312F' } : {}}
             >
               가격순
               {sortType === 'price' && (

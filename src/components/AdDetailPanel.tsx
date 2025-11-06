@@ -52,10 +52,10 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#C85450'
+            backgroundColor: '#B8312F'
           }}
-          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b04946'}
-          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C85450'}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#9e2825'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B8312F'}
           title="상세 패널 닫기"
         >
           <svg
@@ -89,7 +89,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           </div>
 
           {/* Ad Title */}
-          <h3 className="text-xl font-bold mb-2" style={{ color: '#C85450' }}>{ad.title}</h3>
+          <h3 className="text-xl font-bold mb-2" style={{ color: '#B8312F' }}>{ad.title}</h3>
           <p className="text-base font-medium text-gray-700">{ad.location?.address}</p>
         </div>
 
@@ -151,7 +151,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             <h4 className="text-xl font-bold text-gray-900 mb-4">가격 정보</h4>
             <div className="space-y-3">
               {/* 주요 가격 - 월 광고비 강조 */}
-              <div className="p-5 rounded-lg text-center shadow-md" style={{ backgroundColor: '#C85450' }}>
+              <div className="p-5 rounded-lg text-center shadow-md" style={{ backgroundColor: '#B8312F' }}>
                 <div className="text-sm font-semibold mb-1" style={{ color: '#ffd7d5' }}>월 광고비</div>
                 <div className="text-4xl font-bold text-white">
                   {ad.pricing?.monthly?.toLocaleString() || '문의'}원
@@ -161,16 +161,16 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
               {/* 기타 가격 옵션 */}
               <div className="grid grid-cols-2 gap-3">
                 {ad.pricing?.weekly && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
-                    <div className="text-sm font-semibold mb-1" style={{ color: '#C85450' }}>주 광고비</div>
+                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#B8312F' }}>
+                    <div className="text-sm font-semibold mb-1" style={{ color: '#B8312F' }}>주 광고비</div>
                     <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.weekly.toLocaleString()}원
                     </div>
                   </div>
                 )}
                 {ad.pricing?.daily && (
-                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#C85450' }}>
-                    <div className="text-sm font-semibold mb-1" style={{ color: '#C85450' }}>일 광고비</div>
+                  <div className="p-4 bg-white rounded-lg text-center border-2" style={{ borderColor: '#B8312F' }}>
+                    <div className="text-sm font-semibold mb-1" style={{ color: '#B8312F' }}>일 광고비</div>
                     <div className="text-xl font-bold text-gray-900">
                       {ad.pricing.daily.toLocaleString()}원
                     </div>
@@ -196,11 +196,11 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
               {/* 할인 정보 - 단순화 */}
               {ad.pricing?.discounts && Object.keys(ad.pricing.discounts).length > 0 && (
-                <div className="p-4 rounded-lg border-2" style={{ backgroundColor: '#fef2f2', borderColor: '#C85450' }}>
+                <div className="p-4 rounded-lg border-2" style={{ backgroundColor: '#fef2f2', borderColor: '#B8312F' }}>
                   <div className="text-base font-bold text-gray-900 mb-3">장기 계약 할인</div>
                   <div className="flex flex-wrap gap-2">
                     {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
-                      <span key={period} className="text-sm text-white px-3 py-1.5 rounded-md font-bold" style={{ backgroundColor: '#C85450' }}>
+                      <span key={period} className="text-sm text-white px-3 py-1.5 rounded-md font-bold" style={{ backgroundColor: '#B8312F' }}>
                         {period.replace('months', '개월')}: {discount}%
                       </span>
                     ))}
@@ -236,20 +236,20 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             <h4 className="text-xl font-bold text-gray-900 mb-4">광고 정보</h4>
             <div className="space-y-4">
               <div className="p-4 bg-white rounded-lg border-2 border-gray-300">
-                <label className="text-sm font-bold mb-2 block" style={{ color: '#C85450' }}>카테고리</label>
+                <label className="text-sm font-bold mb-2 block" style={{ color: '#B8312F' }}>카테고리</label>
                 <p className="text-lg font-bold text-gray-900">{ad.category.name}</p>
               </div>
               <div className="p-4 bg-white rounded-lg border-2 border-gray-300">
-                <label className="text-sm font-bold mb-2 block" style={{ color: '#C85450' }}>지역</label>
+                <label className="text-sm font-bold mb-2 block" style={{ color: '#B8312F' }}>지역</label>
                 <p className="text-lg font-bold text-gray-900">{ad.district.name}</p>
               </div>
               <div className="p-4 bg-white rounded-lg border-2 border-gray-300">
-                <label className="text-sm font-bold mb-2 block" style={{ color: '#C85450' }}>주소</label>
+                <label className="text-sm font-bold mb-2 block" style={{ color: '#B8312F' }}>주소</label>
                 <p className="text-base font-bold text-gray-900">{ad.location?.address}</p>
               </div>
               {ad.description && (
                 <div className="p-4 bg-white rounded-lg border-2 border-gray-300">
-                  <label className="text-sm font-bold mb-2 block" style={{ color: '#C85450' }}>설명</label>
+                  <label className="text-sm font-bold mb-2 block" style={{ color: '#B8312F' }}>설명</label>
                   <p className="text-base font-medium text-gray-900 leading-relaxed">{ad.description}</p>
                 </div>
               )}
@@ -264,7 +264,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 {ad.location.nearestStation && (
                   <div className="p-4 bg-white rounded-lg border-2 border-gray-300">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#C85450' }}>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#B8312F' }}>
                         <span className="text-white text-base">🚇</span>
                       </div>
                       <div className="flex-1">
@@ -281,7 +281,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 {ad.location.parking && ad.location.parking.available && (
                   <div className="p-4 bg-white rounded-lg border-2 border-gray-300">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#C85450' }}>
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ backgroundColor: '#B8312F' }}>
                         <span className="text-white text-base">🅿️</span>
                       </div>
                       <div className="flex-1">
@@ -309,7 +309,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
 
                     if (keyLower.includes('width') || keyLower === 'width') {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12M8 12h12M8 17h12M4 7h.01M4 12h.01M4 17h.01" />
                           <path strokeLinecap="round" strokeLinejoin="round" d="M7 12h10M7 12l-3 3m3-3l-3-3m13 3l-3 3m3-3l-3-3" />
                         </svg>
@@ -317,14 +317,14 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                     }
                     if (keyLower.includes('height') || keyLower === 'height') {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14m0-14l-3 3m3-3l3 3m-3 11l-3-3m3 3l3-3" />
                         </svg>
                       );
                     }
                     if (keyLower.includes('resolution')) {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <rect x="3" y="5" width="18" height="14" rx="2" />
                           <path strokeLinecap="round" strokeLinejoin="round" d="M7 15l3-3 2 2 4-4" />
                         </svg>
@@ -332,7 +332,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                     }
                     if (keyLower.includes('brightness')) {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <circle cx="12" cy="12" r="5" />
                           <path strokeLinecap="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41m11.32-11.32l1.41-1.41" />
                         </svg>
@@ -340,28 +340,28 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                     }
                     if (keyLower.includes('material')) {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                         </svg>
                       );
                     }
                     if (keyLower.includes('type')) {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                       );
                     }
                     if (keyLower.includes('update')) {
                       return (
-                        <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                        <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                         </svg>
                       );
                     }
                     // 기본 아이콘
                     return (
-                      <svg className="w-5 h-5" fill="none" stroke="#C85450" viewBox="0 0 24 24" strokeWidth="2.5">
+                      <svg className="w-5 h-5" fill="none" stroke="#B8312F" viewBox="0 0 24 24" strokeWidth="2.5">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     );
@@ -387,7 +387,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                     >
                       <div className="flex items-center gap-2 mb-2">
                         {getIcon(key)}
-                        <span className="text-sm font-bold tracking-wide" style={{ color: '#C85450' }}>
+                        <span className="text-sm font-bold tracking-wide" style={{ color: '#B8312F' }}>
                           {getLabel(key)}
                         </span>
                       </div>
@@ -403,17 +403,17 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           <div className="p-6 border-b border-gray-200">
             <h4 className="text-xl font-bold text-gray-900 mb-4">노출 및 참여 통계</h4>
             <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className="text-center p-5 rounded-lg shadow-sm" style={{ backgroundColor: '#C85450' }}>
+              <div className="text-center p-5 rounded-lg shadow-sm" style={{ backgroundColor: '#B8312F' }}>
                 <div className="text-4xl font-bold text-white">
                   {(ad.metadata?.performanceMetrics?.averageViews || (ad.viewCount || 0) * 10).toLocaleString()}
                 </div>
                 <div className="text-sm font-semibold mt-2" style={{ color: '#ffd7d5' }}>일 평균 노출</div>
               </div>
-              <div className="text-center p-5 bg-white rounded-lg border-2" style={{ borderColor: '#C85450' }}>
+              <div className="text-center p-5 bg-white rounded-lg border-2" style={{ borderColor: '#B8312F' }}>
                 <div className="text-4xl font-bold text-gray-900">
                   {(ad.viewCount || 0).toLocaleString()}
                 </div>
-                <div className="text-sm font-semibold mt-2" style={{ color: '#C85450' }}>페이지 조회</div>
+                <div className="text-sm font-semibold mt-2" style={{ color: '#B8312F' }}>페이지 조회</div>
               </div>
               <div className="text-center p-5 bg-gray-50 rounded-lg border-2 border-gray-300">
                 <div className="text-3xl font-bold text-gray-900">
@@ -435,7 +435,7 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
                 <div className="text-base font-bold text-gray-900 mb-3">피크 시간대</div>
                 <div className="flex flex-wrap gap-2">
                   {ad.metadata.performanceMetrics.peakHours.map((time, index) => (
-                    <span key={index} className="text-sm text-white px-3 py-1.5 rounded-md font-bold" style={{ backgroundColor: '#C85450' }}>
+                    <span key={index} className="text-sm text-white px-3 py-1.5 rounded-md font-bold" style={{ backgroundColor: '#B8312F' }}>
                       {time}
                     </span>
                   ))}
@@ -447,10 +447,10 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
           {/* Action Buttons */}
           <div className="p-6">
             <div className="space-y-3">
-              <button className="w-full text-white py-4 rounded-lg transition-colors text-base font-bold shadow-sm" style={{ backgroundColor: '#C85450' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b04946'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C85450'}>
+              <button className="w-full text-white py-4 rounded-lg transition-colors text-base font-bold shadow-sm" style={{ backgroundColor: '#B8312F' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#9e2825'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B8312F'}>
                 광고 문의하기
               </button>
-              <button className="w-full border-2 py-4 rounded-lg transition-colors text-base font-bold" style={{ borderColor: '#C85450', color: '#C85450' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+              <button className="w-full border-2 py-4 rounded-lg transition-colors text-base font-bold" style={{ borderColor: '#B8312F', color: '#B8312F' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                 관심 광고 저장
               </button>
               <button

@@ -40,15 +40,15 @@ export default function FilterChip({
         ${variantClasses[variant]}
         ${className}
       `}
-      style={isActive ? { backgroundColor: '#C85450' } : {}}
+      style={isActive ? { backgroundColor: '#B8312F' } : {}}
       onMouseEnter={(e) => {
         if (isActive) {
-          e.currentTarget.style.backgroundColor = '#b04946';
+          e.currentTarget.style.backgroundColor = '#9e2825';
         }
       }}
       onMouseLeave={(e) => {
         if (isActive) {
-          e.currentTarget.style.backgroundColor = '#C85450';
+          e.currentTarget.style.backgroundColor = '#B8312F';
         }
       }}
     >

@@ -104,9 +104,9 @@ export default function TopFilterBar({
               <button
                 onClick={onSearch}
                 className="text-white py-2.5 px-6 rounded-lg transition-all duration-200 font-bold text-[15px] shadow-sm hover:shadow-md"
-                style={{ backgroundColor: '#C85450' }}
-                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b04946'}
-                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C85450'}
+                style={{ backgroundColor: '#B8312F' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#9e2825'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#B8312F'}
               >
                 검색
               </button>

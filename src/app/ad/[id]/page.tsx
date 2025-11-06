@@ -80,7 +80,7 @@ export default function AdDetailPage() {
         <header className="bg-white shadow-sm border-b sticky top-0 z-50 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-20">
-              <button className="flex items-center space-x-2 font-semibold transition-colors" style={{ color: '#C85450' }}>
+              <button className="flex items-center space-x-2 font-semibold transition-colors" style={{ color: '#B8312F' }}>
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
                 </svg>
@@ -128,9 +128,9 @@ export default function AdDetailPage() {
               <button
                 onClick={() => router.push('/')}
                 className="flex items-center space-x-2 font-semibold transition-colors"
-              style={{ color: '#C85450' }}
+              style={{ color: '#B8312F' }}
               onMouseEnter={(e) => e.currentTarget.style.color = '#a84440'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#C85450'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#B8312F'}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -167,9 +167,9 @@ export default function AdDetailPage() {
             <button
               onClick={() => router.push('/')}
               className="flex items-center space-x-2 font-semibold transition-all hover:gap-3"
-              style={{ color: '#C85450' }}
+              style={{ color: '#B8312F' }}
               onMouseEnter={(e) => e.currentTarget.style.color = '#a84440'}
-              onMouseLeave={(e) => e.currentTarget.style.color = '#C85450'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#B8312F'}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -223,7 +223,7 @@ export default function AdDetailPage() {
                 {ad.description && (
                   <div className="p-6 bg-gray-50 rounded-xl border border-gray-200">
                     <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                      <svg className="w-5 h-5 mr-2" style={{ color: '#C85450' }} fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-5 h-5 mr-2" style={{ color: '#B8312F' }} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                       </svg>
                       상세 설명
@@ -239,7 +239,7 @@ export default function AdDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <svg className="w-6 h-6 mr-2" style={{ color: '#C85450' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 mr-2" style={{ color: '#B8312F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     이미지 갤러리
@@ -294,7 +294,7 @@ export default function AdDetailPage() {
                               ? 'ring-2 ring-offset-2'
                               : 'border-transparent hover:border-gray-400'
                           }`}
-                          style={selectedImageIndex === index ? { borderColor: '#C85450', ringColor: '#C85450' } : {}}
+                          style={selectedImageIndex === index ? { borderColor: '#B8312F', ringColor: '#B8312F' } : {}}
                         >
                           <div className="relative w-full h-full">
                             <Image
@@ -318,7 +318,7 @@ export default function AdDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <svg className="w-6 h-6 mr-2" style={{ color: '#C85450' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 mr-2" style={{ color: '#B8312F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                     광고 사양
@@ -358,7 +358,7 @@ export default function AdDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <svg className="w-6 h-6 mr-2" style={{ color: '#C85450' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 mr-2" style={{ color: '#B8312F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -368,12 +368,12 @@ export default function AdDetailPage() {
                     {ad.location.nearestStation && (
                       <div className="p-5 rounded-xl border" style={{ background: 'linear-gradient(to right, #fef2f2, #fde4e3)', borderColor: '#fbb8b5' }}>
                         <div className="flex items-start gap-4">
-                          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-md" style={{ backgroundColor: '#C85450' }}>
+                          <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-md" style={{ backgroundColor: '#B8312F' }}>
                             <span className="text-white text-xl">🚇</span>
                           </div>
                           <div className="flex-1">
                             <div className="font-bold text-lg text-gray-900 mb-1">
-                              {ad.location.nearestStation.name} <span style={{ color: '#C85450' }}>({ad.location.nearestStation.line})</span>
+                              {ad.location.nearestStation.name} <span style={{ color: '#B8312F' }}>({ad.location.nearestStation.line})</span>
                             </div>
                             <div className="text-sm text-gray-600">
                               {ad.location.nearestStation.exit} · 도보 {ad.location.nearestStation.walkingTime}
@@ -406,13 +406,13 @@ export default function AdDetailPage() {
             <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
               <div className="p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <svg className="w-6 h-6 mr-2" style={{ color: '#C85450' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6 mr-2" style={{ color: '#B8312F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                   </svg>
                   노출 및 참여 통계
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <div className="text-center p-5 rounded-xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #C85450, #a84440)' }}>
+                  <div className="text-center p-5 rounded-xl shadow-lg" style={{ background: 'linear-gradient(to bottom right, #B8312F, #a84440)' }}>
                     <div className="text-3xl font-bold text-white mb-1">
                       {(() => {
                         const averageViews = Number(ad.metadata?.performanceMetrics?.averageViews);
@@ -449,7 +449,7 @@ export default function AdDetailPage() {
                     <div className="text-sm font-bold mb-3" style={{ color: '#a84440' }}>피크 시간대</div>
                     <div className="flex flex-wrap gap-2">
                       {ad.metadata.performanceMetrics.peakHours.map((time, index) => (
-                        <span key={index} className="px-3 py-1.5 text-white text-xs font-bold rounded-full shadow-sm" style={{ backgroundColor: '#C85450' }}>
+                        <span key={index} className="px-3 py-1.5 text-white text-xs font-bold rounded-full shadow-sm" style={{ backgroundColor: '#B8312F' }}>
                           {time}
                         </span>
                       ))}
@@ -464,7 +464,7 @@ export default function AdDetailPage() {
           <div className="lg:col-span-1">
             <div className="sticky top-28 space-y-6">
               {/* 가격 정보 - 메인 강조 */}
-              <div className="rounded-2xl shadow-2xl overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #C85450, #a84440)' }}>
+              <div className="rounded-2xl shadow-2xl overflow-hidden" style={{ background: 'linear-gradient(to bottom right, #B8312F, #a84440)' }}>
                 <div className="p-8 text-white">
                   <h2 className="text-2xl font-bold mb-6 flex items-center">
                     <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -514,7 +514,7 @@ export default function AdDetailPage() {
                       <div className="text-sm font-bold text-white mb-3">장기 계약 할인</div>
                       <div className="flex flex-wrap gap-2">
                         {Object.entries(ad.pricing.discounts).map(([period, discount]) => (
-                          <span key={period} className="px-3 py-1.5 bg-white text-xs font-bold rounded-full" style={{ color: '#C85450' }}>
+                          <span key={period} className="px-3 py-1.5 bg-white text-xs font-bold rounded-full" style={{ color: '#B8312F' }}>
                             {period.replace('months', '개월')}: {discount}%
                           </span>
                         ))}
@@ -546,10 +546,10 @@ export default function AdDetailPage() {
 
                 {/* CTA 버튼 */}
                 <div className="p-6 bg-white">
-                  <button className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] mb-3" style={{ background: 'linear-gradient(to right, #C85450, #a84440)' }}>
+                  <button className="w-full text-white py-4 px-6 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-[1.02] mb-3" style={{ background: 'linear-gradient(to right, #B8312F, #a84440)' }}>
                     광고 문의하기
                   </button>
-                  <button className="w-full border-2 py-3 px-6 rounded-xl font-semibold transition-all" style={{ borderColor: '#C85450', color: '#C85450' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
+                  <button className="w-full border-2 py-3 px-6 rounded-xl font-semibold transition-all" style={{ borderColor: '#B8312F', color: '#B8312F' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#fef2f2'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
                     관심 광고 저장
                   </button>
                   <p className="text-xs text-gray-500 mt-3 text-center">
@@ -562,7 +562,7 @@ export default function AdDetailPage() {
               <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
                 <div className="p-6">
                   <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                    <svg className="w-5 h-5 mr-2" style={{ color: '#C85450' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 mr-2" style={{ color: '#B8312F' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -586,7 +586,7 @@ export default function AdDetailPage() {
                     <Suspense fallback={
                       <div className="flex items-center justify-center bg-gray-100" style={{ height: '300px' }}>
                         <div className="text-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-3 border-t-transparent mx-auto mb-2" style={{ borderColor: '#C85450', borderTopColor: 'transparent' }}></div>
+                          <div className="animate-spin rounded-full h-8 w-8 border-3 border-t-transparent mx-auto mb-2" style={{ borderColor: '#B8312F', borderTopColor: 'transparent' }}></div>
                           <p className="text-sm text-gray-600 font-medium">지도 로딩중...</p>
                         </div>
                       </div>

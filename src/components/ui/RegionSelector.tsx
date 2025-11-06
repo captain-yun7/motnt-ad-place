@@ -60,15 +60,15 @@ export default function RegionSelector({
             ? 'text-white shadow-sm'
             : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900'
         }`}
-        style={!selectedCity && !selectedDistrictId ? { backgroundColor: '#C85450' } : {}}
+        style={!selectedCity && !selectedDistrictId ? { backgroundColor: '#B8312F' } : {}}
         onMouseEnter={(e) => {
           if (!selectedCity && !selectedDistrictId) {
-            e.currentTarget.style.backgroundColor = '#b04946';
+            e.currentTarget.style.backgroundColor = '#9e2825';
           }
         }}
         onMouseLeave={(e) => {
           if (!selectedCity && !selectedDistrictId) {
-            e.currentTarget.style.backgroundColor = '#C85450';
+            e.currentTarget.style.backgroundColor = '#B8312F';
           }
         }}
       >
@@ -81,10 +81,10 @@ export default function RegionSelector({
         onChange={(e) => handleCityChange(e.target.value)}
         className="px-4 py-2 text-[15px] font-semibold border border-gray-200 rounded-lg focus:outline-none focus:ring-2 bg-white hover:border-gray-300 transition-colors cursor-pointer"
         style={{
-          '--tw-ring-color': '#C85450'
+          '--tw-ring-color': '#B8312F'
         } as React.CSSProperties}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = '#C85450';
+          e.currentTarget.style.borderColor = '#B8312F';
         }}
         onBlur={(e) => {
           e.currentTarget.style.borderColor = '';
@@ -105,10 +105,10 @@ export default function RegionSelector({
           onChange={(e) => handleDistrictChange(e.target.value)}
           className="px-4 py-2 text-[15px] font-semibold border border-gray-200 rounded-lg focus:outline-none focus:ring-2 bg-white hover:border-gray-300 transition-colors cursor-pointer"
           style={{
-            '--tw-ring-color': '#C85450'
+            '--tw-ring-color': '#B8312F'
           } as React.CSSProperties}
           onFocus={(e) => {
-            e.currentTarget.style.borderColor = '#C85450';
+            e.currentTarget.style.borderColor = '#B8312F';
           }}
           onBlur={(e) => {
             e.currentTarget.style.borderColor = '';

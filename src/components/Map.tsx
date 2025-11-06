@@ -270,7 +270,7 @@ const Map = memo(function Map({
               <div style="
                 width: 54px;
                 height: 54px;
-                background: #C85450;
+                background: #B8312F;
                 border: 3px solid white;
                 border-radius: 50%;
                 box-shadow: 0 3px 10px rgba(0,0,0,0.5);
@@ -381,7 +381,7 @@ const Map = memo(function Map({
                 <div style="
                   width: 44px;
                   height: 44px;
-                  background: #C85450;
+                  background: #B8312F;
                   border: 2px solid white;
                   border-radius: 50%;
                   box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -394,7 +394,7 @@ const Map = memo(function Map({
                 <!-- 가격 -->
                 <div style="
                   padding: 4px 10px;
-                  background: #C85450;
+                  background: #B8312F;
                   color: white;
                   font-size: 12px;
                   font-weight: 700;
