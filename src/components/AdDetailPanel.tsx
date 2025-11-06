@@ -44,21 +44,24 @@ export default function AdDetailPanel({ ad, isVisible, onClose, showSubFilters }
             console.log('Detail panel close button clicked');
             onClose();
           }}
-          className="fixed top-1/2 -translate-y-1/2 z-40 bg-white border border-gray-200 shadow-lg rounded-l-lg hover:bg-gray-50 transition-all"
-          style={{ 
+          className="fixed top-1/2 -translate-y-1/2 z-40 border border-white shadow-lg rounded-l-lg transition-all"
+          style={{
             left: '896px', // 416px(리스트) + 480px(상세) = 896px
             width: '32px',
             height: '32px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            backgroundColor: '#C85450'
           }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b04946'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C85450'}
           title="상세 패널 닫기"
         >
-          <svg 
-            className="w-4 h-4 text-gray-600"
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className="w-4 h-4 text-white"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"/>

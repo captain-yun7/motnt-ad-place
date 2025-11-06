@@ -55,16 +55,18 @@ export default function TopFilterBar({
       <div className="px-8 py-5">
         {/* Main Row */}
         <div className="flex items-center justify-between">
-          {/* Left: Logo + Category Filter */}
-          <div className="flex items-center space-x-16">
-            {/* Logo */}
+          {/* Left: Logo only */}
+          <div>
             <img
               src="https://cdn.imweb.me/thumbnail/20221130/52d8b98b7be24.png"
               alt="지하철광고 국가대표광고"
               className="h-7"
               style={{ imageRendering: '-webkit-optimize-contrast' }}
             />
+          </div>
 
+          {/* Right: Category Filter + Search */}
+          <div className="flex items-center space-x-8">
             {/* 광고유형 필터 */}
             <div className="flex items-center space-x-4">
               <span className="text-[16px] font-bold text-gray-900 tracking-tight">광고유형</span>
@@ -88,46 +90,49 @@ export default function TopFilterBar({
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Right: Search */}
-          <div className="flex items-center space-x-3.5">
-            <div className="w-72">
-              <SearchInput
-                value={filters.search}
-                onChange={(value) => onFilterChange('search', value)}
-                onKeyDown={handleSearchKeyDown}
-                placeholder="지역, 건물명, 역 이름을 검색하세요"
-              />
-            </div>
-            <button
-              onClick={onSearch}
-              className="bg-gray-900 text-white py-2.5 px-6 rounded-lg hover:bg-gray-800 transition-all duration-200 font-bold text-[15px] shadow-sm hover:shadow-md"
-            >
-              검색
-            </button>
-            <button
-              onClick={onReset}
-              className="text-gray-600 hover:text-gray-900 py-2.5 px-4 transition-colors font-semibold text-[14px]"
-            >
-              초기화
-            </button>
-            {/* 필터 토글 버튼 */}
-            <button
-              onClick={onToggleSubFilters}
-              className="flex items-center gap-2 border-2 border-gray-300 hover:border-gray-900 bg-white py-2.5 px-4 rounded-lg transition-all duration-200 font-semibold text-[14px] text-gray-700 hover:text-gray-900 shadow-sm hover:shadow-md"
-              title={showSubFilters ? "검색 조건 접기" : "검색 조건 펼치기"}
-            >
-              <span>{showSubFilters ? '검색 조건 접기' : '검색 조건 펼치기'}</span>
-              <svg
-                className={`w-4 h-4 transition-transform duration-200 ${showSubFilters ? 'rotate-180' : ''}`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            {/* Search */}
+            <div className="flex items-center space-x-3.5">
+              <div className="w-72">
+                <SearchInput
+                  value={filters.search}
+                  onChange={(value) => onFilterChange('search', value)}
+                  onKeyDown={handleSearchKeyDown}
+                  placeholder="지역, 건물명, 역 이름을 검색하세요"
+                />
+              </div>
+              <button
+                onClick={onSearch}
+                className="text-white py-2.5 px-6 rounded-lg transition-all duration-200 font-bold text-[15px] shadow-sm hover:shadow-md"
+                style={{ backgroundColor: '#C85450' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#b04946'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#C85450'}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
+                검색
+              </button>
+              <button
+                onClick={onReset}
+                className="text-gray-600 hover:text-gray-900 py-2.5 px-4 transition-colors font-semibold text-[14px]"
+              >
+                초기화
+              </button>
+              {/* 필터 토글 버튼 */}
+              <button
+                onClick={onToggleSubFilters}
+                className="flex items-center gap-2 border-2 border-gray-300 hover:border-gray-900 bg-white py-2.5 px-4 rounded-lg transition-all duration-200 font-semibold text-[14px] text-gray-700 hover:text-gray-900 shadow-sm hover:shadow-md"
+                title={showSubFilters ? "검색 조건 접기" : "검색 조건 펼치기"}
+              >
+                <span>{showSubFilters ? '검색 조건 접기' : '검색 조건 펼치기'}</span>
+                <svg
+                  className={`w-4 h-4 transition-transform duration-200 ${showSubFilters ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 

@@ -24,10 +24,10 @@ export default function FilterChip({
 
   const variantClasses = {
     default: isActive
-      ? "bg-gray-900 text-white shadow-sm hover:bg-gray-800 hover:shadow-md"
+      ? "text-white shadow-sm hover:shadow-md"
       : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200",
     primary: isActive
-      ? "bg-gray-900 text-white shadow-sm hover:bg-gray-800 hover:shadow-md"
+      ? "text-white shadow-sm hover:shadow-md"
       : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-200"
   };
 
@@ -40,6 +40,17 @@ export default function FilterChip({
         ${variantClasses[variant]}
         ${className}
       `}
+      style={isActive ? { backgroundColor: '#C85450' } : {}}
+      onMouseEnter={(e) => {
+        if (isActive) {
+          e.currentTarget.style.backgroundColor = '#b04946';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (isActive) {
+          e.currentTarget.style.backgroundColor = '#C85450';
+        }
+      }}
     >
       {children}
     </button>

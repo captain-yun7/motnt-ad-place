@@ -57,9 +57,20 @@ export default function RegionSelector({
         }}
         className={`px-4 py-2 text-[15px] font-semibold rounded-lg transition-all duration-200 ${
           !selectedCity && !selectedDistrictId
-            ? 'bg-gray-900 text-white shadow-sm'
+            ? 'text-white shadow-sm'
             : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900'
         }`}
+        style={!selectedCity && !selectedDistrictId ? { backgroundColor: '#C85450' } : {}}
+        onMouseEnter={(e) => {
+          if (!selectedCity && !selectedDistrictId) {
+            e.currentTarget.style.backgroundColor = '#b04946';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!selectedCity && !selectedDistrictId) {
+            e.currentTarget.style.backgroundColor = '#C85450';
+          }
+        }}
       >
         전체
       </button>
@@ -68,7 +79,16 @@ export default function RegionSelector({
       <select
         value={selectedCity}
         onChange={(e) => handleCityChange(e.target.value)}
-        className="px-4 py-2 text-[15px] font-semibold border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 bg-white hover:border-gray-300 transition-colors cursor-pointer"
+        className="px-4 py-2 text-[15px] font-semibold border border-gray-200 rounded-lg focus:outline-none focus:ring-2 bg-white hover:border-gray-300 transition-colors cursor-pointer"
+        style={{
+          '--tw-ring-color': '#C85450'
+        } as React.CSSProperties}
+        onFocus={(e) => {
+          e.currentTarget.style.borderColor = '#C85450';
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderColor = '';
+        }}
       >
         <option value="">시/도 선택</option>
         {cities.map((city) => (
@@ -83,7 +103,16 @@ export default function RegionSelector({
         <select
           value={selectedDistrictId}
           onChange={(e) => handleDistrictChange(e.target.value)}
-          className="px-4 py-2 text-[15px] font-semibold border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900 bg-white hover:border-gray-300 transition-colors cursor-pointer"
+          className="px-4 py-2 text-[15px] font-semibold border border-gray-200 rounded-lg focus:outline-none focus:ring-2 bg-white hover:border-gray-300 transition-colors cursor-pointer"
+          style={{
+            '--tw-ring-color': '#C85450'
+          } as React.CSSProperties}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = '#C85450';
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = '';
+          }}
         >
           <option value="">구/군 선택</option>
           {districtsInCity.map((district) => (
