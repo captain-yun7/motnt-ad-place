@@ -315,55 +315,13 @@ const Map = memo(function Map({
             anchor: new window.naver.maps.Point(24, 24),
           };
         } else {
-          // 줌 레벨 14 이상: 아이콘 + 가격 함께 표시
+          // 줌 레벨 14 이상: 직사각형 마커 (위: 광고유형, 아래: 월가격)
           const monthlyPrice = ad.pricing.monthly;
-          const formattedPrice = monthlyPrice >= 10000
+          const formattedPrice = monthlyPrice >= 10000000
+            ? `${Math.floor(monthlyPrice / 10000000)}천만`
+            : monthlyPrice >= 10000
             ? `${Math.floor(monthlyPrice / 10000)}만`
             : `${monthlyPrice.toLocaleString()}`;
-
-          // 카테고리별 아이콘 (작은 버전)
-          let smallIcon = '';
-          switch(ad.category.name) {
-            case '전광판':
-              smallIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <rect x="2" y="4" width="20" height="12" rx="1" stroke="white" stroke-width="2" fill="none"/>
-                <circle cx="6" cy="8" r="1" fill="white"/>
-                <circle cx="10" cy="8" r="1" fill="white"/>
-                <circle cx="14" cy="8" r="1" fill="white"/>
-                <circle cx="18" cy="8" r="1" fill="white"/>
-              </svg>`;
-              break;
-            case '현수막':
-              smallIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M4 5h16v10c0 0-2 2-4 0s-4 2-4 0-4 2-4 0-4 2-4 0V5z" stroke="white" stroke-width="1.5" fill="white" opacity="0.9"/>
-              </svg>`;
-              break;
-            case '버스정류장':
-              smallIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <rect x="5" y="6" width="14" height="10" rx="2" stroke="white" stroke-width="1.5" fill="none"/>
-                <circle cx="8" cy="18" r="1.5" fill="white"/>
-                <circle cx="16" cy="18" r="1.5" fill="white"/>
-              </svg>`;
-              break;
-            case '지하철':
-              smallIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <rect x="4" y="7" width="16" height="10" rx="2" stroke="white" stroke-width="2" fill="none"/>
-                <circle cx="7" cy="19" r="1.5" fill="white"/>
-                <circle cx="17" cy="19" r="1.5" fill="white"/>
-              </svg>`;
-              break;
-            case '팝업스토어':
-              smallIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M3 7h18l-1 13H4L3 7z" stroke="white" stroke-width="2" fill="none"/>
-                <circle cx="9" cy="13" r="1" fill="white"/>
-                <circle cx="15" cy="13" r="1" fill="white"/>
-              </svg>`;
-              break;
-            default:
-              smallIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/>
-              </svg>`;
-          }
 
           markerIcon = {
             content: `
@@ -371,44 +329,51 @@ const Map = memo(function Map({
                 cursor: pointer;
                 display: flex;
                 flex-direction: column;
-                align-items: center;
-                gap: 4px;
+                min-width: 85px;
                 transition: all 0.2s;
+                filter: drop-shadow(0 3px 8px rgba(0,0,0,0.4));
               "
-              onmouseover="this.style.transform='scale(1.1)'; this.style.zIndex='1000';"
+              onmouseover="this.style.transform='scale(1.08)'; this.style.zIndex='1000';"
               onmouseout="this.style.transform='scale(1)'; this.style.zIndex='1';">
-                <!-- 아이콘 -->
+                <!-- 광고 유형 (흰색 배경) -->
                 <div style="
-                  width: 44px;
-                  height: 44px;
-                  background: #B8312F;
-                  border: 2px solid white;
-                  border-radius: 50%;
-                  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
+                  padding: 6px 12px;
+                  background: white;
+                  color: #333;
+                  font-size: 11px;
+                  font-weight: 700;
+                  text-align: center;
+                  border-top-left-radius: 6px;
+                  border-top-right-radius: 6px;
+                  border: 1.5px solid #e0e0e0;
+                  border-bottom: none;
+                  white-space: nowrap;
+                  letter-spacing: -0.2px;
+                  line-height: 1.2;
                 ">
-                  ${smallIcon}
+                  ${ad.category.name}
                 </div>
-                <!-- 가격 -->
+                <!-- 월 가격 (색상 배경) -->
                 <div style="
-                  padding: 4px 10px;
+                  padding: 7px 12px;
                   background: #B8312F;
                   color: white;
-                  font-size: 12px;
-                  font-weight: 700;
-                  border-radius: 10px;
-                  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+                  font-size: 13px;
+                  font-weight: 800;
+                  text-align: center;
+                  border-bottom-left-radius: 6px;
+                  border-bottom-right-radius: 6px;
+                  border: 1.5px solid #B8312F;
+                  border-top: none;
                   white-space: nowrap;
                   letter-spacing: -0.3px;
-                  border: 1px solid white;
+                  line-height: 1.2;
                 ">
-                  월 ${formattedPrice}
+                  ${formattedPrice}
                 </div>
               </div>
             `,
-            anchor: new window.naver.maps.Point(22, 60),
+            anchor: new window.naver.maps.Point(42, 45),
           };
         }
         
