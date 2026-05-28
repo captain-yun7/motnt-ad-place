@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { auth } from '@/auth';
-import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import { r2, R2_BUCKET, r2KeyFromUrl } from '@/lib/r2';
 
 async function checkAdminAuth() {
   const session = await auth()
@@ -36,29 +37,20 @@ export async function DELETE(
       )
     }
 
-    const supabase = await createClient()
-
-    try {
-      // URL에서 파일 경로 추출
-      const url = new URL(image.url)
-      const pathParts = url.pathname.split('/')
-      const fileName = pathParts[pathParts.length - 1]
-      const adId = pathParts[pathParts.length - 2]
-      const fullPath = `${adId}/${fileName}`
-
-      // Supabase Storage에서 파일 삭제
-      const { error: deleteError } = await supabase.storage
-        .from('motnt-ad-place-bucket')
-        .remove([fullPath])
-
-      if (deleteError) {
-        console.error('Supabase delete error:', deleteError)
+    // R2 키 추출 가능한 URL이면 R2에서도 삭제 (구 Supabase URL은 스킵)
+    const key = r2KeyFromUrl(image.url)
+    if (key) {
+      try {
+        await r2.send(
+          new DeleteObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: key,
+          })
+        )
+      } catch (deleteError) {
+        console.error('R2 delete error:', deleteError)
         // 파일이 없어도 데이터베이스에서는 삭제
       }
-
-    } catch (urlError) {
-      console.error('Error parsing image URL:', urlError)
-      // URL 파싱 실패해도 데이터베이스에서는 삭제
     }
 
     // 데이터베이스에서 이미지 레코드 삭제

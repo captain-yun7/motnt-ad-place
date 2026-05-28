@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { auth } from '@/auth';
-import { createClient } from '@/lib/supabase/server';
 import { prisma } from '@/lib/prisma';
+import { r2, R2_BUCKET, r2PublicUrl } from '@/lib/r2';
 
 async function checkAdminAuth() {
   const session = await auth()
@@ -49,7 +50,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = await createClient()
     const uploadedImages = []
 
     // 현재 이미지 개수 확인하여 order 설정
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
-      
+
       // 파일 검증
       if (!file.type.startsWith('image/')) {
         return NextResponse.json(
@@ -78,29 +78,22 @@ export async function POST(request: NextRequest) {
 
       // 고유한 파일명 생성
       const fileExtension = file.name.split('.').pop()
-      const fileName = `${adId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExtension}`
+      const key = `${adId}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExtension}`
 
       try {
-        // Supabase Storage에 업로드
-        const { data, error } = await supabase.storage
-          .from('motnt-ad-place-bucket')
-          .upload(fileName, file, {
-            cacheControl: '3600',
-            upsert: false
+        // R2에 업로드
+        const arrayBuffer = await file.arrayBuffer()
+        await r2.send(
+          new PutObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: key,
+            Body: Buffer.from(arrayBuffer),
+            ContentType: file.type,
+            CacheControl: 'public, max-age=31536000, immutable',
           })
+        )
 
-        if (error) {
-          console.error('Supabase upload error:', error)
-          return NextResponse.json(
-            { error: `이미지 업로드 실패: ${error.message}` },
-            { status: 500 }
-          )
-        }
-
-        // 업로드된 파일의 공개 URL 생성
-        const { data: { publicUrl } } = supabase.storage
-          .from('motnt-ad-place-bucket')
-          .getPublicUrl(fileName)
+        const publicUrl = r2PublicUrl(key)
 
         // 데이터베이스에 이미지 정보 저장
         const imageRecord = await prisma.adImage.create({
@@ -118,11 +111,11 @@ export async function POST(request: NextRequest) {
           url: publicUrl,
           alt: imageRecord.alt,
           order: imageRecord.order,
-          fileName: fileName
+          fileName: key
         })
 
       } catch (uploadError) {
-        console.error('Image upload error:', uploadError)
+        console.error('R2 upload error:', uploadError)
         return NextResponse.json(
           { error: `${file.name} 업로드 중 오류가 발생했습니다.` },
           { status: 500 }
