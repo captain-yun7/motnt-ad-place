@@ -1,19 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { requireAdminSession } from '@/lib/auth/session'
 import AdminAdsPage from '@/components/admin/AdminAdsPage'
 import { prisma } from '@/lib/prisma'
 import { AdResponse } from '@/types/ad'
 
 export default async function AdminAdsListPage() {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/admin/login')
-  }
+  const session = await requireAdminSession()
 
   // 광고 목록, 카테고리, 지역 정보 직접 조회
   const [ads, categories, districts] = await Promise.all([
@@ -76,7 +67,7 @@ export default async function AdminAdsListPage() {
 
   return (
     <AdminAdsPage
-      user={user}
+      user={session.user}
       initialAds={adResponses}
       categories={categories}
       districts={districts}

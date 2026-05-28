@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { AdResponse } from '@/types/ad'
@@ -22,7 +21,7 @@ interface District {
 }
 
 interface AdEditFormProps {
-  user: User
+  user: { email?: string | null }
   ad: AdResponse,
   categories: Category[]
   districts: District[]
@@ -116,7 +115,6 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
   const containerRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
-  const supabase = createClient()
 
   // 기존 광고 데이터로 폼 초기화
   useEffect(() => {
@@ -329,9 +327,7 @@ export default function AdEditForm({ user, ad, categories, districts }: AdEditFo
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/admin/login')
-    router.refresh()
+    await signOut({ callbackUrl: '/admin/login' })
   }
 
   const generateSlug = (title: string) => {

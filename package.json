@@ -13,7 +13,7 @@
     "db:seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.16.1",
+    "@prisma/client": "^6.19.2",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/ssr": "^0.7.0",
@@ -22,6 +22,7 @@
     "@types/navermaps": "^3.9.1",
     "lodash": "^4.17.21",
     "next": "15.5.9",
+    "next-auth": "^5.0.0-beta.30",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
@@ -35,7 +36,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.7",
     "prettier": "^3.6.2",
-    "prisma": "^6.16.1",
+    "prisma": "^6.19.2",
     "tailwindcss": "^4",
     "tsx": "^4.20.5",
     "typescript": "^5"

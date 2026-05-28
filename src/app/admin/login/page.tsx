@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 export default function AdminLoginPage() {
@@ -10,20 +10,20 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const result = await signIn('credentials', {
       email,
       password,
+      redirect: false,
     })
 
-    if (error) {
-      setError(error.message)
+    if (result?.error) {
+      setError('이메일 또는 비밀번호가 올바르지 않습니다.')
       setLoading(false)
     } else {
       router.push('/admin/dashboard')
@@ -50,11 +50,7 @@ export default function AdminLoginPage() {
           <form className="space-y-6" onSubmit={handleSignIn}>
             {error && (
               <div className="rounded-md bg-red-50 p-4">
-                <div className="text-sm text-red-700">
-                  {error === 'Invalid login credentials' 
-                    ? '이메일 또는 비밀번호가 올바르지 않습니다.' 
-                    : error}
-                </div>
+                <div className="text-sm text-red-700">{error}</div>
               </div>
             )}
 

@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 interface DashboardStats {
@@ -13,7 +12,7 @@ interface DashboardStats {
 }
 
 interface AdminDashboardProps {
-  user: User
+  user: { email?: string | null }
 }
 
 export default function AdminDashboard({ user }: AdminDashboardProps) {
@@ -25,7 +24,6 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
   })
   const [loading, setLoading] = useState(true)
   const router = useRouter()
-  const supabase = createClient()
 
   useEffect(() => {
     fetchStats()
@@ -62,9 +60,7 @@ export default function AdminDashboard({ user }: AdminDashboardProps) {
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/admin/login')
-    router.refresh()
+    await signOut({ callbackUrl: '/admin/login' })
   }
 
   const menuItems = [

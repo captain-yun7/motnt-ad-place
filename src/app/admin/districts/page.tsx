@@ -1,18 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { requireAdminSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import AdminDistrictsPage from '@/components/admin/AdminDistrictsPage'
 
 export default async function AdminDistrictsListPage() {
-  const supabase = await createClient()
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/admin/login')
-  }
+  const session = await requireAdminSession()
 
   // 지역 목록 직접 조회
   const districts = await prisma.district.findMany({
@@ -34,8 +25,8 @@ export default async function AdminDistrictsListPage() {
   }))
 
   return (
-    <AdminDistrictsPage 
-      user={user}
+    <AdminDistrictsPage
+      user={session.user}
       initialDistricts={districtsWithCount}
     />
   )

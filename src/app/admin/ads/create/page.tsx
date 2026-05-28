@@ -1,18 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { requireAdminSession } from '@/lib/auth/session'
 import AdCreateForm from '@/components/admin/AdCreateForm'
 import { prisma } from '@/lib/prisma'
 
 export default async function AdminAdCreatePage() {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/admin/login')
-  }
+  const session = await requireAdminSession()
 
   // 카테고리와 지역 정보 직접 조회
   const [categories, districts] = await Promise.all([
@@ -26,7 +17,7 @@ export default async function AdminAdCreatePage() {
 
   return (
     <AdCreateForm
-      user={user}
+      user={session.user}
       categories={categories}
       districts={districts}
     />

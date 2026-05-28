@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 
-// 관리자 인증 확인
 async function checkAdminAuth() {
-  const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  
-  if (error || !user) {
-    return null
-  }
-  
-  return user
+  const session = await auth()
+  return session?.user ?? null
 }
 
 // 광고 삭제

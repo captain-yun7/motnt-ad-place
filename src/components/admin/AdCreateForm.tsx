@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 
 interface Category {
@@ -20,7 +19,7 @@ interface District {
 }
 
 interface AdCreateFormProps {
-  user: User
+  user: { email?: string | null }
   categories: Category[]
   districts: District[]
 }
@@ -131,7 +130,6 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
   const containerRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
-  const supabase = createClient()
 
   // 카카오 주소 검색 API (키워드 + 주소 병합)
   const searchAddress = async (query: string) => {
@@ -468,9 +466,7 @@ export default function AdCreateForm({ user, categories, districts }: AdCreateFo
   }
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/admin/login')
-    router.refresh()
+    await signOut({ callbackUrl: '/admin/login' })
   }
 
   // 제목에서 slug 자동 생성

@@ -1,18 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { requireAdminSession } from '@/lib/auth/session'
 import { prisma } from '@/lib/prisma'
 import AdminCategoriesPage from '@/components/admin/AdminCategoriesPage'
 
 export default async function AdminCategoriesListPage() {
-  const supabase = await createClient()
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/admin/login')
-  }
+  const session = await requireAdminSession()
 
   // 카테고리 목록 직접 조회
   const categories = await prisma.category.findMany({
@@ -31,8 +22,8 @@ export default async function AdminCategoriesListPage() {
   }))
 
   return (
-    <AdminCategoriesPage 
-      user={user}
+    <AdminCategoriesPage
+      user={session.user}
       initialCategories={categoriesWithCount}
     />
   )

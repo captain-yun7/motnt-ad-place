@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect, notFound } from 'next/navigation'
+import { requireAdminSession } from '@/lib/auth/session'
+import { notFound } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import AdEditForm from '@/components/admin/AdEditForm'
 
@@ -8,16 +8,8 @@ export default async function AdminAdEditPage({
 }: { 
   params: Promise<{ id: string }> 
 }) {
-  const supabase = await createClient()
+  const session = await requireAdminSession()
   const { id } = await params
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/admin/login')
-  }
 
   // 광고 상세 정보 직접 조회
   const ad = await prisma.ad.findUnique({
@@ -66,8 +58,8 @@ export default async function AdminAdEditPage({
   )
 
   return (
-    <AdEditForm 
-      user={user}
+    <AdEditForm
+      user={session.user}
       ad={ad}
       categories={categoriesWithCount}
       districts={districtsWithCount}

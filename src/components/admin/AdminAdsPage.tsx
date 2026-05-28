@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
+import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { AdResponse } from '@/types/ad'
@@ -22,7 +21,7 @@ interface District {
 }
 
 interface AdminAdsPageProps {
-  user: User
+  user: { email?: string | null }
   initialAds: AdResponse[]
   categories: Category[]
   districts: District[]
@@ -37,12 +36,9 @@ export default function AdminAdsPage({ user, initialAds, categories, districts }
   const [statusFilter, setStatusFilter] = useState('')
   
   const router = useRouter()
-  const supabase = createClient()
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut()
-    router.push('/admin/login')
-    router.refresh()
+    await signOut({ callbackUrl: '/admin/login' })
   }
 
   // 광고 삭제
